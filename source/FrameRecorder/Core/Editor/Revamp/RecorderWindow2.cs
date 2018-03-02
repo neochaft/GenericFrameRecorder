@@ -1,5 +1,7 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.UIElements;
 using UnityEngine;
 using UnityEngine.Recorder;
@@ -28,6 +30,9 @@ namespace UnityEditor.Recorder
             return new Color(Random.value, Random.value, Random.value, alpha);
         }
 
+        VisualElement m_recordings;
+        RecordElement m_selectedRecord;
+
         public void OnEnable()
         {
             Random.InitState(1337 + 42);
@@ -38,7 +43,7 @@ namespace UnityEditor.Recorder
             int kPadding = 10;
             int kBoxSize = 100;
 
-            var mainControls = new VisualContainer
+            var mainControls = new VisualElement
             {
                 style =
                 {
@@ -48,7 +53,7 @@ namespace UnityEditor.Recorder
             };
             root.Add(mainControls);
             
-            var controlLeftPane = new VisualContainer
+            var controlLeftPane = new VisualElement
             {
                 style =
                 {
@@ -60,7 +65,7 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            var controlRightPane = new VisualContainer
+            var controlRightPane = new VisualElement
             {
                 style =
                 {
@@ -88,7 +93,7 @@ namespace UnityEditor.Recorder
             controlLeftPane.Add(recordIcon);
 
 
-            var leftButtonsStack = new VisualContainer
+            var leftButtonsStack = new VisualElement
             {
                 style =
                 {
@@ -113,7 +118,7 @@ namespace UnityEditor.Recorder
 
             controlLeftPane.Add(leftButtonsStack);
             
-            var rightButtonsStack = new VisualContainer
+            var rightButtonsStack = new VisualElement
             {
                 style =
                 {
@@ -133,7 +138,7 @@ namespace UnityEditor.Recorder
             controlRightPane.Add(rightButtonsStack);
             
 
-            var parameters = new VisualContainer
+            var parameters = new VisualElement
             {
                 style =
                 {
@@ -142,7 +147,7 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            var recordingAndParameters = new VisualContainer
+            var recordingAndParameters = new VisualElement
             {
                 style =
                 {
@@ -154,7 +159,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            var recordingsPanel = new VisualContainer
+            var recordingsPanel = new VisualElement
             {
                 style =
                 {
@@ -168,7 +173,7 @@ namespace UnityEditor.Recorder
 
             root.Add(recordingAndParameters);
 
-            var recordingControl = new VisualContainer
+            var recordingControl = new VisualElement
             {
                 style =
                 {
@@ -176,10 +181,36 @@ namespace UnityEditor.Recorder
                     height = 20,
                 }
             };
+
+            var addNewRecord = new Label("+ Add New Recordings");
             
-            recordingControl.Add(new Label("+ Add New Recordings"));
+            //var newRecordMenu = new PopupField<string>(GetRecorders().Select(t => "New " + ObjectNames.NicifyVariableName(t.Name)).ToList(), 0);
             
-            var recordings = new ScrollView
+            //newRecordMenu.AddItem();PopupField<string>(GetRecorders().Select(t => "New " + ObjectNames.NicifyVariableName(t.Name)).ToList(), 0);
+            
+            addNewRecord.RegisterCallback<MouseUpEvent>(evt =>
+            {               
+                var newRecordMenu = new GenericMenu();
+                
+                foreach (var t in GetRecorders())
+                {
+                    var cleanName = ObjectNames.NicifyVariableName(t.Name); // TODO Find a way to cleanly pass the displayName (or this can be another field?)
+                    newRecordMenu.AddItem(new GUIContent("New " + cleanName), false, data => OnAddNewRecorder(t), cleanName);
+                }
+                
+                newRecordMenu.ShowAsContext();
+            });
+            //newRecordMenu.AppendAction("Action 1", evt => Debug.Log("Yolo 1"), ContextualMenu.MenuAction.AlwaysEnabled);
+            
+            recordingControl.Add(addNewRecord);
+            //recordingControl.Add(newRecordMenu);
+            
+            //recordingControl.RegisterCallback<MouseUpEvent>(OnAddNewRecorder);
+            
+            //var m = new ContextualMenuManipulator(MyDelegate);
+            //m.target = re;
+            
+            m_recordings = new ScrollView
             {
                 
                 style =
@@ -191,13 +222,14 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            for(var i = 0; i < 20; ++i)
-                recordings.Add(Record("Recording [" + i + "]"));
+            
+            //for(var i = 0; i < 20; ++i)
+            //    recordings.Add(Record("Recording [" + i + "]"));
 
             recordingsPanel.Add(recordingControl);
-            recordingsPanel.Add(recordings);
+            recordingsPanel.Add(m_recordings);
 
-            var parametersControl = new VisualContainer
+            var parametersControl = new VisualElement
             {
                 style =
                 {
@@ -207,24 +239,66 @@ namespace UnityEditor.Recorder
             };
 
             parameters.Add(parametersControl);
+            
+            var recorderInspector = new IMGUIContainer(OnGUIHandler);
+            
+            parameters.Add(recorderInspector);
+            
+            
         }
 
-        static VisualElement Record(string name)
+        void OnGUIHandler()
         {
-            var container = new VisualContainer
-            {
-                style = { flex = 1.0f, flexDirection = FlexDirection.Row, backgroundColor = RandomColor() } 
-            };
+            EditorGUILayout.DropdownButton(new GUIContent("Yolo GUI"), FocusType.Passive);
             
-            container.Add( new UnityEngine.Experimental.UIElements.Toggle(() => { }));
-            container.Add(new Label(name));
+            if (m_selectedRecord == null)
+                return;
+            
+            
+        }
 
-            return container;
+        void OnAddNewRecorder(Type type)
+        {
+            m_recordings.Add(new RecordElement(type, OnRecordMouseUp));
+        }
+
+        void OnRecordMouseUp(MouseUpEvent evt)
+        {
+            if (evt.clickCount != 1)
+                return;
+
+            var recorder = (RecordElement)evt.currentTarget;
+            Debug.Log("Clicked on " + recorder.editor);
+            evt.StopImmediatePropagation();
+        }
+        
+        class RecordElement : VisualElement
+        {
+            public RecorderEditor editor { get; private set; }
+            
+            public string displayName
+            {
+                get { return ObjectNames.NicifyVariableName(editor.GetType().Name); }
+            }
+
+            public RecordElement(Type type, EventCallback<MouseUpEvent> onRecordMouseUp)
+            {
+                editor = (RecorderEditor) CreateInstance(type);
+                style.flex = 1.0f;
+                style.flexDirection = FlexDirection.Row;
+                style.backgroundColor = RandomColor();
+
+                //container.RegisterCallback<MouseUpEvent>(OnRecordMouseUp);
+                Add(new UnityEngine.Experimental.UIElements.Toggle(() => { }));
+                Add(new Label(displayName));
+                
+                RegisterCallback(onRecordMouseUp);
+            }
         }
 
         static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)
         {
-            var container = new VisualContainer
+            var container = new VisualElement
             {
                 style = { flexDirection = FlexDirection.Row } 
             };
@@ -245,6 +319,16 @@ namespace UnityEditor.Recorder
             container.Add(field);
 
             return container;
+        }
+        
+        static IEnumerable<Type> GetRecorders()
+        {
+            //var type = typeof(RecorderBase);
+            var type = typeof(RecorderEditor);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
+            return types;
         }
     }
 }
