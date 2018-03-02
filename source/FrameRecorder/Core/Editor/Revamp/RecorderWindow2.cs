@@ -13,6 +13,7 @@ using UnityEngine.Timeline;
 using UnityEngine.UI;
 using Button = UnityEngine.Experimental.UIElements.Button;
 using Image = UnityEngine.Experimental.UIElements.Image;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
@@ -31,10 +32,48 @@ namespace UnityEditor.Recorder
         }
 
         VisualElement m_recordings;
-        RecordElement m_selectedRecord;
+        Editor m_recorderEditor;
+        
+        RecorderWindowSettings m_WindowSettingsAsset;
 
+        // ScrollView do not stretch items horizontally, use a workaround to solve this...         
+        void AdjustScrollViewWidth(PostLayoutEvent evt)
+        {
+                
+            var scrollView = (ScrollView) evt.currentTarget;
+            scrollView.contentContainer.style.width = scrollView.contentViewport.layout.width;
+        }
+
+        class MyScrollBar : Scrollbar
+        {
+            
+        }
+            
+        
         public void OnEnable()
         {
+            if (m_WindowSettingsAsset == null)
+            {
+                var candidates = AssetDatabase.FindAssets("t:RecorderWindow2Settings");
+                if (candidates.Length > 0)
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
+                    m_WindowSettingsAsset = AssetDatabase.LoadAssetAtPath<RecorderWindowSettings>(path);
+                    if (m_WindowSettingsAsset == null)
+                    {
+                        AssetDatabase.DeleteAsset(path);
+                    }
+                }
+                if(m_WindowSettingsAsset == null)
+                {
+                    m_WindowSettingsAsset = ScriptableObject.CreateInstance<RecorderWindowSettings>();
+                    AssetDatabase.CreateAsset(m_WindowSettingsAsset, FRPackagerPaths.GetRecorderRootPath() +  "/RecorderWindow2Settings.asset");
+                    AssetDatabase.Refresh();
+                }
+            }
+            
+            // TODO Restore current list
+            
             Random.InitState(1337 + 42);
 
             var root = this.GetRootVisualContainer();
@@ -138,7 +177,7 @@ namespace UnityEditor.Recorder
             controlRightPane.Add(rightButtonsStack);
             
 
-            var parameters = new VisualElement
+            var parameters = new ScrollView //VisualElement
             {
                 style =
                 {
@@ -146,6 +185,7 @@ namespace UnityEditor.Recorder
                     flex = 1.0f,
                 }
             };
+            parameters.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
 
             var recordingAndParameters = new VisualElement
             {
@@ -191,11 +231,12 @@ namespace UnityEditor.Recorder
             addNewRecord.RegisterCallback<MouseUpEvent>(evt =>
             {               
                 var newRecordMenu = new GenericMenu();
-                
-                foreach (var t in GetRecorders())
+
+                var recorderList = RecordersInventory.ListRecorders();
+                //var recorderList = GetRecorders();
+                foreach (var info in recorderList)
                 {
-                    var cleanName = ObjectNames.NicifyVariableName(t.Name); // TODO Find a way to cleanly pass the displayName (or this can be another field?)
-                    newRecordMenu.AddItem(new GUIContent("New " + cleanName), false, data => OnAddNewRecorder(t), cleanName);
+                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
                 }
                 
                 newRecordMenu.ShowAsContext();
@@ -222,6 +263,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
+            m_recordings.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
             
             //for(var i = 0; i < 20; ++i)
             //    recordings.Add(Record("Recording [" + i + "]"));
@@ -235,31 +277,38 @@ namespace UnityEditor.Recorder
                 {
                     backgroundColor = RandomColor(0.8f),
                     height = 30,
+                    minWidth = 300.0f,
                 }
             };
 
             parameters.Add(parametersControl);
             
-            var recorderInspector = new IMGUIContainer(OnGUIHandler);
+            m_recorderInspector = new IMGUIContainer(OnGUIHandler)
+            {
+                style =
+                {
+                    flex = 1.0f
+                }
+            };
             
-            parameters.Add(recorderInspector);
+            parameters.Add(m_recorderInspector);
             
             
         }
+
+        IMGUIContainer m_recorderInspector;
 
         void OnGUIHandler()
         {
-            EditorGUILayout.DropdownButton(new GUIContent("Yolo GUI"), FocusType.Passive);
-            
-            if (m_selectedRecord == null)
-                return;
-            
-            
+            if (m_recorderEditor != null)
+            {
+                m_recorderEditor.OnInspectorGUI();
+            }
         }
 
-        void OnAddNewRecorder(Type type)
+        void OnAddNewRecorder(RecorderInfo info)
         {
-            m_recordings.Add(new RecordElement(type, OnRecordMouseUp));
+            m_recordings.Add(new RecorderItem(m_WindowSettingsAsset, info, OnRecordMouseUp));
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -267,30 +316,43 @@ namespace UnityEditor.Recorder
             if (evt.clickCount != 1)
                 return;
 
-            var recorder = (RecordElement)evt.currentTarget;
-            Debug.Log("Clicked on " + recorder.editor);
+            var recorder = (RecorderItem)evt.currentTarget;
+            Debug.Log("Clicked on " + recorder.settings);
+            m_recorderEditor = recorder.editor;
+            m_recorderInspector.Dirty(ChangeType.Layout);
             evt.StopImmediatePropagation();
         }
         
-        class RecordElement : VisualElement
+        class RecorderItem : VisualElement
         {
-            public RecorderEditor editor { get; private set; }
+            public RecorderSettings settings { get; private set; }
+            public Editor editor { get; private set; }
+            public UnityEngine.Recorder.Recorder recorder { get; private set; }
             
-            public string displayName
-            {
-                get { return ObjectNames.NicifyVariableName(editor.GetType().Name); }
-            }
+            public string title { get; set; }
 
-            public RecordElement(Type type, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(Object saveFileScriptableObject, RecorderInfo info, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
-                editor = (RecorderEditor) CreateInstance(type);
+                settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
+                
+                
+                settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
+                settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
+                
+                recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
+                editor = Editor.CreateEditor(settings);
+                title = info.displayName; // TODO Add number or something?
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
                 style.backgroundColor = RandomColor();
 
                 //container.RegisterCallback<MouseUpEvent>(OnRecordMouseUp);
                 Add(new UnityEngine.Experimental.UIElements.Toggle(() => { }));
-                Add(new Label(displayName));
+                //Add(new Label(title));
+                var titleField = new TextField() {text = title};
+                titleField.OnValueChanged(evt => title = evt.newValue);
+                Add(titleField);
+                
                 
                 RegisterCallback(onRecordMouseUp);
             }
@@ -324,7 +386,7 @@ namespace UnityEditor.Recorder
         static IEnumerable<Type> GetRecorders()
         {
             //var type = typeof(RecorderBase);
-            var type = typeof(RecorderEditor);
+            var type = typeof(RecorderSettings);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));

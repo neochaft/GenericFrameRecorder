@@ -11,7 +11,6 @@ namespace UnityEngine.Recorder
     {
         public Type recorderType;
         public Type settingsClass;
-        public Type settingsEditorClass;
         public string category;
         public string displayName;
     }

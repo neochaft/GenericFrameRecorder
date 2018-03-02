@@ -141,6 +141,8 @@ namespace UnityEditor.Recorder
         {
             if (target == null)
                 return;
+            
+            EditorGUILayout.DropdownButton(new GUIContent("Hello from GUI"), FocusType.Passive);
 
             BuildInputEditors();
 
@@ -156,6 +158,8 @@ namespace UnityEditor.Recorder
             (target as RecorderSettings).SelfAdjustSettings();
 
             OnValidateSettingsGUI();
+            
+            EditorGUILayout.DropdownButton(new GUIContent("Bybye from GUI"), FocusType.Passive);
         }
 
         public virtual void OnValidateSettingsGUI()
