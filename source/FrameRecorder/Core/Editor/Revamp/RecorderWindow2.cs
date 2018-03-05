@@ -32,19 +32,19 @@ namespace UnityEditor.Recorder
         }
 
         VisualElement m_recordings;
+        VisualElement m_parameters;
         Editor m_recorderEditor;
         
         RecorderWindowSettings m_WindowSettingsAsset;
 
         // ScrollView do not stretch items horizontally, use a workaround to solve this...         
-        void AdjustScrollViewWidth(PostLayoutEvent evt)
+        static void AdjustScrollViewWidth(PostLayoutEvent evt)
         {
-                
             var scrollView = (ScrollView) evt.currentTarget;
             scrollView.contentContainer.style.width = scrollView.contentViewport.layout.width;
         }
 
-        class MyScrollBar : Scrollbar
+        class MyScrollView : ScrollView
         {
             
         }
@@ -177,7 +177,7 @@ namespace UnityEditor.Recorder
             controlRightPane.Add(rightButtonsStack);
             
 
-            var parameters = new ScrollView //VisualElement
+            m_parameters = new ScrollView //VisualElement
             {
                 style =
                 {
@@ -185,7 +185,10 @@ namespace UnityEditor.Recorder
                     flex = 1.0f,
                 }
             };
-            parameters.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
+            
+            m_parameters.contentContainer.style.positionLeft = 0;
+            m_parameters.contentContainer.style.positionRight = 0;
+            //m_parameters.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
 
             var recordingAndParameters = new VisualElement
             {
@@ -209,7 +212,7 @@ namespace UnityEditor.Recorder
             };
 
             recordingAndParameters.Add(recordingsPanel);
-            recordingAndParameters.Add(parameters);
+            recordingAndParameters.Add(m_parameters);
 
             root.Add(recordingAndParameters);
 
@@ -262,8 +265,11 @@ namespace UnityEditor.Recorder
                     flexDirection = FlexDirection.Column,
                 }
             };
+
+            m_recordings.contentContainer.style.positionLeft = 0;
+            m_recordings.contentContainer.style.positionRight = 0;
             
-            m_recordings.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
+            //m_recordings.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
             
             //for(var i = 0; i < 20; ++i)
             //    recordings.Add(Record("Recording [" + i + "]"));
@@ -281,7 +287,7 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            parameters.Add(parametersControl);
+            m_parameters.Add(parametersControl);
             
             m_recorderInspector = new IMGUIContainer(OnGUIHandler)
             {
@@ -291,7 +297,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            parameters.Add(m_recorderInspector);
+            m_parameters.Add(m_recorderInspector);
             
             
         }
@@ -320,6 +326,7 @@ namespace UnityEditor.Recorder
             Debug.Log("Clicked on " + recorder.settings);
             m_recorderEditor = recorder.editor;
             m_recorderInspector.Dirty(ChangeType.Layout);
+            //m_parameters.Dirty(ChangeType.Layout);
             evt.StopImmediatePropagation();
         }
         
