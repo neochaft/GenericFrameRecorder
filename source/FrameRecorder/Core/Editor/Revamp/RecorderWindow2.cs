@@ -17,7 +17,140 @@ using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
-{
+{     
+    //[ExecuteInEditMode]
+    //[Serializable]
+
+    [CustomEditor(typeof(GlobalSettings))]
+    [CanEditMultipleObjects]
+    class GlobalSettingsEditor : Editor
+    {
+        SerializedProperty m_RecordModeProperty;
+        
+        SerializedProperty m_PlaybackProperty;
+        SerializedProperty m_FrameRateTypeProperty;
+        SerializedProperty m_CustomFrameRateValueProperty;
+        
+        SerializedProperty m_StartFrameProperty;
+        SerializedProperty m_EndFrameProperty;
+        SerializedProperty m_StartTimeProperty;
+        SerializedProperty m_EndTimeProperty;
+        
+        SerializedProperty m_SynchFrameRateProperty;
+
+        GenericMenu m_FrameRateMenu;
+
+        static class Styles
+        {
+            public static readonly GUIContent sRecordModeLabel  = new GUIContent("Record Mode");
+            public static readonly GUIContent sSingleFrameLabel = new GUIContent("Frame #");
+            public static readonly GUIContent sFirstFrameLabel  = new GUIContent("First frame");
+            public static readonly GUIContent sLastFrameLabel   = new GUIContent("Last frame");
+            public static readonly GUIContent sStartTimeLabel   = new GUIContent("Start (sec)");
+            public static readonly GUIContent sEndTimeLabel     = new GUIContent("End (sec)");
+            
+            public static readonly GUIContent sFrameRateTitle   = new GUIContent("Frame Rate");
+            public static readonly GUIContent sPlaybackLabel    = new GUIContent("Playback");
+            public static readonly GUIContent sTargetFPSLabel   = new GUIContent("Target Frame Rate");
+            public static readonly GUIContent sMaxFPSLabel      = new GUIContent("Max Frame Rate");
+            public static readonly GUIContent sSyncFPSLabel     = new GUIContent("Sync. Frame Rate");
+            public static readonly GUIContent sValueLabel       = new GUIContent("Value");
+        }
+
+        void OnEnable()
+        {          
+            m_RecordModeProperty = serializedObject.FindProperty("m_RecordMode");
+            m_PlaybackProperty = serializedObject.FindProperty("m_FrameRatePlayback");
+            m_FrameRateTypeProperty  = serializedObject.FindProperty("m_FrameRateType");
+            m_CustomFrameRateValueProperty = serializedObject.FindProperty("m_CustomFrameRateValue");
+            m_StartFrameProperty = serializedObject.FindProperty("m_StartFrame");
+            m_EndFrameProperty = serializedObject.FindProperty("m_EndFrame");
+            m_StartTimeProperty = serializedObject.FindProperty("m_StartTime");
+            m_EndTimeProperty = serializedObject.FindProperty("m_EndTime");
+            m_SynchFrameRateProperty = serializedObject.FindProperty("m_SynchFrameRate");
+        }
+
+        public bool RecordModeGUI()
+        {           
+            serializedObject.Update();
+            
+            EditorGUILayout.PropertyField(m_RecordModeProperty, Styles.sRecordModeLabel);
+
+            ++EditorGUI.indentLevel;
+            
+            switch ((RecordMode)m_RecordModeProperty.enumValueIndex)
+            {
+                case RecordMode.Manual:
+                {
+                    // Nothing
+                    break;
+                }
+                    
+                case RecordMode.SingleFrame:
+                {
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.sSingleFrameLabel);
+                    m_EndFrameProperty.intValue = m_StartFrameProperty.intValue;
+                    break;
+                }
+                    
+                case RecordMode.FrameInterval:
+                {
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.sFirstFrameLabel);
+                    EditorGUILayout.PropertyField(m_EndFrameProperty, Styles.sLastFrameLabel);
+                    break;
+                }
+                    
+                case RecordMode.TimeInterval:
+                {
+                    EditorGUILayout.PropertyField(m_StartTimeProperty, Styles.sStartTimeLabel);
+                    EditorGUILayout.PropertyField(m_EndTimeProperty, Styles.sEndTimeLabel);
+                    break;
+                }
+                    
+            }
+            
+            --EditorGUI.indentLevel;            
+            
+            serializedObject.ApplyModifiedProperties();
+            
+            return GUI.changed;
+        }
+        
+        public bool FrameRateGUI()
+        {           
+            serializedObject.Update();
+            
+            EditorGUILayout.LabelField(Styles.sFrameRateTitle);
+            
+            ++EditorGUI.indentLevel;
+            
+            EditorGUILayout.PropertyField(m_PlaybackProperty, Styles.sPlaybackLabel);
+
+            var variableFPS = m_PlaybackProperty.enumValueIndex == (int) FrameRatePlayback.Variable;
+            
+            EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.sMaxFPSLabel : Styles.sTargetFPSLabel);
+
+            if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRate.FR_CUSTOM)
+            {
+                ++EditorGUI.indentLevel;
+                EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.sValueLabel);
+                --EditorGUI.indentLevel;
+            }
+            
+            if (variableFPS)
+            {
+                EditorGUILayout.PropertyField(m_SynchFrameRateProperty, Styles.sSyncFPSLabel);       
+            }
+            
+            --EditorGUI.indentLevel;
+            
+            serializedObject.ApplyModifiedProperties();
+
+            return GUI.changed;
+        }
+    }
+    
+    
     public class RecorderWindow2 : EditorWindow
     {
         [MenuItem("Tools/Yolo Record !!")]
@@ -34,43 +167,60 @@ namespace UnityEditor.Recorder
         VisualElement m_recordings;
         VisualElement m_parameters;
         Editor m_recorderEditor;
+
+        [SerializeField]
+        GlobalSettings m_GlobalSettings;
+        
+        GlobalSettingsEditor m_GlobalSettingsEditor;
         
         RecorderWindowSettings m_WindowSettingsAsset;
 
-        // ScrollView do not stretch items horizontally, use a workaround to solve this...         
-        static void AdjustScrollViewWidth(PostLayoutEvent evt)
+        GlobalSettings LoadGlobalSettings()
         {
-            var scrollView = (ScrollView) evt.currentTarget;
-            scrollView.contentContainer.style.width = scrollView.contentViewport.layout.width;
-        }
-
-        class MyScrollView : ScrollView
-        {
-            
-        }
-            
-        
-        public void OnEnable()
-        {
-            if (m_WindowSettingsAsset == null)
+            if (m_GlobalSettings == null)
             {
-                var candidates = AssetDatabase.FindAssets("t:RecorderWindow2Settings");
+                var candidates = AssetDatabase.FindAssets("t:GlobalSettings");
                 if (candidates.Length > 0)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
-                    m_WindowSettingsAsset = AssetDatabase.LoadAssetAtPath<RecorderWindowSettings>(path);
-                    if (m_WindowSettingsAsset == null)
+                    m_GlobalSettings = AssetDatabase.LoadAssetAtPath<GlobalSettings>(path);
+                    if (m_GlobalSettings == null)
                     {
                         AssetDatabase.DeleteAsset(path);
                     }
                 }
-                if(m_WindowSettingsAsset == null)
+                if(m_GlobalSettings == null)
                 {
-                    m_WindowSettingsAsset = ScriptableObject.CreateInstance<RecorderWindowSettings>();
-                    AssetDatabase.CreateAsset(m_WindowSettingsAsset, FRPackagerPaths.GetRecorderRootPath() +  "/RecorderWindow2Settings.asset");
+                    m_GlobalSettings = CreateInstance<GlobalSettings>();
+                    AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
                     AssetDatabase.Refresh();
                 }
             }
+
+            return m_GlobalSettings;
+        }
+        
+        public void OnEnable()
+        {
+//            if (m_WindowSettingsAsset == null)
+//            {
+//                var candidates = AssetDatabase.FindAssets("t:RecorderWindow2Settings");
+//                if (candidates.Length > 0)
+//                {
+//                    var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
+//                    m_WindowSettingsAsset = AssetDatabase.LoadAssetAtPath<RecorderWindowSettings>(path);
+//                    if (m_WindowSettingsAsset == null)
+//                    {
+//                        AssetDatabase.DeleteAsset(path);
+//                    }
+//                }
+//                if(m_WindowSettingsAsset == null)
+//                {
+//                    m_WindowSettingsAsset = ScriptableObject.CreateInstance<RecorderWindowSettings>();
+//                    AssetDatabase.CreateAsset(m_WindowSettingsAsset, FRPackagerPaths.GetRecorderRootPath() +  "/RecorderWindow2Settings.asset");
+//                    AssetDatabase.Refresh();
+//                }
+//            }
             
             // TODO Restore current list
             
@@ -88,6 +238,7 @@ namespace UnityEditor.Recorder
                 {
                     backgroundColor = RandomColor(),
                     flexDirection = FlexDirection.Row,
+                    minHeight = 110.0f 
                 }
             };
             root.Add(mainControls);
@@ -116,6 +267,8 @@ namespace UnityEditor.Recorder
             
             mainControls.Add(controlLeftPane);
             mainControls.Add(controlRightPane);
+            
+            //mainControls.style.height = 300.0f; // TODO Remove!
 
             var recordIcon = new Image
             {
@@ -151,33 +304,39 @@ namespace UnityEditor.Recorder
 
             leftButtonsStack.Add(startRecordButton);
 
-            var recordModeComboBox = FieldWithLabel("Record Mode:", new EnumField(DurationMode.Manual));           
+            //var recordModeComboBox = FieldWithLabel("Record Mode:", new EnumField(DurationMode.Manual));
 
-            leftButtonsStack.Add(recordModeComboBox);
+            m_GlobalSettings = LoadGlobalSettings(); //CreateInstance<GlobalSettings>();
+            //AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
+            //AssetDatabase.SaveAssets();
+            
+            m_GlobalSettingsEditor = (GlobalSettingsEditor) Editor.CreateEditor(m_GlobalSettings);
+            var globalOptions = new IMGUIContainer(() =>
+            {
+                if (m_GlobalSettingsEditor.RecordModeGUI())
+                    EditorUtility.SetDirty(m_GlobalSettingsEditor);
+            })
+            {
+                style = {flex = 1.0f,}
+            };
+
+            leftButtonsStack.Add(globalOptions);
 
             controlLeftPane.Add(leftButtonsStack);
             
-            var rightButtonsStack = new VisualElement
+            var rightButtonsStack = new IMGUIContainer(() =>
             {
-                style =
-                {
-                    backgroundColor = RandomColor(),
-                    paddingTop = kPadding,
-                    paddingBottom = kPadding,                    
-                    flexDirection = FlexDirection.Column,
-                }
+                if (m_GlobalSettingsEditor.FrameRateGUI())
+                    EditorUtility.SetDirty(m_GlobalSettingsEditor);
+            })
+            {
+                style = {flex = 1.0f,}
             };
-            
-            rightButtonsStack.Add(new Label("Frame Rate"));
-            rightButtonsStack.Add(FieldWithLabel("Playback", new EnumField(FrameRateMode.Constant), 30.0f));
-            rightButtonsStack.Add(FieldWithLabel("Target fps", new EnumField(EFrameRate.FR_30), 30.0f));
-            rightButtonsStack.Add(FieldWithLabel("Sync. framerate", new UnityEngine.Experimental.UIElements.Toggle(() => Debug.Log("Toggled Yo!")) { on = true }, 30.0f));
-            
             
             controlRightPane.Add(rightButtonsStack);
             
 
-            m_parameters = new ScrollView //VisualElement
+            m_parameters = new ScrollView
             {
                 style =
                 {
@@ -188,7 +347,6 @@ namespace UnityEditor.Recorder
             
             m_parameters.contentContainer.style.positionLeft = 0;
             m_parameters.contentContainer.style.positionRight = 0;
-            //m_parameters.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
 
             var recordingAndParameters = new VisualElement
             {
@@ -364,8 +522,21 @@ namespace UnityEditor.Recorder
                 RegisterCallback(onRecordMouseUp);
             }
         }
+        
+        static IEnumerable<Type> GetRecorders()
+        {
+            //var type = typeof(RecorderBase);
+            var type = typeof(RecorderSettings);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
+            return types;
+        }
+    }
 
-        static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)
+    static class UIElementsHelper
+    {
+        public static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)
         {
             var container = new VisualElement
             {
@@ -388,16 +559,6 @@ namespace UnityEditor.Recorder
             container.Add(field);
 
             return container;
-        }
-        
-        static IEnumerable<Type> GetRecorders()
-        {
-            //var type = typeof(RecorderBase);
-            var type = typeof(RecorderSettings);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
-            return types;
         }
     }
 }

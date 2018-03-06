@@ -28,25 +28,25 @@ namespace UnityEngine.Recorder
             {
                 session.RecordFrame();
 
-                switch (session.m_Recorder.settings.m_DurationMode)
+                switch (session.m_Recorder.settings.recordMode)
                 {
-                    case DurationMode.Manual:
+                    case RecordMode.Manual:
                         break;
-                    case DurationMode.SingleFrame:
+                    case RecordMode.SingleFrame:
                     {
                         if (session.m_Recorder.recordedFramesCount == 1)
                             enabled = false;
                         break;
                     }
-                    case DurationMode.FrameInterval:
+                    case RecordMode.FrameInterval:
                     {
                         if (session.frameIndex > session.settings.m_EndFrame)
                             enabled = false;
                         break;
                     }
-                    case DurationMode.TimeInterval:
+                    case RecordMode.TimeInterval:
                     {
-                        if (session.settings.m_FrameRateMode == FrameRateMode.Variable)
+                        if (session.settings.frameRatePlayback == FrameRatePlayback.Variable)
                         {
                             if (session.m_CurrentFrameStartTS >= session.settings.m_EndTime)
                                 enabled = false;

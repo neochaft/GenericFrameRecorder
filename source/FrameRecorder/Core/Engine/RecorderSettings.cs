@@ -13,13 +13,13 @@ namespace UnityEngine.Recorder
         RenderTexture = 16,
     }
 
-    public enum FrameRateMode
+    public enum FrameRatePlayback
     {
-        Variable,
         Constant,
+        Variable,
     }
 
-    public enum DurationMode
+    public enum RecordMode
     {
         Manual,
         SingleFrame,
@@ -67,15 +67,15 @@ namespace UnityEngine.Recorder
         [SerializeField]
         string m_AssetID;
         public int m_CaptureEveryNthFrame = 1;
-        public FrameRateMode m_FrameRateMode = FrameRateMode.Constant;
+        public FrameRatePlayback frameRatePlayback = FrameRatePlayback.Constant;
         [Range(1, 120)]
         public double m_FrameRate = 30.0;
-        public EFrameRate m_FrameRateExact = EFrameRate.FR_CUSTOM;
+        public FrameRate m_FrameRateExact = FrameRate.FR_CUSTOM;
         public int m_StartFrame;
         public int m_EndFrame = 10;
         public float m_StartTime = 0.0f;
         public float m_EndTime = 1.0f;
-        public DurationMode m_DurationMode;
+        public RecordMode recordMode;
         public bool m_SynchFrameRate = true;
         public FileNameGenerator m_BaseFileName;
         public OutputPath m_DestinationPath;
@@ -121,7 +121,7 @@ namespace UnityEngine.Recorder
 
         public bool fixedDuration
         {
-            get { return m_DurationMode != DurationMode.Manual; }
+            get { return recordMode != RecordMode.Manual; }
         }
 
         public virtual bool ValidityCheck( List<string> errors )

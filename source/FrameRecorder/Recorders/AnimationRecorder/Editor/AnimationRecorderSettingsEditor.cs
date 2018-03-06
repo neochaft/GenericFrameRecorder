@@ -97,8 +97,8 @@ namespace UnityEditor.Experimental.FrameRecorder
                 {
                     OnOutputGroupGui();
                     OnEncodingGroupGui();
-                    OnFrameRateGroupGui();
-                    OnBoundsGroupGui();
+                    //OnFrameRateGroupGui();
+                    //OnBoundsGroupGui();
                 }
             }
             

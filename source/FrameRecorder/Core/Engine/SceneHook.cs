@@ -13,7 +13,7 @@ namespace UnityEngine.Recorder
     /// Motivation  : 
     /// Notes: 
     /// </summary>    
-    public class SceneHook
+    public static class SceneHook
     {
         const string k_HostGoName = "UnityEngine-Recorder";
 
@@ -26,8 +26,8 @@ namespace UnityEngine.Recorder
             if (go == null && createIfAbsent)
             {
                 go = new GameObject(k_HostGoName);
-                if (!Verbose.enabled)
-                    go.hideFlags = HideFlags.HideInHierarchy;
+                //if (!Verbose.enabled)
+                //    go.hideFlags = HideFlags.HideInHierarchy;
             }
 
             return go;

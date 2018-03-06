@@ -70,12 +70,12 @@ namespace UnityEditor.Recorder
             if (target != null)
             {
                 m_InputEditors = new List<InputEditorState>();
-                m_FrameRateLabels = EnumHelper.MaskOutEnumNames<EFrameRate>(0xFFFF, (x) => FrameRateHelper.ToLable((EFrameRate)x));
+                m_FrameRateLabels = EnumHelper.MaskOutEnumNames<FrameRate>(0xFFFF, (x) => FrameRateHelper.ToLable((FrameRate)x));
 
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
-                m_FrameRateMode = pf.Find(x => x.m_FrameRateMode);
+                m_FrameRateMode = pf.Find(x => x.frameRatePlayback);
                 m_FrameRate = pf.Find(x => x.m_FrameRate);
-                m_DurationMode = pf.Find(x => x.m_DurationMode);
+                m_DurationMode = pf.Find(x => x.recordMode);
                 m_StartFrame = pf.Find(x => x.m_StartFrame);
                 m_EndFrame = pf.Find(x => x.m_EndFrame);
                 m_StartTime = pf.Find(x => x.m_StartTime);
@@ -132,9 +132,9 @@ namespace UnityEditor.Recorder
             OnInputGroupGui();
             OnOutputGroupGui();
             OnEncodingGroupGui();
-            OnFrameRateGroupGui();
-            OnBoundsGroupGui();
-            OnExtraGroupsGui();
+            //OnFrameRateGroupGui();
+            //OnBoundsGroupGui();
+            //OnExtraGroupsGui();
         }
 
         public override void OnInspectorGUI()
@@ -142,8 +142,6 @@ namespace UnityEditor.Recorder
             if (target == null)
                 return;
             
-            EditorGUILayout.DropdownButton(new GUIContent("Hello from GUI"), FocusType.Passive);
-
             BuildInputEditors();
 
             EditorGUI.BeginChangeCheck();
@@ -158,8 +156,6 @@ namespace UnityEditor.Recorder
             (target as RecorderSettings).SelfAdjustSettings();
 
             OnValidateSettingsGUI();
-            
-            EditorGUILayout.DropdownButton(new GUIContent("Bybye from GUI"), FocusType.Passive);
         }
 
         public virtual void OnValidateSettingsGUI()
@@ -239,80 +235,82 @@ namespace UnityEditor.Recorder
             // place holder
         }
 
-        protected virtual void OnFrameRateGui()
-        {
+        //protected virtual void OnFrameRateGui()
+//        public void OnFrameRateGui()
+//        {
+//
+//            AddProperty(m_FrameRateMode, () => EditorGUILayout.PropertyField(m_FrameRateMode, new GUIContent("Constraint Type")));
+//
+//            AddProperty(m_FrameRateExact, () =>
+//            {
+//                using (var check = new EditorGUI.ChangeCheckScope())
+//                {
+//                    var label = m_FrameRateMode.intValue == (int)FrameRateMode.Constant ? "Target fps" : "Max fps";
+//                    var index = EnumHelper.GetMaskedIndexFromEnumValue<EFrameRate>(m_FrameRateExact.intValue, 0xFFFF);
+//                    index = EditorGUILayout.Popup(label, index, m_FrameRateLabels);
+//
+//                    if (check.changed)
+//                    {
+//                        m_FrameRateExact.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EFrameRate>(index, 0xFFFF);
+//                        if (m_FrameRateExact.intValue != (int)EFrameRate.FR_CUSTOM)
+//                            m_FrameRate.floatValue = FrameRateHelper.ToFloat((EFrameRate)m_FrameRateExact.intValue, m_FrameRate.floatValue);
+//                    }
+//                }
+//            });
+//
+//            AddProperty(m_FrameRate, () =>
+//            {
+//                if (m_FrameRateExact.intValue == (int)EFrameRate.FR_CUSTOM)
+//                {
+//                    ++EditorGUI.indentLevel;
+//                    EditorGUILayout.PropertyField(m_FrameRate, new GUIContent("Value"));
+//                    --EditorGUI.indentLevel;
+//                }
+//            });
+//
+//            AddProperty(m_FrameRateMode, () =>
+//            {
+//                if (m_FrameRateMode.intValue == (int)FrameRateMode.Constant)
+//                    EditorGUILayout.PropertyField(m_SynchFrameRate, new GUIContent("Sync. framerate"));
+//            });
+//        }
 
-            AddProperty(m_FrameRateMode, () => EditorGUILayout.PropertyField(m_FrameRateMode, new GUIContent("Constraint Type")));
-
-            AddProperty(m_FrameRateExact, () =>
-            {
-                using (var check = new EditorGUI.ChangeCheckScope())
-                {
-                    var label = m_FrameRateMode.intValue == (int)FrameRateMode.Constant ? "Target fps" : "Max fps";
-                    var index = EnumHelper.GetMaskedIndexFromEnumValue<EFrameRate>(m_FrameRateExact.intValue, 0xFFFF);
-                    index = EditorGUILayout.Popup(label, index, m_FrameRateLabels);
-
-                    if (check.changed)
-                    {
-                        m_FrameRateExact.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EFrameRate>(index, 0xFFFF);
-                        if (m_FrameRateExact.intValue != (int)EFrameRate.FR_CUSTOM)
-                            m_FrameRate.floatValue = FrameRateHelper.ToFloat((EFrameRate)m_FrameRateExact.intValue, m_FrameRate.floatValue);
-                    }
-                }
-            });
-
-            AddProperty(m_FrameRate, () =>
-            {
-                if (m_FrameRateExact.intValue == (int)EFrameRate.FR_CUSTOM)
-                {
-                    ++EditorGUI.indentLevel;
-                    EditorGUILayout.PropertyField(m_FrameRate, new GUIContent("Value"));
-                    --EditorGUI.indentLevel;
-                }
-            });
-
-            AddProperty(m_FrameRateMode, () =>
-            {
-                if (m_FrameRateMode.intValue == (int)FrameRateMode.Constant)
-                    EditorGUILayout.PropertyField(m_SynchFrameRate, new GUIContent("Sync. framerate"));
-            });
-        }
-
-        protected virtual void OnBoundsGui()
-        {
-            EditorGUILayout.PropertyField(m_DurationMode, new GUIContent("Mode"));
-
-            ++EditorGUI.indentLevel;
-            switch ((DurationMode)m_DurationMode.intValue)
-            {
-                case DurationMode.Manual:
-                {
-                    break;
-                }
-                case DurationMode.SingleFrame:
-                {
-                    AddProperty(m_StartFrame, () =>
-                    {
-                        EditorGUILayout.PropertyField(m_StartFrame, new GUIContent("Frame #"));
-                        m_EndFrame.intValue = m_StartFrame.intValue;
-                    });
-                    break;
-                }
-                case DurationMode.FrameInterval:
-                {
-                    AddProperty(m_StartFrame, () => EditorGUILayout.PropertyField(m_StartFrame, new GUIContent("First frame")));
-                    AddProperty(m_EndFrame, () => EditorGUILayout.PropertyField(m_EndFrame, new GUIContent("Last frame")));
-                    break;
-                }
-                case DurationMode.TimeInterval:
-                {
-                    AddProperty(m_StartTime, () => EditorGUILayout.PropertyField(m_StartTime, new GUIContent("Start (sec)")));
-                    AddProperty(m_EndFrame, () => EditorGUILayout.PropertyField(m_EndTime, new GUIContent("End (sec)")));
-                    break;
-                }
-            }
-            --EditorGUI.indentLevel;
-        }
+        //protected virtual void OnBoundsGui()
+//        public void OnBoundsGui()
+//        {
+//            EditorGUILayout.PropertyField(m_DurationMode, new GUIContent("Mode"));
+//
+//            ++EditorGUI.indentLevel;
+//            switch ((DurationMode)m_DurationMode.intValue)
+//            {
+//                case DurationMode.Manual:
+//                {
+//                    break;
+//                }
+//                case DurationMode.SingleFrame:
+//                {
+//                    AddProperty(m_StartFrame, () =>
+//                    {
+//                        EditorGUILayout.PropertyField(m_StartFrame, new GUIContent("Frame #"));
+//                        m_EndFrame.intValue = m_StartFrame.intValue;
+//                    });
+//                    break;
+//                }
+//                case DurationMode.FrameInterval:
+//                {
+//                    AddProperty(m_StartFrame, () => EditorGUILayout.PropertyField(m_StartFrame, new GUIContent("First frame")));
+//                    AddProperty(m_EndFrame, () => EditorGUILayout.PropertyField(m_EndFrame, new GUIContent("Last frame")));
+//                    break;
+//                }
+//                case DurationMode.TimeInterval:
+//                {
+//                    AddProperty(m_StartTime, () => EditorGUILayout.PropertyField(m_StartTime, new GUIContent("Start (sec)")));
+//                    AddProperty(m_EndFrame, () => EditorGUILayout.PropertyField(m_EndTime, new GUIContent("End (sec)")));
+//                    break;
+//                }
+//            }
+//            --EditorGUI.indentLevel;
+//        }
 
         protected virtual void OnInputGroupGui()
         {
@@ -347,35 +345,35 @@ namespace UnityEditor.Recorder
             }
         }
 
-        protected virtual void OnFrameRateGroupGui()
-        {
-            m_FoldoutTime = EditorGUILayout.Foldout(m_FoldoutTime, "Frame rate");
-            if (m_FoldoutTime)
-            {
-                ++EditorGUI.indentLevel;
-                OnFrameRateGui();
-                --EditorGUI.indentLevel;
-            }
-        }
+//        protected virtual void OnFrameRateGroupGui()
+//        {
+//            m_FoldoutTime = EditorGUILayout.Foldout(m_FoldoutTime, "Frame rate");
+//            if (m_FoldoutTime)
+//            {
+//                ++EditorGUI.indentLevel;
+//                OnFrameRateGui();
+//                --EditorGUI.indentLevel;
+//            }
+//        }
 
-        protected virtual void OnBoundsGroupGui()
-        {
-            if (showBounds)
-            {
-                m_FoldoutBounds = EditorGUILayout.Foldout(m_FoldoutBounds, "Bounds / Limits");
-                if (m_FoldoutBounds)
-                {
-                    ++EditorGUI.indentLevel;
-                    OnBoundsGui();
-                    --EditorGUI.indentLevel;
-                }
-            }
-        }
+//        protected virtual void OnBoundsGroupGui()
+//        {
+//            if (showBounds)
+//            {
+//                m_FoldoutBounds = EditorGUILayout.Foldout(m_FoldoutBounds, "Bounds / Limits");
+//                if (m_FoldoutBounds)
+//                {
+//                    ++EditorGUI.indentLevel;
+//                    OnBoundsGui();
+//                    --EditorGUI.indentLevel;
+//                }
+//            }
+//        }
 
-        protected virtual void OnExtraGroupsGui()
-        {
-            // nothing. this is for sub classes...
-        }
+//        protected virtual void OnExtraGroupsGui()
+//        {
+//            // nothing. this is for sub classes...
+//        }
 
         protected virtual EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
         {

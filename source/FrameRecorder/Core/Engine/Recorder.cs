@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
 
             settings.SelfAdjustSettings(); // ignore return value.
 
-            var fixedRate = settings.m_FrameRateMode == FrameRateMode.Constant ? (int)settings.m_FrameRate : 0;
+            var fixedRate = settings.frameRatePlayback == FrameRatePlayback.Constant ? (int)settings.m_FrameRate : 0;
             if (fixedRate > 0)
             {
                 if (Time.captureFramerate != 0 && fixedRate != Time.captureFramerate )
@@ -132,9 +132,9 @@ namespace UnityEngine.Recorder
         {
             return !recording 
                 || (ctx.frameIndex % settings.m_CaptureEveryNthFrame) != 0 
-                || ( settings.m_DurationMode == DurationMode.TimeInterval && ctx.m_CurrentFrameStartTS < settings.m_StartTime )
-                || ( settings.m_DurationMode == DurationMode.FrameInterval && ctx.frameIndex < settings.m_StartFrame )
-                || ( settings.m_DurationMode == DurationMode.SingleFrame && ctx.frameIndex < settings.m_StartFrame );
+                || ( settings.recordMode == RecordMode.TimeInterval && ctx.m_CurrentFrameStartTS < settings.m_StartTime )
+                || ( settings.recordMode == RecordMode.FrameInterval && ctx.frameIndex < settings.m_StartFrame )
+                || ( settings.recordMode == RecordMode.SingleFrame && ctx.frameIndex < settings.m_StartFrame );
         }
 
         public bool recording { get; protected set; }

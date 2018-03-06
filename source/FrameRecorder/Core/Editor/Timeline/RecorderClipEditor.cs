@@ -131,7 +131,7 @@ namespace UnityEditor.Recorder.Timeline
                 return;
 
             var settings = m_Editor.target as RecorderSettings;
-            settings.m_DurationMode = DurationMode.Manual;
+            settings.recordMode = RecordMode.Manual;
 
             // Time
             settings.m_FrameRate = m_Timeline.editorSettings.fps;
@@ -143,7 +143,7 @@ namespace UnityEditor.Recorder.Timeline
                 return;
 
             var settings = m_Editor.target as RecorderSettings;
-            settings.m_DurationMode = DurationMode.Manual;
+            settings.recordMode = RecordMode.Manual;
 
             // Time
             m_Timeline.editorSettings.fps = (float)settings.m_FrameRate;

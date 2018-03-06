@@ -224,17 +224,17 @@ namespace UnityEditor.Recorder
 
             var session = recComp.session;
             var settings = recComp.session.m_Recorder.settings;
-            switch (settings.m_DurationMode)
+            switch (settings.recordMode)
             {
-                case DurationMode.Manual:
+                case RecordMode.Manual:
                 {
                     var label = string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
                     EditorGUI.ProgressBar(rect, 0, label );
 
                     break;
                 }
-                case DurationMode.SingleFrame:
-                case DurationMode.FrameInterval:
+                case RecordMode.SingleFrame:
+                case RecordMode.FrameInterval:
                 {
                     var label = (session.frameIndex < settings.m_StartFrame) ? 
                             string.Format("Skipping first {0} frames...", settings.m_StartFrame-1) : 
@@ -242,7 +242,7 @@ namespace UnityEditor.Recorder
                     EditorGUI.ProgressBar(rect, (session.frameIndex +1) / (float)(settings.m_EndFrame +1), label );
                     break;
                 }
-                case DurationMode.TimeInterval:
+                case RecordMode.TimeInterval:
                 {
                     var label = (session.m_CurrentFrameStartTS < settings.m_StartTime) ?
                         string.Format("Skipping first {0} seconds...", settings.m_StartTime) :
