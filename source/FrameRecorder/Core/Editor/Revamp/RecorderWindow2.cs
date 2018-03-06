@@ -2,6 +2,7 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor.Experimental.UIElements;
 using UnityEngine;
 using UnityEngine.Recorder;
@@ -17,9 +18,61 @@ using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
-{     
-    //[ExecuteInEditMode]
-    //[Serializable]
+{   
+    [CustomPropertyDrawer(typeof(FrameRate))]
+    class FrameRateProperyDrawer : PropertyDrawer
+    {
+        readonly GUIContent[] m_DisplayNames;
+        
+        public FrameRateProperyDrawer()
+        {
+            var displayNames = new List<GUIContent>();
+
+            foreach (FrameRate frameRate in Enum.GetValues(typeof(FrameRate)))
+            {
+                displayNames.Add(new GUIContent(ToLabel(frameRate)));
+            }
+
+            m_DisplayNames = displayNames.ToArray();
+        }
+        
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+            
+            property.intValue = EditorGUI.Popup(position, label, property.intValue, m_DisplayNames);
+                
+            EditorGUI.EndProperty();
+        }
+        
+        static string ToLabel(FrameRate frameRate)
+        {
+            switch (frameRate)
+            {
+                case FrameRate.FR_23:
+                    return "23.97";
+                case FrameRate.FR_24:
+                    return "Film (24)";
+                case FrameRate.FR_25:
+                    return "PAL (25)";
+                case FrameRate.FR_29:
+                    return "NTSC (29.97)";
+                case FrameRate.FR_30:
+                    return "30";
+                case FrameRate.FR_50:
+                    return "50";
+                case FrameRate.FR_59:
+                    return "59.94" ;
+                case FrameRate.FR_60:
+                    return "60";
+                case FrameRate.FR_CUSTOM:
+                    return "Custom";
+                    
+                default:
+                    return "unknown";
+            }
+        }       
+    }
 
     [CustomEditor(typeof(GlobalSettings))]
     [CanEditMultipleObjects]
@@ -129,6 +182,8 @@ namespace UnityEditor.Recorder
             var variableFPS = m_PlaybackProperty.enumValueIndex == (int) FrameRatePlayback.Variable;
             
             EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.sMaxFPSLabel : Styles.sTargetFPSLabel);
+
+            //EditorGUILayout.EnumPopup((FrameRate) (m_FrameRateTypeProperty.enumValueIndex));
 
             if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRate.FR_CUSTOM)
             {
