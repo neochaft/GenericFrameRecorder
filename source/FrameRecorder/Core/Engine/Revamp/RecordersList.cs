@@ -13,18 +13,13 @@ namespace UnityEditor.Recorder
             get { return m_Recorders; }
         }
         
-        public Recorder2Settings Add(string type)
+        public Recorder2Settings Add(Type type)
         {
-            var s = new Recorder2Settings() {name = type};
+            var s = (Recorder2Settings)CreateInstance(type); // TODO Make sure Type is actually a derivate of the recorders base
+            s.displayName = type.Name;
             m_Recorders.Add(s);
             
             return s;
         }
-    }
-
-    [Serializable]
-    public class Recorder2Settings
-    {
-        public string name;
     }
 }

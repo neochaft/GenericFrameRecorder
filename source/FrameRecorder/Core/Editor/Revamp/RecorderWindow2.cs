@@ -226,59 +226,42 @@ namespace UnityEditor.Recorder
         [SerializeField]
         GlobalSettings m_GlobalSettings;
         
+        [SerializeField]
+        RecordersList m_RecordersList;
+        
         GlobalSettingsEditor m_GlobalSettingsEditor;
         
         RecorderWindowSettings m_WindowSettingsAsset;
-
-        GlobalSettings LoadGlobalSettings()
+        
+        static T LoadSettings<T>(string filename) where T : ScriptableObject
         {
-            if (m_GlobalSettings == null)
+            T asset = null;
+            
+            var candidates = AssetDatabase.FindAssets("t:" + filename);
+            if (candidates.Length > 0)
             {
-                var candidates = AssetDatabase.FindAssets("t:GlobalSettings");
-                if (candidates.Length > 0)
+                var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
+                asset = AssetDatabase.LoadAssetAtPath<T>(path);
+                if (asset == null)
                 {
-                    var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
-                    m_GlobalSettings = AssetDatabase.LoadAssetAtPath<GlobalSettings>(path);
-                    if (m_GlobalSettings == null)
-                    {
-                        AssetDatabase.DeleteAsset(path);
-                    }
-                }
-                if(m_GlobalSettings == null)
-                {
-                    m_GlobalSettings = CreateInstance<GlobalSettings>();
-                    AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
-                    AssetDatabase.Refresh();
+                    AssetDatabase.DeleteAsset(path);
                 }
             }
+            
+            if(asset == null)
+            {
+                asset = CreateInstance<T>();
+                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".asset");
+                AssetDatabase.Refresh();
+            }
 
-            return m_GlobalSettings;
+            return asset;
         }
+
+        
         
         public void OnEnable()
-        {
-//            if (m_WindowSettingsAsset == null)
-//            {
-//                var candidates = AssetDatabase.FindAssets("t:RecorderWindow2Settings");
-//                if (candidates.Length > 0)
-//                {
-//                    var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
-//                    m_WindowSettingsAsset = AssetDatabase.LoadAssetAtPath<RecorderWindowSettings>(path);
-//                    if (m_WindowSettingsAsset == null)
-//                    {
-//                        AssetDatabase.DeleteAsset(path);
-//                    }
-//                }
-//                if(m_WindowSettingsAsset == null)
-//                {
-//                    m_WindowSettingsAsset = ScriptableObject.CreateInstance<RecorderWindowSettings>();
-//                    AssetDatabase.CreateAsset(m_WindowSettingsAsset, FRPackagerPaths.GetRecorderRootPath() +  "/RecorderWindow2Settings.asset");
-//                    AssetDatabase.Refresh();
-//                }
-//            }
-            
-            // TODO Restore current list
-            
+        {           
             Random.InitState(1337 + 42);
 
             var root = this.GetRootVisualContainer();
@@ -361,7 +344,10 @@ namespace UnityEditor.Recorder
 
             //var recordModeComboBox = FieldWithLabel("Record Mode:", new EnumField(DurationMode.Manual));
 
-            m_GlobalSettings = LoadGlobalSettings(); //CreateInstance<GlobalSettings>();
+            //if (m_GlobalSettings == null)
+                m_GlobalSettings = LoadSettings<GlobalSettings>("GlobalSettings"); //CreateInstance<GlobalSettings>();
+
+
             //AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
             //AssetDatabase.SaveAssets();
             
@@ -448,11 +434,18 @@ namespace UnityEditor.Recorder
             {               
                 var newRecordMenu = new GenericMenu();
 
-                var recorderList = RecordersInventory.ListRecorders();
-                //var recorderList = GetRecorders();
-                foreach (var info in recorderList)
+//                var recorderList = RecordersInventory.ListRecorders();
+//                //var recorderList = GetRecorders();
+//                foreach (var info in recorderList)
+//                {
+//                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+//                }
+
+                var recorderTypes = GetRecorders();
+                
+                foreach (var info in recorderTypes)
                 {
-                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+                    newRecordMenu.AddItem(new GUIContent(info.Name), false, data => OnAddNewRecorder((Type) data), info);
                 }
                 
                 newRecordMenu.ShowAsContext();
@@ -513,6 +506,14 @@ namespace UnityEditor.Recorder
             m_parameters.Add(m_recorderInspector);
             
             
+            // Load recorders
+            if (m_RecordersList == null)
+                m_RecordersList = LoadSettings<RecordersList>("RecordersList");
+
+            foreach (var recorderSettings in m_RecordersList.recorders)
+            {
+                m_recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
+            }
         }
 
         IMGUIContainer m_recorderInspector;
@@ -525,9 +526,12 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void OnAddNewRecorder(RecorderInfo info)
+        void OnAddNewRecorder(Type type)//RecorderInfo info)
         {
-            m_recordings.Add(new RecorderItem(m_WindowSettingsAsset, info, OnRecordMouseUp));
+            var s = m_RecordersList.Add(type);
+            m_recordings.Add(new RecorderItem(s, OnRecordMouseUp));
+            // TODO Select it
+            //EditorUtility.SetDirty(m_RecordersList);
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -536,32 +540,33 @@ namespace UnityEditor.Recorder
                 return;
 
             var recorder = (RecorderItem)evt.currentTarget;
-            Debug.Log("Clicked on " + recorder.settings);
+            Debug.Log("Clicked on " + recorder.settings.name);
             m_recorderEditor = recorder.editor;
             m_recorderInspector.Dirty(ChangeType.Layout);
-            //m_parameters.Dirty(ChangeType.Layout);
-            evt.StopImmediatePropagation();
+//            //m_parameters.Dirty(ChangeType.Layout);
+//            evt.StopImmediatePropagation();
         }
         
         class RecorderItem : VisualElement
         {
-            public RecorderSettings settings { get; private set; }
+            public Recorder2Settings settings { get; private set; }
             public Editor editor { get; private set; }
-            public UnityEngine.Recorder.Recorder recorder { get; private set; }
+            //public UnityEngine.Recorder.Recorder recorder { get; private set; }
             
-            public string title { get; set; }
+            //public string title { get; set; }
 
-            public RecorderItem(Object saveFileScriptableObject, RecorderInfo info, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(Recorder2Settings s, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
-                settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
+                settings = s;
+                //settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
                 
                 
-                settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
-                settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
+                //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
+                //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
                 
-                recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
+                //recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
                 editor = Editor.CreateEditor(settings);
-                title = info.displayName; // TODO Add number or something?
+                var title = s.displayName; // TODO Add number or something?
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
                 style.backgroundColor = RandomColor();
@@ -569,7 +574,7 @@ namespace UnityEditor.Recorder
                 //container.RegisterCallback<MouseUpEvent>(OnRecordMouseUp);
                 Add(new UnityEngine.Experimental.UIElements.Toggle(() => { }));
                 //Add(new Label(title));
-                var titleField = new TextField() {text = title};
+                var titleField = new TextField { text = title };
                 titleField.OnValueChanged(evt => title = evt.newValue);
                 Add(titleField);
                 
@@ -581,7 +586,7 @@ namespace UnityEditor.Recorder
         static IEnumerable<Type> GetRecorders()
         {
             //var type = typeof(RecorderBase);
-            var type = typeof(RecorderSettings);
+            var type = typeof(Recorder2Settings);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
