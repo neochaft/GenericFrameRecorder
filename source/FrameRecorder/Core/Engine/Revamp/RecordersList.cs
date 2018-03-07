@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace UnityEngine.Recorder
 {
     public class RecordersList : ScriptableObject
     {
@@ -13,13 +13,9 @@ namespace UnityEditor.Recorder
             get { return m_Recorders; }
         }
         
-        public Recorder2Settings Add(Type type)
+        public void Add(Recorder2Settings s)
         {
-            var s = (Recorder2Settings)CreateInstance(type); // TODO Make sure Type is actually a derivate of the recorders base
-            s.displayName = type.Name;
             m_Recorders.Add(s);
-            
-            return s;
         }
     }
 }

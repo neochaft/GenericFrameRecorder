@@ -19,35 +19,40 @@ using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
 {   
-    [CustomPropertyDrawer(typeof(FrameRate))]
-    class FrameRateProperyDrawer : PropertyDrawer
+    abstract class EnumProperyDrawer<T> : PropertyDrawer
     {
-        readonly GUIContent[] m_DisplayNames;
-        
-        public FrameRateProperyDrawer()
-        {
-            var displayNames = new List<GUIContent>();
-
-            foreach (FrameRate frameRate in Enum.GetValues(typeof(FrameRate)))
-            {
-                displayNames.Add(new GUIContent(ToLabel(frameRate)));
-            }
-
-            m_DisplayNames = displayNames.ToArray();
-        }
+        GUIContent[] m_DisplayNames;
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            if (m_DisplayNames == null)
+            {
+                var displayNames = new List<GUIContent>();
+
+                foreach (T frameRate in Enum.GetValues(typeof(T)))
+                {
+                    displayNames.Add(new GUIContent(ToLabel(frameRate)));
+                }
+
+                m_DisplayNames = displayNames.ToArray();
+            }
+            
             EditorGUI.BeginProperty(position, label, property);
             
             property.intValue = EditorGUI.Popup(position, label, property.intValue, m_DisplayNames);
                 
             EditorGUI.EndProperty();
         }
-        
-        static string ToLabel(FrameRate frameRate)
+
+        protected abstract string ToLabel(T value); 
+    }
+    
+    [CustomPropertyDrawer(typeof(FrameRate))]
+    class FrameRateProperyDrawer : EnumProperyDrawer<FrameRate>
+    {
+        protected override string ToLabel(FrameRate value)
         {
-            switch (frameRate)
+            switch (value)
             {
                 case FrameRate.FR_23:
                     return "23.97";
@@ -68,6 +73,37 @@ namespace UnityEditor.Recorder
                 case FrameRate.FR_CUSTOM:
                     return "Custom";
                     
+                default:
+                    return "unknown";
+            }
+        }       
+    }
+    
+    [CustomPropertyDrawer(typeof(FrameResolution))]
+    class FrameResolutionProperyDrawer : EnumProperyDrawer<FrameResolution>
+    {
+        protected override string ToLabel(FrameResolution value)
+        {
+            switch (value)
+            {
+                case FrameResolution.X240P:
+                    return "240p";
+                case FrameResolution.X480P:
+                    return "480p";
+                case FrameResolution.X720P_HD:
+                    return "720p (HD)";
+                case FrameResolution.X1080P_FHD:
+                    return "1080p (FHD)";
+                case FrameResolution.X1440P_QHD:
+                    return "1440p (QHD)";
+                case FrameResolution.X2160P_4K:
+                    return "2160p (4K)";
+                case FrameResolution.X2880P_5K:
+                    return "2880p (5K)";
+                case FrameResolution.X4320P_8K:
+                    return "4320p (8K)";
+                case FrameResolution.Custom:
+                    return "Custom";
                 default:
                     return "unknown";
             }
@@ -95,19 +131,19 @@ namespace UnityEditor.Recorder
 
         static class Styles
         {
-            public static readonly GUIContent sRecordModeLabel  = new GUIContent("Record Mode");
-            public static readonly GUIContent sSingleFrameLabel = new GUIContent("Frame #");
-            public static readonly GUIContent sFirstFrameLabel  = new GUIContent("First frame");
-            public static readonly GUIContent sLastFrameLabel   = new GUIContent("Last frame");
-            public static readonly GUIContent sStartTimeLabel   = new GUIContent("Start (sec)");
-            public static readonly GUIContent sEndTimeLabel     = new GUIContent("End (sec)");
+            public static readonly GUIContent SRecordModeLabel  = new GUIContent("Record Mode");
+            public static readonly GUIContent SSingleFrameLabel = new GUIContent("Frame #");
+            public static readonly GUIContent SFirstFrameLabel  = new GUIContent("First frame");
+            public static readonly GUIContent SLastFrameLabel   = new GUIContent("Last frame");
+            public static readonly GUIContent SStartTimeLabel   = new GUIContent("Start (sec)");
+            public static readonly GUIContent SEndTimeLabel     = new GUIContent("End (sec)");
             
-            public static readonly GUIContent sFrameRateTitle   = new GUIContent("Frame Rate");
-            public static readonly GUIContent sPlaybackLabel    = new GUIContent("Playback");
-            public static readonly GUIContent sTargetFPSLabel   = new GUIContent("Target Frame Rate");
-            public static readonly GUIContent sMaxFPSLabel      = new GUIContent("Max Frame Rate");
-            public static readonly GUIContent sSyncFPSLabel     = new GUIContent("Sync. Frame Rate");
-            public static readonly GUIContent sValueLabel       = new GUIContent("Value");
+            public static readonly GUIContent SFrameRateTitle   = new GUIContent("Frame Rate");
+            public static readonly GUIContent SPlaybackLabel    = new GUIContent("Playback");
+            public static readonly GUIContent STargetFPSLabel   = new GUIContent("Target Frame Rate");
+            public static readonly GUIContent SMaxFPSLabel      = new GUIContent("Max Frame Rate");
+            public static readonly GUIContent SSyncFPSLabel     = new GUIContent("Sync. Frame Rate");
+            public static readonly GUIContent SValueLabel       = new GUIContent("Value");
         }
 
         void OnEnable()
@@ -127,7 +163,7 @@ namespace UnityEditor.Recorder
         {           
             serializedObject.Update();
             
-            EditorGUILayout.PropertyField(m_RecordModeProperty, Styles.sRecordModeLabel);
+            EditorGUILayout.PropertyField(m_RecordModeProperty, Styles.SRecordModeLabel);
 
             ++EditorGUI.indentLevel;
             
@@ -141,22 +177,22 @@ namespace UnityEditor.Recorder
                     
                 case RecordMode.SingleFrame:
                 {
-                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.sSingleFrameLabel);
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.SSingleFrameLabel);
                     m_EndFrameProperty.intValue = m_StartFrameProperty.intValue;
                     break;
                 }
                     
                 case RecordMode.FrameInterval:
                 {
-                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.sFirstFrameLabel);
-                    EditorGUILayout.PropertyField(m_EndFrameProperty, Styles.sLastFrameLabel);
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.SFirstFrameLabel);
+                    EditorGUILayout.PropertyField(m_EndFrameProperty, Styles.SLastFrameLabel);
                     break;
                 }
                     
                 case RecordMode.TimeInterval:
                 {
-                    EditorGUILayout.PropertyField(m_StartTimeProperty, Styles.sStartTimeLabel);
-                    EditorGUILayout.PropertyField(m_EndTimeProperty, Styles.sEndTimeLabel);
+                    EditorGUILayout.PropertyField(m_StartTimeProperty, Styles.SStartTimeLabel);
+                    EditorGUILayout.PropertyField(m_EndTimeProperty, Styles.SEndTimeLabel);
                     break;
                 }
                     
@@ -173,28 +209,28 @@ namespace UnityEditor.Recorder
         {           
             serializedObject.Update();
             
-            EditorGUILayout.LabelField(Styles.sFrameRateTitle);
+            EditorGUILayout.LabelField(Styles.SFrameRateTitle);
             
             ++EditorGUI.indentLevel;
             
-            EditorGUILayout.PropertyField(m_PlaybackProperty, Styles.sPlaybackLabel);
+            EditorGUILayout.PropertyField(m_PlaybackProperty, Styles.SPlaybackLabel);
 
             var variableFPS = m_PlaybackProperty.enumValueIndex == (int) FrameRatePlayback.Variable;
             
-            EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.sMaxFPSLabel : Styles.sTargetFPSLabel);
+            EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.SMaxFPSLabel : Styles.STargetFPSLabel);
 
             //EditorGUILayout.EnumPopup((FrameRate) (m_FrameRateTypeProperty.enumValueIndex));
 
             if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRate.FR_CUSTOM)
             {
                 ++EditorGUI.indentLevel;
-                EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.sValueLabel);
+                EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.SValueLabel);
                 --EditorGUI.indentLevel;
             }
             
             if (variableFPS)
             {
-                EditorGUILayout.PropertyField(m_SynchFrameRateProperty, Styles.sSyncFPSLabel);       
+                EditorGUILayout.PropertyField(m_SynchFrameRateProperty, Styles.SSyncFPSLabel);       
             }
             
             --EditorGUI.indentLevel;
@@ -219,9 +255,9 @@ namespace UnityEditor.Recorder
             return new Color(Random.value, Random.value, Random.value, alpha);
         }
 
-        VisualElement m_recordings;
-        VisualElement m_parameters;
-        Editor m_recorderEditor;
+        VisualElement m_Recordings;
+        VisualElement m_Parameters;
+        Editor m_RecorderEditor;
 
         [SerializeField]
         GlobalSettings m_GlobalSettings;
@@ -377,7 +413,7 @@ namespace UnityEditor.Recorder
             controlRightPane.Add(rightButtonsStack);
             
 
-            m_parameters = new ScrollView
+            m_Parameters = new ScrollView
             {
                 style =
                 {
@@ -386,8 +422,8 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            m_parameters.contentContainer.style.positionLeft = 0;
-            m_parameters.contentContainer.style.positionRight = 0;
+            m_Parameters.contentContainer.style.positionLeft = 0;
+            m_Parameters.contentContainer.style.positionRight = 0;
 
             var recordingAndParameters = new VisualElement
             {
@@ -411,7 +447,7 @@ namespace UnityEditor.Recorder
             };
 
             recordingAndParameters.Add(recordingsPanel);
-            recordingAndParameters.Add(m_parameters);
+            recordingAndParameters.Add(m_Parameters);
 
             root.Add(recordingAndParameters);
 
@@ -460,7 +496,7 @@ namespace UnityEditor.Recorder
             //var m = new ContextualMenuManipulator(MyDelegate);
             //m.target = re;
             
-            m_recordings = new ScrollView
+            m_Recordings = new ScrollView
             {
                 
                 style =
@@ -472,8 +508,8 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            m_recordings.contentContainer.style.positionLeft = 0;
-            m_recordings.contentContainer.style.positionRight = 0;
+            m_Recordings.contentContainer.style.positionLeft = 0;
+            m_Recordings.contentContainer.style.positionRight = 0;
             
             //m_recordings.RegisterCallback<PostLayoutEvent>(AdjustScrollViewWidth);
             
@@ -481,7 +517,7 @@ namespace UnityEditor.Recorder
             //    recordings.Add(Record("Recording [" + i + "]"));
 
             recordingsPanel.Add(recordingControl);
-            recordingsPanel.Add(m_recordings);
+            recordingsPanel.Add(m_Recordings);
 
             var parametersControl = new VisualElement
             {
@@ -493,9 +529,9 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            m_parameters.Add(parametersControl);
+            m_Parameters.Add(parametersControl);
             
-            m_recorderInspector = new IMGUIContainer(OnGUIHandler)
+            m_RecorderInspector = new IMGUIContainer(OnGUIHandler)
             {
                 style =
                 {
@@ -503,7 +539,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            m_parameters.Add(m_recorderInspector);
+            m_Parameters.Add(m_RecorderInspector);
             
             
             // Load recorders
@@ -512,24 +548,26 @@ namespace UnityEditor.Recorder
 
             foreach (var recorderSettings in m_RecordersList.recorders)
             {
-                m_recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
+                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
             }
         }
 
-        IMGUIContainer m_recorderInspector;
+        IMGUIContainer m_RecorderInspector;
 
         void OnGUIHandler()
         {
-            if (m_recorderEditor != null)
+            if (m_RecorderEditor != null)
             {
-                m_recorderEditor.OnInspectorGUI();
+                m_RecorderEditor.OnInspectorGUI();
             }
         }
 
         void OnAddNewRecorder(Type type)//RecorderInfo info)
         {
-            var s = m_RecordersList.Add(type);
-            m_recordings.Add(new RecorderItem(s, OnRecordMouseUp));
+            var s = (Recorder2Settings)CreateInstance(type); // TODO Make sure Type is actually a derivate of the recorders base
+            s.displayName = type.Name;
+            m_RecordersList.Add(s);
+            m_Recordings.Add(new RecorderItem(s, OnRecordMouseUp));
             // TODO Select it
             //EditorUtility.SetDirty(m_RecordersList);
         }
@@ -540,9 +578,9 @@ namespace UnityEditor.Recorder
                 return;
 
             var recorder = (RecorderItem)evt.currentTarget;
-            Debug.Log("Clicked on " + recorder.settings.name);
-            m_recorderEditor = recorder.editor;
-            m_recorderInspector.Dirty(ChangeType.Layout);
+            Debug.Log("Clicked on " + recorder.settings.displayName);
+            m_RecorderEditor = recorder.editor;
+            m_RecorderInspector.Dirty(ChangeType.Layout);
 //            //m_parameters.Dirty(ChangeType.Layout);
 //            evt.StopImmediatePropagation();
         }
@@ -583,7 +621,7 @@ namespace UnityEditor.Recorder
             }
         }
         
-        static IEnumerable<Type> GetRecorders()
+        public static IEnumerable<Type> GetRecorders() // TODO Move this elsewhere and cache this...
         {
             //var type = typeof(RecorderBase);
             var type = typeof(Recorder2Settings);
@@ -594,7 +632,22 @@ namespace UnityEditor.Recorder
         }
     }
 
-    static class UIElementsHelper
+    [CustomEditor(typeof(MovieRecorder2))]
+    class Recorder2SettingsEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.LabelField("Starting recorder settings GUI...");
+            var r = EditorGUILayout.GetControlRect();
+
+            //r.y += 100.0f;
+
+            UnityEditor.Presets.PresetSelector.DrawPresetButton(r, new[] {target});
+            base.OnInspectorGUI();
+        }
+    }
+
+    static class UiElementsHelper
     {
         public static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)
         {

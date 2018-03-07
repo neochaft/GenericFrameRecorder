@@ -13,7 +13,6 @@ namespace UnityEngine.Recorder
     //[Flags]
     public enum FrameRate
     {
-        FR_CUSTOM,
         FR_23, // 24 * 1000 / 1001
         FR_24,
         FR_25,
@@ -21,7 +20,8 @@ namespace UnityEngine.Recorder
         FR_30,
         FR_50,
         FR_59, // 60 * 1000 / 1001,
-        FR_60
+        FR_60,
+        FR_CUSTOM,
     }
 
     /// <summary>
