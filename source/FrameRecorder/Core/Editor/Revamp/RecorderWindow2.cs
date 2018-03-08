@@ -258,6 +258,7 @@ namespace UnityEditor.Recorder
         VisualElement m_Recordings;
         VisualElement m_Parameters;
         Editor m_RecorderEditor;
+        VisualElement m_recorderHeader;
 
         [SerializeField]
         GlobalSettings m_GlobalSettings;
@@ -524,10 +525,20 @@ namespace UnityEditor.Recorder
                 style =
                 {
                     backgroundColor = RandomColor(0.8f),
-                    height = 30,
+                    flex = 1.0f,
                     minWidth = 300.0f,
                 }
             };
+            
+            
+            // TODO UIElements
+            m_recorderHeader = new IMGUIContainer(OnRecorderHeader)
+            {
+                style = { flex = 1.0f }
+            };
+            
+            parametersControl.Add(m_recorderHeader);
+            
 
             m_Parameters.Add(parametersControl);
             
@@ -552,6 +563,25 @@ namespace UnityEditor.Recorder
             }
         }
 
+        void OnRecorderHeader()
+        {
+            if (m_RecorderEditor != null)
+            {
+                var rec = (Recorder2Settings)m_RecorderEditor.target;
+                
+                var r = EditorGUILayout.GetControlRect();
+                Presets.PresetSelector.DrawPresetButton(r, new Object[] {rec});
+                
+                
+                EditorGUILayout.LabelField("Recording Type: " + rec.GetType().Name);
+                
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Nothing selected");
+            }
+        }
+
         IMGUIContainer m_RecorderInspector;
 
         void OnGUIHandler()
@@ -562,9 +592,12 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void OnAddNewRecorder(Type type)//RecorderInfo info)
+        void OnAddNewRecorder(Type type)//RecorderInfo info)s
         {
             var s = (Recorder2Settings)CreateInstance(type); // TODO Make sure Type is actually a derivate of the recorders base
+            //var reco = (Reco) Activator.CreateInstance(type);
+            //s.reco = reco;
+            //AssetDatabase.AddObjectToAsset(reco, s);
             s.displayName = type.Name;
             m_RecordersList.Add(s);
             m_Recordings.Add(new RecorderItem(s, OnRecordMouseUp));
@@ -581,6 +614,7 @@ namespace UnityEditor.Recorder
             Debug.Log("Clicked on " + recorder.settings.displayName);
             m_RecorderEditor = recorder.editor;
             m_RecorderInspector.Dirty(ChangeType.Layout);
+            m_recorderHeader.Dirty(ChangeType.Layout);
 //            //m_parameters.Dirty(ChangeType.Layout);
 //            evt.StopImmediatePropagation();
         }
@@ -632,9 +666,10 @@ namespace UnityEditor.Recorder
         }
     }
 
-    [CustomEditor(typeof(MovieRecorder2))]
+    //[CustomEditor(typeof(Recorder2Settings))]
     class Recorder2SettingsEditor : Editor
     {
+        Editor m_RecoEditor;
         public override void OnInspectorGUI()
         {
             EditorGUILayout.LabelField("Starting recorder settings GUI...");
@@ -644,9 +679,32 @@ namespace UnityEditor.Recorder
 
             UnityEditor.Presets.PresetSelector.DrawPresetButton(r, new[] {target});
             base.OnInspectorGUI();
+            
+            var recorder2Settings = (Recorder2Settings) target;
+            //if (m_RecoEditor == null)
+            //    m_RecoEditor = CreateEditor(recorder2Settings.reco);
+            
+            //m_RecoEditor.OnInspectorGUI();
+
+
+//            
+//            recorder2Settings.OnGUI();
         }
     }
 
+    [CustomEditor(typeof(MovieRecorder2))]
+    class Recorrrrrrder2SettingsEditor : Editor
+    {
+        Editor m_RecoEditor;
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.LabelField("MovieRecorder2 GUI...");
+            
+            base.OnInspectorGUI();
+            
+        }
+    }
+    
     static class UiElementsHelper
     {
         public static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)

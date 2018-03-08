@@ -15,13 +15,21 @@ namespace UnityEngine.Recorder
         X4320P_8K,
         Custom
     }
+
+//    [Serializable]
+//    public abstract class Reco// : ScriptableObject
+//    {
+//        //public abstract void OnGUI();
+//        public string test;
+//    }
     
     //[Serializable]
-    public abstract class Recorder2Settings : ScriptableObject
+    public abstract class Recorder2Settings : ScriptableObject //where T : Reco
     {
         public string displayName;
         public FrameResolution resolution;
-
-
+        
+        
+        //public T reco;
     }
 }
