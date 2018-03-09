@@ -268,7 +268,7 @@ namespace UnityEditor.Recorder
         
         GlobalSettingsEditor m_GlobalSettingsEditor;
         
-        RecorderWindowSettings m_WindowSettingsAsset;
+        //RecorderWindowSettings m_WindowSettingsAsset;
         
         static T LoadSettings<T>(string filename) where T : ScriptableObject
         {
@@ -471,18 +471,18 @@ namespace UnityEditor.Recorder
             {               
                 var newRecordMenu = new GenericMenu();
 
-//                var recorderList = RecordersInventory.ListRecorders();
-//                //var recorderList = GetRecorders();
-//                foreach (var info in recorderList)
-//                {
-//                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
-//                }
-
-                var recorderTypes = GetRecorders();
+                var recorderList = RecordersInventory.ListRecorders();
+////                //var recorderList = GetRecorders();
+////                foreach (var info in recorderList)
+////                {
+////                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+////                }
+//
+//                var recorderTypes = GetRecorders();
                 
-                foreach (var info in recorderTypes)
+                foreach (var info in recorderList)
                 {
-                    newRecordMenu.AddItem(new GUIContent(info.Name), false, data => OnAddNewRecorder((Type) data), info);
+                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
                 }
                 
                 newRecordMenu.ShowAsContext();
@@ -557,17 +557,17 @@ namespace UnityEditor.Recorder
             if (m_RecordersList == null)
                 m_RecordersList = LoadSettings<RecordersList>("RecordersList");
 
-            foreach (var recorderSettings in m_RecordersList.recorders)
-            {
-                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
-            }
+//            foreach (var recorderSettings in m_RecordersList.recorders)
+//            {
+//                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
+//            }
         }
 
         void OnRecorderHeader()
         {
             if (m_RecorderEditor != null)
             {
-                var rec = (Recorder2Settings)m_RecorderEditor.target;
+                var rec = (RecorderSettings)m_RecorderEditor.target;
                 
                 var r = EditorGUILayout.GetControlRect();
                 Presets.PresetSelector.DrawPresetButton(r, new Object[] {rec});
@@ -592,17 +592,9 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void OnAddNewRecorder(Type type)//RecorderInfo info)s
+        void OnAddNewRecorder(RecorderInfo info)
         {
-            var s = (Recorder2Settings)CreateInstance(type); // TODO Make sure Type is actually a derivate of the recorders base
-            //var reco = (Reco) Activator.CreateInstance(type);
-            //s.reco = reco;
-            //AssetDatabase.AddObjectToAsset(reco, s);
-            s.displayName = type.Name;
-            m_RecordersList.Add(s);
-            m_Recordings.Add(new RecorderItem(s, OnRecordMouseUp));
-            // TODO Select it
-            //EditorUtility.SetDirty(m_RecordersList);
+            m_Recordings.Add(new RecorderItem(m_RecordersList, info, OnRecordMouseUp));
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -611,7 +603,7 @@ namespace UnityEditor.Recorder
                 return;
 
             var recorder = (RecorderItem)evt.currentTarget;
-            Debug.Log("Clicked on " + recorder.settings.displayName);
+            Debug.Log("Clicked on " + recorder.settings.GetType().Name);
             m_RecorderEditor = recorder.editor;
             m_RecorderInspector.Dirty(ChangeType.Layout);
             m_recorderHeader.Dirty(ChangeType.Layout);
@@ -621,24 +613,23 @@ namespace UnityEditor.Recorder
         
         class RecorderItem : VisualElement
         {
-            public Recorder2Settings settings { get; private set; }
-            public Editor editor { get; private set; }
-            //public UnityEngine.Recorder.Recorder recorder { get; private set; }
+            public RecorderSettings settings { get; private set; }
+            public RecorderEditor editor { get; private set; }
+            public UnityEngine.Recorder.Recorder recorder { get; private set; }
             
             //public string title { get; set; }
 
-            public RecorderItem(Recorder2Settings s, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(Object saveFileScriptableObject, RecorderInfo info, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
-                settings = s;
-                //settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
+                settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
                 
                 
                 //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
                 //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
                 
-                //recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
-                editor = Editor.CreateEditor(settings);
-                var title = s.displayName; // TODO Add number or something?
+                recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
+                editor = (RecorderEditor)Editor.CreateEditor(settings);
+                var title = info.recorderType.Name; //s.displayName; // TODO Add number or something?
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
                 style.backgroundColor = RandomColor();
@@ -655,10 +646,10 @@ namespace UnityEditor.Recorder
             }
         }
         
-        public static IEnumerable<Type> GetRecorders() // TODO Move this elsewhere and cache this...
+        static IEnumerable<Type> GetRecorders()
         {
             //var type = typeof(RecorderBase);
-            var type = typeof(Recorder2Settings);
+            var type = typeof(RecorderSettings);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));

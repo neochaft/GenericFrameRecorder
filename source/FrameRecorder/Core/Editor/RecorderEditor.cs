@@ -205,7 +205,11 @@ namespace UnityEditor.Recorder
                 }
 
                 if (m_InputEditors[i].visible)
+                {
+                    ++EditorGUI.indentLevel;
                     OnInputGui(i);
+                    --EditorGUI.indentLevel;
+                }
 
                 if (multiInputs)
                     EditorGUI.indentLevel--;
