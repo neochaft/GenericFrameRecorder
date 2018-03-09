@@ -200,15 +200,13 @@ namespace UnityEditor.Recorder
             {
                 if (multiInputs)
                 {
-                    EditorGUI.indentLevel++;
                     m_InputEditors[i].visible = EditorGUILayout.Foldout(m_InputEditors[i].visible, m_InputEditors[i].settingsObj.m_DisplayName ?? "Input " + (i + 1));
+                    EditorGUI.indentLevel++;
                 }
 
                 if (m_InputEditors[i].visible)
                 {
-                    ++EditorGUI.indentLevel;
                     OnInputGui(i);
-                    --EditorGUI.indentLevel;
                 }
 
                 if (multiInputs)
