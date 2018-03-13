@@ -9,5 +9,13 @@ namespace UnityEditor.Recorder
     public class RecorderWindowSettings : ScriptableObject
     {
         public RecorderSettings m_Settings;
+        
+        public RecorderWindowSettings Clone()
+        {
+            return Instantiate(this);
+            //var rws = Instantiate(this);
+            //rws.m_Settings = Instantiate(m_Settings);
+            //return rws;
+        }
     }
 }
