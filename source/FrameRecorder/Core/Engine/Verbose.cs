@@ -5,7 +5,7 @@ using UnityEditor;
 namespace UnityEngine.Recorder
 {
 #if UNITY_EDITOR
-    [InitializeOnLoad]
+    //[InitializeOnLoad]
     public class Verbose
     {
         const string MENU_NAME = "Tools/Recorder/Debug mode";

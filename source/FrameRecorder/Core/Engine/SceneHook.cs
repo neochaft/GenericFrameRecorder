@@ -29,6 +29,10 @@ namespace UnityEngine.Recorder
                 //if (!Verbose.enabled)
                 //    go.hideFlags = HideFlags.HideInHierarchy;
             }
+            else if (go != null)
+            {
+                go.hideFlags = HideFlags.None; //HideInHierarchy;
+            }
 
             return go;
         }

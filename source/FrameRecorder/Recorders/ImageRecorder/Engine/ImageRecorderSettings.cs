@@ -12,7 +12,7 @@ namespace UnityEngine.Recorder
         EXR
     }
 
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class ImageRecorderSettings : RecorderSettings
     {
         public PNGRecordeOutputFormat m_OutputFormat = PNGRecordeOutputFormat.JPEG;

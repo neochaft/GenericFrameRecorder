@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
     /// - Some of the fields in this class actually don't apply to ALL recorders but are so common that they are included 
     ///   here for convenience.
     /// </summary>    
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public abstract class RecorderSettings : ScriptableObject
     {
         [SerializeField]
