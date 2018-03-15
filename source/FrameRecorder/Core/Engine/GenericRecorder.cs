@@ -5,14 +5,15 @@ namespace UnityEngine.Recorder
     /// Motivation: Root class Recorder has a field for the settings but it's a nuisance to always have to cast it to the 
     ///             specialized type, when accessed from the specialized recorder class. 
     /// </summary>
-    public abstract class GenericRecorder<TSettings> : Recorder where TSettings : RecorderSettings
+    public abstract class GenericRecorder<T> : Recorder where T : RecorderSettings
     {
         [SerializeField]
-        protected TSettings m_Settings;
+        protected T m_Settings;
+        
         public override RecorderSettings settings
         {
             get { return m_Settings; }
-            set { m_Settings = (TSettings)value; }
+            set { m_Settings = (T)value; }
         }
     }
 }

@@ -49,40 +49,18 @@ namespace UnityEditor.Recorder
         protected List<string> m_SettingsErrors = new List<string>();
         RTInputSelector m_RTInputSelector;
 
-        SerializedProperty m_FrameRateMode;
-        SerializedProperty m_FrameRate;
-        SerializedProperty m_DurationMode;
-        SerializedProperty m_StartFrame;
-        SerializedProperty m_EndFrame;
-        SerializedProperty m_StartTime;
-        SerializedProperty m_EndTime;
-        SerializedProperty m_SynchFrameRate;
         SerializedProperty m_CaptureEveryNthFrame;
-        SerializedProperty m_FrameRateExact;
         SerializedProperty m_DestinationPath;
         SerializedProperty m_BaseFileName;
-
-
-        string[] m_FrameRateLabels;
 
         protected virtual void OnEnable()
         {
             if (target != null)
             {
                 m_InputEditors = new List<InputEditorState>();
-                m_FrameRateLabels = EnumHelper.MaskOutEnumNames<FrameRate>(0xFFFF, (x) => FrameRateHelper.ToLable((FrameRate)x));
-
+                
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
-                m_FrameRateMode = pf.Find(x => x.frameRatePlayback);
-                m_FrameRate = pf.Find(x => x.m_FrameRate);
-                m_DurationMode = pf.Find(x => x.recordMode);
-                m_StartFrame = pf.Find(x => x.m_StartFrame);
-                m_EndFrame = pf.Find(x => x.m_EndFrame);
-                m_StartTime = pf.Find(x => x.m_StartTime);
-                m_EndTime = pf.Find(x => x.m_EndTime);
-                m_SynchFrameRate = pf.Find(x => x.m_SynchFrameRate);
                 m_CaptureEveryNthFrame = pf.Find(x => x.m_CaptureEveryNthFrame);
-                m_FrameRateExact = pf.Find(x => x.m_FrameRateExact);
                 m_DestinationPath = pf.Find(w => w.m_DestinationPath);
                 m_BaseFileName = pf.Find(w => w.m_BaseFileName);
 

@@ -177,7 +177,7 @@ namespace UnityEngine.Recorder
             var factory = GetRecorderInfo(recorderType);
             if (factory != null)
             {
-                var recorder = ScriptableObject.CreateInstance(recorderType) as Recorder;
+                var recorder = (Recorder)ScriptableObject.CreateInstance(recorderType);
                 recorder.Reset();
                 recorder.settings = settings;
                 return recorder;
@@ -194,7 +194,7 @@ namespace UnityEngine.Recorder
             if (recorderinfo != null)
             {
                 RecorderSettings settings = null;
-                settings = ScriptableObject.CreateInstance(recorderinfo.settingsClass) as RecorderSettings;
+                settings = (RecorderSettings)ScriptableObject.CreateInstance(recorderinfo.settingsClass);
                 settings.name = "Recorder Settings";
                 settings.recorderType = recorderType;
 

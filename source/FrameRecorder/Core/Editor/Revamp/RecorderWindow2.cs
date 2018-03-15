@@ -167,14 +167,7 @@ namespace UnityEditor.Recorder
 
             leftButtonsStack.Add(m_startRecordButton);
 
-            //var recordModeComboBox = FieldWithLabel("Record Mode:", new EnumField(DurationMode.Manual));
-
-            //if (m_GlobalSettings == null)
-            m_GlobalSettings = LoadSettings<GlobalSettings>("GlobalSettings"); //CreateInstance<GlobalSettings>();
-
-
-            //AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
-            //AssetDatabase.SaveAssets();
+            m_GlobalSettings = GlobalSettings.instance; //LoadSettings<GlobalSettings>("GlobalSettings"); 
             
             m_GlobalSettingsEditor = (GlobalSettingsEditor) Editor.CreateEditor(m_GlobalSettings);
                 
@@ -379,11 +372,12 @@ namespace UnityEditor.Recorder
 
             var sessions = new List<RecordingSession>();
             
-            foreach (RecorderItem recorderItem in m_Recordings.Children())
+            foreach (var visualElement in m_Recordings.Children())
             {
+                var recorderItem = (RecorderItem) visualElement;
                 var settings = recorderItem.settings;
                 
-                var session = new RecordingSession()
+                var session = new RecordingSession
                 {
                     m_Recorder = RecordersInventory.GenerateNewRecorder(settings.recorderType, settings),
                     m_RecorderGO = go,

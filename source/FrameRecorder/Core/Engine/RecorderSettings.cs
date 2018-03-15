@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Recorder;
 
 namespace UnityEngine.Recorder
 {
@@ -67,16 +68,47 @@ namespace UnityEngine.Recorder
         [SerializeField]
         string m_AssetID;
         public int m_CaptureEveryNthFrame = 1;
-        public FrameRatePlayback frameRatePlayback = FrameRatePlayback.Constant;
-        [Range(1, 120)]
-        public double m_FrameRate = 30.0;
-        public FrameRate m_FrameRateExact = FrameRate.FR_CUSTOM;
-        public int m_StartFrame;
-        public int m_EndFrame = 10;
-        public float m_StartTime = 0.0f;
-        public float m_EndTime = 1.0f;
-        public RecordMode recordMode;
-        public bool m_SynchFrameRate = true;
+        
+        public FrameRatePlayback frameRatePlayback
+        {
+            get { return GlobalSettings.instance.frameRatePlayback; }
+        }
+        
+        public double m_FrameRate
+        {
+            get { return GlobalSettings.instance.frameRate; }
+        }
+        
+        public int m_StartFrame
+        {
+            get { return GlobalSettings.instance.startFrame; }
+        }
+        
+        public int m_EndFrame
+        {
+            get { return GlobalSettings.instance.endFrame; }
+        }
+        
+        public float m_StartTime
+        {
+            get { return GlobalSettings.instance.startTime; }
+        }
+        
+        public float m_EndTime
+        {
+            get { return GlobalSettings.instance.endTime; }
+        }
+        
+        public RecordMode recordMode
+        {
+            get { return GlobalSettings.instance.recordMode; }
+        }
+        
+        public bool m_SynchFrameRate
+        {
+            get { return GlobalSettings.instance.synchFrameRate; }
+        }
+        
         public FileNameGenerator m_BaseFileName;
         public OutputPath m_DestinationPath;
 
@@ -102,7 +134,7 @@ namespace UnityEngine.Recorder
             }
         }
 
-        public RecorderSettings()
+        protected RecorderSettings()
         {
             m_DestinationPath.root = OutputPath.ERoot.Current;
             m_DestinationPath.leaf = "Recordings";
