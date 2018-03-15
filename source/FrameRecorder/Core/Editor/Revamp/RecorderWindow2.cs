@@ -523,13 +523,39 @@ namespace UnityEditor.Recorder
             if (evt.clickCount != 1)
                 return;
 
-            var recorder = (RecorderItem)evt.currentTarget;
-            Debug.Log("Clicked on " + recorder.settings.GetType().Name);
-            m_RecorderEditor = recorder.editor;
-            m_RecorderInspector.Dirty(ChangeType.Layout);
-            m_recorderHeader.Dirty(ChangeType.Layout);
+            var recorder = (RecorderItem) evt.currentTarget;
+            
+            if (evt.button == (int) MouseButton.LeftMouse)
+            {    
+                Debug.Log("Clicked on " + recorder.settings.GetType().Name);
+                m_RecorderEditor = recorder.editor;
+                m_RecorderInspector.Dirty(ChangeType.Layout);
+                m_recorderHeader.Dirty(ChangeType.Layout);
 //            //m_parameters.Dirty(ChangeType.Layout);
 //            evt.StopImmediatePropagation();
+            }
+            else
+            {             
+                var contextMenu = new GenericMenu();
+                
+                contextMenu.AddItem(new GUIContent("Duplicate"), false, data => { }, recorder);
+                contextMenu.AddItem(new GUIContent("Delete"), false,
+                    data =>
+                    {
+                        var item = (RecorderItem) data;
+                        var s = item.settings;
+                        m_RecordersList.Remove(s);
+                        
+                        UnityHelpers.Destroy(s, true);
+                        
+                        m_Recordings.Remove(item);
+                        
+                        AssetDatabase.SaveAssets();
+                        
+                    }, recorder);
+                
+                contextMenu.ShowAsContext();
+            }
         }
         
         class RecorderItem : VisualElement
@@ -579,6 +605,7 @@ namespace UnityEditor.Recorder
                 
                 
                 RegisterCallback(onRecordMouseUp);
+                //RegisterCallback<MouseUpEvent>(onRecordContextMenu);
             }
         }
         

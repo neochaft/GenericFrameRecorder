@@ -17,5 +17,10 @@ namespace UnityEngine.Recorder
         {
             m_Recorders.Add(s);
         }
+
+        public void Remove(RecorderSettings s)
+        {
+            m_Recorders.Remove(s);
+        }
     }
 }
