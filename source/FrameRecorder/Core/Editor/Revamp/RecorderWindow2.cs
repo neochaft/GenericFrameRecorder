@@ -382,7 +382,7 @@ namespace UnityEditor.Recorder
             //var recordModeComboBox = FieldWithLabel("Record Mode:", new EnumField(DurationMode.Manual));
 
             //if (m_GlobalSettings == null)
-                m_GlobalSettings = LoadSettings<GlobalSettings>("GlobalSettings"); //CreateInstance<GlobalSettings>();
+            m_GlobalSettings = LoadSettings<GlobalSettings>("GlobalSettings"); //CreateInstance<GlobalSettings>();
 
 
             //AssetDatabase.CreateAsset(m_GlobalSettings, "Assets/GlobalSettings.asset");
@@ -557,10 +557,10 @@ namespace UnityEditor.Recorder
             if (m_RecordersList == null)
                 m_RecordersList = LoadSettings<RecordersList>("RecordersList");
 
-//            foreach (var recorderSettings in m_RecordersList.recorders)
-//            {
-//                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
-//            }
+            foreach (var recorderSettings in m_RecordersList.recorders)
+            {
+                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
+            }
         }
 
         void OnRecorderHeader()
@@ -594,7 +594,7 @@ namespace UnityEditor.Recorder
 
         void OnAddNewRecorder(RecorderInfo info)
         {
-            m_Recordings.Add(new RecorderItem(m_RecordersList, info, OnRecordMouseUp));
+            m_Recordings.Add(new RecorderItem(m_RecordersList, info.recorderType, OnRecordMouseUp));
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -619,17 +619,32 @@ namespace UnityEditor.Recorder
             
             //public string title { get; set; }
 
-            public RecorderItem(Object saveFileScriptableObject, RecorderInfo info, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(RecordersList recordersList, Type recorderType, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
-                settings = RecordersInventory.GenerateRecorderInitialSettings(saveFileScriptableObject, info.recorderType);
+                var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
                 
-                
+                recordersList.Add(savedSettings);
+
+                Init(savedSettings, onRecordMouseUp);
+            }
+            
+            public RecorderItem(RecorderSettings savedSettings, EventCallback<MouseUpEvent> onRecordMouseUp)
+            {
+                Init(savedSettings, onRecordMouseUp);
+            }
+            
+            void Init(RecorderSettings savedSettings, EventCallback<MouseUpEvent> onRecordMouseUp)
+            {
+                settings = savedSettings;
+
+                var recorderType = settings.recorderType;
+
                 //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
-                //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
+                //settings.inputsSettings.AddRange(settings.GetDefaultInputSettings());
                 
-                recorder = RecordersInventory.GenerateNewRecorder(info.recorderType, settings);
+                recorder = RecordersInventory.GenerateNewRecorder(recorderType, settings);
                 editor = (RecorderEditor)Editor.CreateEditor(settings);
-                var title = info.recorderType.Name; //s.displayName; // TODO Add number or something?
+                var title = recorderType.Name; //s.displayName; // TODO Add number or something?
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
                 style.backgroundColor = RandomColor();
