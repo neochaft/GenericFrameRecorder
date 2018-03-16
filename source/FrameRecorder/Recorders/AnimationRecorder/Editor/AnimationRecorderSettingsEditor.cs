@@ -20,7 +20,7 @@ namespace UnityEditor.Experimental.FrameRecorder
             RecorderWindow.ShowAndPreselectCategory("Animation Clips");
         }
 
-        protected override void OnInputGui()
+        public override void CaptureOptionsGUI()
         {
             var aRecorderSettings = target as AnimationRecorderSettings;
             var inputs = aRecorderSettings.inputsSettings;
@@ -32,7 +32,7 @@ namespace UnityEditor.Experimental.FrameRecorder
                 var input = inputs[i] as AnimationInputSettings;
                 
                 
-                EditorGUILayout.BeginHorizontal();
+                //EditorGUILayout.BeginHorizontal();
                 var r = EditorGUILayout.GetControlRect();
                 var rFold = r;
                 rFold.width = 20;
@@ -57,7 +57,7 @@ namespace UnityEditor.Experimental.FrameRecorder
                 
                 using (new EditorGUI.IndentLevelScope(1))
                 {
-                   EditorGUILayout.EndHorizontal();
+                   //EditorGUILayout.EndHorizontal();
                     if (input.fold)
                     {
                         OnInputGui(i);
@@ -67,7 +67,7 @@ namespace UnityEditor.Experimental.FrameRecorder
 
             }
 
-            EditorGUILayout.BeginHorizontal();
+            //EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Add Object To Record", GUILayout.Width(200)))
             {
@@ -75,35 +75,40 @@ namespace UnityEditor.Experimental.FrameRecorder
                 aRecorderSettings.inputsSettings.Add(newSettings);
             }  
             GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
+            //EditorGUILayout.EndHorizontal();
         }
 
-        protected override void OnOutputGui()
+        public override void OutputFormatGUI()
         {
-            var aRecorderSettings = target as AnimationRecorderSettings;
-            aRecorderSettings.outputPath = EditorGUILayout.TextField("Output Path", aRecorderSettings.outputPath);
+            //using (new EditorGUI.DisabledScope(true))
+            //{
+                EditorGUILayout.LabelField("Format", "Animation Clip");
+            //}
+
+            //var aRecorderSettings = (AnimationRecorderSettings)target;
+            //aRecorderSettings.outputPath = EditorGUILayout.TextField("Output Path", aRecorderSettings.outputPath);
         }
 
         protected override void OnEncodingGroupGui()
         {
         }
 
-        protected override void OnGroupGui()
-        {
-            recorderSettings = EditorGUILayout.Foldout(recorderSettings,"Recorder Settings");
-            if (recorderSettings)
-            {
-                using (new EditorGUI.IndentLevelScope(1))
-                {
-                    OnOutputGroupGui();
-                    OnEncodingGroupGui();
-                    //OnFrameRateGroupGui();
-                    //OnBoundsGroupGui();
-                }
-            }
-            
-            OnInputGui();
-        }
+//        protected override void OnGroupGui()
+//        {
+//            recorderSettings = EditorGUILayout.Foldout(recorderSettings,"Recorder Settings");
+//            if (recorderSettings)
+//            {
+//                using (new EditorGUI.IndentLevelScope(1))
+//                {
+//                    OutputFormatGUI();
+//                    OnEncodingGroupGui();
+//                    //OnFrameRateGroupGui();
+//                    //OnBoundsGroupGui();
+//                }
+//            }
+//            
+//            OnInputGui();
+//        }
         
     }
 }

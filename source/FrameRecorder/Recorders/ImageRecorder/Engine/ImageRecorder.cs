@@ -27,13 +27,13 @@ namespace UnityEngine.Recorder
             if (m_Inputs[0] is ScreenCaptureInput)
             {
                 tex = ((ScreenCaptureInput)m_Inputs[0]).image;
-                if (m_Settings.m_OutputFormat == PNGRecordeOutputFormat.EXR)
+                if (m_Settings.m_OutputFormat == ImageRecorderOutputFormat.EXR)
                 {
                     var textx = new Texture2D(tex.width, tex.height, TextureFormat.RGBAFloat, false);
                     textx.SetPixels(tex.GetPixels());
                     tex = textx;
                 }
-                else if (m_Settings.m_OutputFormat == PNGRecordeOutputFormat.PNG)
+                else if (m_Settings.m_OutputFormat == ImageRecorderOutputFormat.PNG)
                 {
                     var textx = new Texture2D(tex.width, tex.height, TextureFormat.RGB24, false);
                     textx.SetPixels(tex.GetPixels());
@@ -46,7 +46,7 @@ namespace UnityEngine.Recorder
                 var input = (BaseRenderTextureInput)m_Inputs[0];
                 var width = input.outputRT.width;
                 var height = input.outputRT.height;
-                tex = new Texture2D(width, height, m_Settings.m_OutputFormat != PNGRecordeOutputFormat.EXR ? TextureFormat.RGBA32 : TextureFormat.RGBAFloat, false);
+                tex = new Texture2D(width, height, m_Settings.m_OutputFormat != ImageRecorderOutputFormat.EXR ? TextureFormat.RGBA32 : TextureFormat.RGBAFloat, false);
                 var backupActive = RenderTexture.active;
                 RenderTexture.active = input.outputRT;
                 tex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
@@ -58,15 +58,15 @@ namespace UnityEngine.Recorder
             string ext;
             switch (m_Settings.m_OutputFormat)
             {
-                case PNGRecordeOutputFormat.PNG:
+                case ImageRecorderOutputFormat.PNG:
                     bytes = tex.EncodeToPNG();
                     ext = "png";
                     break;
-                case PNGRecordeOutputFormat.JPEG:
+                case ImageRecorderOutputFormat.JPEG:
                     bytes = tex.EncodeToJPG();
                     ext = "jpg";
                     break;
-                case PNGRecordeOutputFormat.EXR:
+                case ImageRecorderOutputFormat.EXR:
                     bytes = tex.EncodeToEXR();
                     ext = "exr";
                     break;
@@ -74,7 +74,7 @@ namespace UnityEngine.Recorder
                     throw new ArgumentOutOfRangeException();
             }
 
-            if(m_Inputs[0] is BaseRenderTextureInput || m_Settings.m_OutputFormat != PNGRecordeOutputFormat.JPEG)
+            if(m_Inputs[0] is BaseRenderTextureInput || m_Settings.m_OutputFormat != ImageRecorderOutputFormat.JPEG)
                 UnityHelpers.Destroy(tex);
 
             var fileName = m_Settings.m_BaseFileName.BuildFileName( session, recordedFramesCount, tex.width, tex.height, ext);

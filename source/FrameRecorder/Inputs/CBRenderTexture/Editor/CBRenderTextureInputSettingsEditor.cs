@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
 
@@ -17,7 +18,7 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_RenderAspect;
         SerializedProperty m_FlipFinalOutput;
         SerializedProperty m_Transparency;
-        SerializedProperty m_CaptureUI;
+        SerializedProperty m_IncludeUI;
 
         protected void OnEnable()
         {
@@ -33,10 +34,10 @@ namespace UnityEditor.Recorder.Input
             m_RenderAspect = pf.Find(w => w.m_AspectRatio);
             m_FlipFinalOutput = pf.Find( w => w.m_FlipFinalOutput );
             m_Transparency = pf.Find(w => w.m_AllowTransparency);
-            m_CaptureUI = pf.Find(w => w.m_CaptureUI);
+            m_IncludeUI = pf.Find(w => w.m_CaptureUI);
 
             m_ResSelector = new ResolutionSelector();
-        }
+        }  
 
         public override void OnInspectorGUI()
         {
@@ -77,7 +78,7 @@ namespace UnityEditor.Recorder.Input
 
                 if(inputType == EImageSource.ActiveCameras)
                 {
-                    AddProperty(m_CaptureUI, () => EditorGUILayout.PropertyField(m_CaptureUI, new GUIContent("Capture UI")));
+                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
                 }
             }
 

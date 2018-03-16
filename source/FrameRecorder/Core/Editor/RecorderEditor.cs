@@ -64,7 +64,7 @@ namespace UnityEditor.Recorder
                 m_DestinationPath = pf.Find(w => w.m_DestinationPath);
                 m_BaseFileName = pf.Find(w => w.m_BaseFileName);
 
-                m_RTInputSelector = new RTInputSelector(target as RecorderSettings);
+                m_RTInputSelector = new RTInputSelector((RecorderSettings) target);
 
                 BuildInputEditors();
             }
@@ -72,7 +72,7 @@ namespace UnityEditor.Recorder
 
         void BuildInputEditors()
         {
-            var rs = target as RecorderSettings;
+            var rs = (RecorderSettings) target;
             if (!rs.inputsSettings.hasBrokenBindings && rs.inputsSettings.Count == m_InputEditors.Count)
                 return;
 
@@ -93,8 +93,8 @@ namespace UnityEditor.Recorder
 
         public bool ValidityCheck(List<string> errors)
         {
-            return (target as RecorderSettings).ValidityCheck(errors)
-                && (target as RecorderSettings).isPlatformSupported;
+            return ((RecorderSettings) target).ValidityCheck(errors)
+                && ((RecorderSettings) target).isPlatformSupported;
         }
 
         public bool showBounds { get; set; }
@@ -107,9 +107,10 @@ namespace UnityEditor.Recorder
 
         protected virtual void OnGroupGui()
         {
-            OnInputGroupGui();
-            OnOutputGroupGui();
+            //OnInputGroupGui();
+            //
             OnEncodingGroupGui();
+            OutputPathsGUI();
             //OnFrameRateGroupGui();
             //OnBoundsGroupGui();
             //OnExtraGroupsGui();
@@ -131,7 +132,7 @@ namespace UnityEditor.Recorder
 
             EditorGUI.EndChangeCheck();
 
-            (target as RecorderSettings).SelfAdjustSettings();
+            ((RecorderSettings) target).SelfAdjustSettings();
 
             OnValidateSettingsGUI();
         }
@@ -139,7 +140,7 @@ namespace UnityEditor.Recorder
         public virtual void OnValidateSettingsGUI()
         {
             m_SettingsErrors.Clear();
-            if (!(target as RecorderSettings).ValidityCheck(m_SettingsErrors))
+            if (!((RecorderSettings) target).ValidityCheck(m_SettingsErrors))
             {
                 for (int i = 0; i < m_SettingsErrors.Count; i++)
                 {
@@ -150,7 +151,7 @@ namespace UnityEditor.Recorder
 
         protected void AddInputSettings(RecorderInputSetting inputSettings)
         {
-            var inputs = (target as RecorderSettings).inputsSettings;
+            var inputs = ((RecorderSettings) target).inputsSettings;
             inputs.Add(inputSettings);
             m_InputEditors.Add(new InputEditorState(GetFieldDisplayState, inputSettings) { visible = true });
         }
@@ -159,7 +160,7 @@ namespace UnityEditor.Recorder
         {
             if (newSettings != null)
             {
-                var inputs = (target as RecorderSettings).inputsSettings;
+                var inputs = ((RecorderSettings) target).inputsSettings;
                 inputs.ReplaceAt(atIndex, newSettings);
                 m_InputEditors[atIndex].settingsObj = newSettings;
             }
@@ -169,32 +170,33 @@ namespace UnityEditor.Recorder
             }
         }
 
-        protected virtual void OnInputGui()
+        public virtual void CaptureOptionsGUI()
         {
-            var inputs = (target as RecorderSettings).inputsSettings;
+            var inputs = ((RecorderSettings) target).inputsSettings;
 
-            bool multiInputs = inputs.Count > 1;
+            //bool multiInputs = inputs.Count > 1;
             for (int i = 0; i < inputs.Count; i++)
             {
-                if (multiInputs)
-                {
-                    m_InputEditors[i].visible = EditorGUILayout.Foldout(m_InputEditors[i].visible, m_InputEditors[i].settingsObj.m_DisplayName ?? "Input " + (i + 1));
-                    EditorGUI.indentLevel++;
-                }
+                EditorGUILayout.LabelField(string.Empty);
+                //if (multiInputs)
+                //{
+                    //m_InputEditors[i].visible = EditorGUILayout.Foldout(m_InputEditors[i].visible, m_InputEditors[i].settingsObj.m_DisplayName ?? "Input " + (i + 1));
+                    //EditorGUI.indentLevel++;
+                //}
 
-                if (m_InputEditors[i].visible)
+                //if (m_InputEditors[i].visible)
                 {
                     OnInputGui(i);
                 }
 
-                if (multiInputs)
-                    EditorGUI.indentLevel--;
+                //if (multiInputs)
+                //    EditorGUI.indentLevel--;
             }
         }
 
         protected virtual void OnInputGui(int inputIndex)
         {
-            var inputs = (target as RecorderSettings).inputsSettings;
+            var inputs = ((RecorderSettings) target).inputsSettings;
             var input = inputs[inputIndex];
             if (m_RTInputSelector.OnInputGui(inputIndex, ref input))
                 ChangeInputSettings(inputIndex, input);
@@ -203,11 +205,21 @@ namespace UnityEditor.Recorder
             m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
         }
 
-        protected virtual void OnOutputGui()
+        public virtual void OutputPathsGUI()
         {
             AddProperty(m_DestinationPath, () => { EditorGUILayout.PropertyField(m_DestinationPath, new GUIContent("Output path")); });
             AddProperty(m_BaseFileName, () => { EditorGUILayout.PropertyField(m_BaseFileName, new GUIContent("File name")); });
             AddProperty(m_CaptureEveryNthFrame, () => EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Every n'th frame")));
+        }
+
+//        public virtual void CaptureOptionsGUI()
+//        {
+//            
+//        }
+
+        public virtual void OutputFormatGUI()
+        {
+            
         }
 
         protected virtual void OnEncodingGui()
@@ -292,27 +304,27 @@ namespace UnityEditor.Recorder
 //            --EditorGUI.indentLevel;
 //        }
 
-        protected virtual void OnInputGroupGui()
-        {
-            m_FoldoutInput = EditorGUILayout.Foldout(m_FoldoutInput, "Input(s)");
-            if (m_FoldoutInput)
-            {
-                ++EditorGUI.indentLevel;
-                OnInputGui();
-                --EditorGUI.indentLevel;
-            }
-        }
+//        protected virtual void OnInputGroupGui()
+//        {
+//            m_FoldoutInput = EditorGUILayout.Foldout(m_FoldoutInput, "Input(s)");
+//            if (m_FoldoutInput)
+//            {
+//                ++EditorGUI.indentLevel;
+//                OnInputGui();
+//                --EditorGUI.indentLevel;
+//            }
+//        }
 
-        protected virtual void OnOutputGroupGui()
-        {
-            m_FoldoutOutput = EditorGUILayout.Foldout(m_FoldoutOutput, "Output(s)");
-            if (m_FoldoutOutput)
-            {
-                ++EditorGUI.indentLevel;
-                OnOutputGui();
-                --EditorGUI.indentLevel;
-            }
-        }
+//        protected virtual void OnOutputGroupGui()
+//        {
+//            m_FoldoutOutput = EditorGUILayout.Foldout(m_FoldoutOutput, "Output(s)");
+//            if (m_FoldoutOutput)
+//            {
+//                ++EditorGUI.indentLevel;
+//                OnOutputGui();
+//                --EditorGUI.indentLevel;
+//            }
+//        }
 
         protected virtual void OnEncodingGroupGui()
         {

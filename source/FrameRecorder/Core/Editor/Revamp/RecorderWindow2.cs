@@ -34,9 +34,12 @@ namespace UnityEditor.Recorder
 
         VisualElement m_Recordings;
         VisualElement m_Parameters;
-        Editor m_RecorderEditor;
+        RecorderEditor m_RecorderEditor;
         VisualElement m_recorderHeader;
         Button m_startRecordButton;
+
+        [SerializeField]
+        int m_SelectedRecorderItemIndex = 0;
 
         [SerializeField]
         GlobalSettings m_GlobalSettings;
@@ -343,6 +346,8 @@ namespace UnityEditor.Recorder
             {
                 m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
             }
+            
+            SelectRecording(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
         }
 
         void Update()
@@ -423,6 +428,7 @@ namespace UnityEditor.Recorder
                     
                     break;
                 }
+
                 case State.WaitingForPlayModeToStartRecording:
                 //{
                     //m_startRecordButton.text = "Start Recording";
@@ -490,11 +496,14 @@ namespace UnityEditor.Recorder
             {
                 var rec = (RecorderSettings)m_RecorderEditor.target;
                 
-                var r = EditorGUILayout.GetControlRect();
-                Presets.PresetSelector.DrawPresetButton(r, new Object[] {rec});
+                //var r = EditorGUILayout.GetControlRect();
+                //Presets.PresetSelector.DrawPresetButton(r, new Object[] {rec});
                 
                 
-                EditorGUILayout.LabelField("Recording Type: " + rec.GetType().Name);
+                EditorGUILayout.LabelField("Recording Type",  rec.GetType().Name);
+                
+                m_RecorderEditor.OutputFormatGUI();
+                m_RecorderEditor.CaptureOptionsGUI();
                 
             }
             else
@@ -526,11 +535,8 @@ namespace UnityEditor.Recorder
             var recorder = (RecorderItem) evt.currentTarget;
             
             if (evt.button == (int) MouseButton.LeftMouse)
-            {    
-                Debug.Log("Clicked on " + recorder.settings.GetType().Name);
-                m_RecorderEditor = recorder.editor;
-                m_RecorderInspector.Dirty(ChangeType.Layout);
-                m_recorderHeader.Dirty(ChangeType.Layout);
+            {
+              SelectRecording(recorder);
 //            //m_parameters.Dirty(ChangeType.Layout);
 //            evt.StopImmediatePropagation();
             }
@@ -547,6 +553,7 @@ namespace UnityEditor.Recorder
                         m_RecordersList.Remove(s);
                         
                         UnityHelpers.Destroy(s, true);
+                        UnityHelpers.Destroy(item.editor, true);
                         
                         m_Recordings.Remove(item);
                         
@@ -557,13 +564,54 @@ namespace UnityEditor.Recorder
                 contextMenu.ShowAsContext();
             }
         }
+
+        void SelectRecording(int index)
+        {
+            m_RecorderEditor = null;
+
+            var selected = m_Recordings.Children().ElementAt(index);
+
+            SelectRecording(selected);
+        }
+        
+        void SelectRecording(VisualElement selected)
+        {
+            m_RecorderEditor = null;
+            m_SelectedRecorderItemIndex = 0;
+            
+            int i = 0;
+            foreach (var recording in m_Recordings)
+            {
+                var r = (RecorderItem) recording;
+
+                if (recording == selected)
+                {
+                    m_RecorderEditor = r.editor;
+                    r.SetSelected(true);
+                    m_SelectedRecorderItemIndex = i;
+                }
+                else
+                {
+                    r.SetSelected(false);
+                    ++i;
+                }
+            }
+
+            if (m_RecorderEditor != null)
+            {
+                m_RecorderInspector.Dirty(ChangeType.Layout);
+                m_recorderHeader.Dirty(ChangeType.Layout);
+            }
+
+        }
         
         class RecorderItem : VisualElement
         {
             public RecorderSettings settings { get; private set; }
             public RecorderEditor editor { get; private set; }
             //public UnityEngine.Recorder.Recorder recorder { get; private set; }
-            
+
+            Color m_Color;
             //public string title { get; set; }
 
             public RecorderItem(RecordersList recordersList, Type recorderType, EventCallback<MouseUpEvent> onRecordMouseUp)
@@ -594,7 +642,7 @@ namespace UnityEditor.Recorder
                 var title = recorderType.Name; //s.displayName; // TODO Add number or something?
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
-                style.backgroundColor = RandomColor();
+                style.backgroundColor = m_Color = RandomColor();
 
                 //container.RegisterCallback<MouseUpEvent>(OnRecordMouseUp);
                 Add(new UnityEngine.Experimental.UIElements.Toggle(() => { }));
@@ -606,6 +654,12 @@ namespace UnityEditor.Recorder
                 
                 RegisterCallback(onRecordMouseUp);
                 //RegisterCallback<MouseUpEvent>(onRecordContextMenu);
+            }
+
+            public void SetSelected(bool value)
+            {
+                style.backgroundColor = value ? Color.white : m_Color;
+
             }
         }
         

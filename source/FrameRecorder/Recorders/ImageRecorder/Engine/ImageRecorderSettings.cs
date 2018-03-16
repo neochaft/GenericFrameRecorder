@@ -4,18 +4,17 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEngine.Recorder
 {
-
-    public enum PNGRecordeOutputFormat
+    public enum ImageRecorderOutputFormat
     {
         PNG,
         JPEG,
         EXR
     }
 
-    //[ExecuteInEditMode]
     public class ImageRecorderSettings : RecorderSettings
     {
-        public PNGRecordeOutputFormat m_OutputFormat = PNGRecordeOutputFormat.JPEG;
+        public ImageRecorderOutputFormat m_OutputFormat = ImageRecorderOutputFormat.JPEG;
+        public bool m_IncludeAlpha;
 
         ImageRecorderSettings()
         {
@@ -24,7 +23,7 @@ namespace UnityEngine.Recorder
 
         public override List<RecorderInputSetting> GetDefaultInputSettings()
         {
-            return new List<RecorderInputSetting>()
+            return new List<RecorderInputSetting>
             {
                 NewInputSettingsObj<CBRenderTextureInputSettings>("Pixels") 
             };
@@ -55,10 +54,10 @@ namespace UnityEngine.Recorder
 
             bool adjusted = false;
 
-            if (inputsSettings[0] is RenderTextureSamplerSettings)
+            var input = inputsSettings[0] as RenderTextureSamplerSettings;
+            if (input != null)
             {
-                var input = (RenderTextureSamplerSettings)inputsSettings[0];
-                var colorSpace = m_OutputFormat == PNGRecordeOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
+                var colorSpace = m_OutputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
                 if (input.m_ColorSpace != colorSpace)
                 {
                     input.m_ColorSpace = colorSpace;
@@ -66,9 +65,9 @@ namespace UnityEngine.Recorder
                 }
             }
 
-            if (inputsSettings[0] is ImageInputSettings)
+            var iis = inputsSettings[0] as ImageInputSettings;
+            if (iis != null)
             {
-                var iis = (ImageInputSettings)inputsSettings[0];
                 if (iis.maxSupportedSize != EImageDimension.x4320p_8K)
                 {
                     iis.maxSupportedSize = EImageDimension.x4320p_8K;

@@ -51,11 +51,10 @@ namespace UnityEditor.Recorder
         }
 #endif
 
-        protected override void OnOutputGui()
+        public override void OutputFormatGUI()
         {
-            AddProperty(m_OutputFormat, () => EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Output format")));
-
-            base.OnOutputGui();
+            EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
+            //base.OutputFormatGUI();
         }
 
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
