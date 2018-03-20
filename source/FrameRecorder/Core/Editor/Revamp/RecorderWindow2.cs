@@ -327,15 +327,15 @@ namespace UnityEditor.Recorder
 
             m_Parameters.Add(parametersControl);
             
-            m_RecorderInspector = new IMGUIContainer(OnGUIHandler)
-            {
-                style =
-                {
-                    flex = 1.0f
-                }
-            };
-            
-            m_Parameters.Add(m_RecorderInspector);
+//            m_RecorderInspector = new IMGUIContainer(OnGUIHandler)
+//            {
+//                style =
+//                {
+//                    flex = 1.0f
+//                }
+//            };
+//            
+//            m_Parameters.Add(m_RecorderInspector);
             
             
             // Load recorders
@@ -502,8 +502,11 @@ namespace UnityEditor.Recorder
                 
                 EditorGUILayout.LabelField("Recording Type",  rec.GetType().Name);
                 
-                m_RecorderEditor.OutputFormatGUI();
-                m_RecorderEditor.CaptureOptionsGUI();
+                m_RecorderEditor.OnInspectorGUI();
+                //m_RecorderEditor.CaptureOptionsGUI();
+                
+                //m_RecorderEditor.OnEncodingGroupGui();
+                //m_RecorderEditor.OutputPathsGUI();
                 
             }
             else
@@ -512,15 +515,15 @@ namespace UnityEditor.Recorder
             }
         }
 
-        IMGUIContainer m_RecorderInspector;
+        //IMGUIContainer m_RecorderInspector;
 
-        void OnGUIHandler()
-        {
-            if (m_RecorderEditor != null)
-            {
-                m_RecorderEditor.OnInspectorGUI();
-            }
-        }
+//        void OnGUIHandler()
+//        {
+//            if (m_RecorderEditor != null)
+//            {
+//                m_RecorderEditor.OnInspectorGUI();
+//            }
+//        }
 
         void OnAddNewRecorder(RecorderInfo info)
         {
@@ -599,7 +602,7 @@ namespace UnityEditor.Recorder
 
             if (m_RecorderEditor != null)
             {
-                m_RecorderInspector.Dirty(ChangeType.Layout);
+                //m_RecorderInspector.Dirty(ChangeType.Layout);
                 m_recorderHeader.Dirty(ChangeType.Layout);
             }
 

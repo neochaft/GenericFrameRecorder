@@ -34,20 +34,20 @@ namespace UnityEditor.Recorder
             // hiding this group by not calling parent class's implementation.  
         }
 
-        public override void OutputFormatGUI()
+        protected override void FileTypeAndFormatGUI()
         {
-            serializedObject.Update();
+            //serializedObject.Update();
             
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
 
-            if (m_OutputFormat.intValue != (int) ImageRecorderOutputFormat.JPEG)
+            if (m_OutputFormat.intValue != (int)ImageRecorderOutputFormat.JPEG)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_IncludeAlpha);
                 --EditorGUI.indentLevel;
             }
             
-            serializedObject.ApplyModifiedProperties();
+            //serializedObject.ApplyModifiedProperties();
         }
 
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)

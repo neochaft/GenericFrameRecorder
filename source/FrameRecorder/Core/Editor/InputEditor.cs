@@ -42,5 +42,10 @@ namespace UnityEditor.Recorder
                 }
             }
         }
+
+        public virtual void CaptureOptionsGUI()
+        {
+            
+        }
     }
 }

@@ -25,7 +25,6 @@ namespace UnityEditor.Recorder.Input
             if (target == null)
                 return;
 
-
             var pf = new PropertyFinder<CBRenderTextureInputSettings>(serializedObject);
             m_Source = pf.Find(w => w.source);
             m_CameraTag = pf.Find(w => w.m_CameraTag);
@@ -37,10 +36,12 @@ namespace UnityEditor.Recorder.Input
             m_IncludeUI = pf.Find(w => w.m_CaptureUI);
 
             m_ResSelector = new ResolutionSelector();
-        }  
-
+        }
+        
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
+            
             AddProperty(m_Source, () =>
             {
                 using (var check = new EditorGUI.ChangeCheckScope())
@@ -76,13 +77,13 @@ namespace UnityEditor.Recorder.Input
                     AddProperty(m_RenderAspect, () => EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio")));
                 }
 
-                if(inputType == EImageSource.ActiveCameras)
-                {
-                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
-                }
+//                if(inputType == EImageSource.ActiveCameras)
+//                {
+//                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
+//                }
             }
 
-            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha")));
+            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"))); // TODO Do same this as wih Include UI
 
             if (Verbose.enabled)
             {
@@ -94,5 +95,14 @@ namespace UnityEditor.Recorder.Input
 
             serializedObject.ApplyModifiedProperties();
         }
+
+        public override void CaptureOptionsGUI()
+        {
+            var inputType = (EImageSource)m_Source.intValue;
+            if (inputType == EImageSource.ActiveCameras)
+            {
+                EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI"));
+            }
+    }
     }
 }

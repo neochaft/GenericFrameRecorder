@@ -20,7 +20,7 @@ namespace UnityEditor.Experimental.FrameRecorder
             RecorderWindow.ShowAndPreselectCategory("Animation Clips");
         }
 
-        public override void CaptureOptionsGUI()
+        protected override void CaptureOptionsGUI()
         {
             var aRecorderSettings = target as AnimationRecorderSettings;
             var inputs = aRecorderSettings.inputsSettings;
@@ -28,9 +28,9 @@ namespace UnityEditor.Experimental.FrameRecorder
             for (int i = 0; i < inputs.Count; i++)
             {
                                 
-                GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
-                var input = inputs[i] as AnimationInputSettings;
-                
+                //GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+                //var input = inputs[i] as AnimationInputSettings;
+                /*
                 
                 //EditorGUILayout.BeginHorizontal();
                 var r = EditorGUILayout.GetControlRect();
@@ -53,12 +53,12 @@ namespace UnityEditor.Experimental.FrameRecorder
                         inputs[i]);
                             
                     menu.ShowAsContext();
-                }               
+                }*/               
                 
-                using (new EditorGUI.IndentLevelScope(1))
+                //using (new EditorGUI.IndentLevelScope(1))
                 {
                    //EditorGUILayout.EndHorizontal();
-                    if (input.fold)
+                    //if (input.fold)
                     {
                         OnInputGui(i);
 
@@ -68,17 +68,17 @@ namespace UnityEditor.Experimental.FrameRecorder
             }
 
             //EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Add Object To Record", GUILayout.Width(200)))
-            {
-                var newSettings = aRecorderSettings.NewInputSettingsObj<AnimationInputSettings>("Animation");
-                aRecorderSettings.inputsSettings.Add(newSettings);
-            }  
-            GUILayout.FlexibleSpace();
+//            GUILayout.FlexibleSpace();
+//            if (GUILayout.Button("Add Object To Record", GUILayout.Width(200)))
+//            {
+//                var newSettings = aRecorderSettings.NewInputSettingsObj<AnimationInputSettings>("Animation");
+//                aRecorderSettings.inputsSettings.Add(newSettings);
+//            }  
+//            GUILayout.FlexibleSpace();
             //EditorGUILayout.EndHorizontal();
         }
 
-        public override void OutputFormatGUI()
+        protected override void FileTypeAndFormatGUI()
         {
             //using (new EditorGUI.DisabledScope(true))
             //{
@@ -86,7 +86,17 @@ namespace UnityEditor.Experimental.FrameRecorder
             //}
 
             //var aRecorderSettings = (AnimationRecorderSettings)target;
+            //
+            //
             //aRecorderSettings.outputPath = EditorGUILayout.TextField("Output Path", aRecorderSettings.outputPath);
+        }
+
+        protected override void ImageRenderOptionsGUI()
+        {
+        }
+
+        protected override void ExtraOptionsGUI()
+        {
         }
 
         protected override void OnEncodingGroupGui()

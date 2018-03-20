@@ -7,7 +7,7 @@ namespace UnityEditor.Recorder
 {
     public class RTInputSelector
     {
-        RecorderSettings recSettings;
+        readonly RecorderSettings m_RecorderSettings;
 
         struct InputGroup
         {
@@ -16,17 +16,17 @@ namespace UnityEditor.Recorder
             public Type[] types;
         }
 
-        SortedDictionary<int, InputGroup> m_Groups;
+        readonly SortedDictionary<int, InputGroup> m_Groups;
 
-        public RTInputSelector( RecorderSettings recSettings  )
+        public RTInputSelector( RecorderSettings recorderSettings  )
         {
             m_Groups = new SortedDictionary<int, InputGroup>();
-            this.recSettings = recSettings;
+            m_RecorderSettings = recorderSettings;
 
-            AddGroups( recSettings.GetInputGroups() );
+            AddGroups( recorderSettings.GetInputGroups() );
         }
 
-        void AddGroups(List<InputGroupFilter> groups)
+        void AddGroups(IList<InputGroupFilter> groups)
         {
             for(int i = 0; i < groups.Count; i++)
             {
@@ -56,11 +56,12 @@ namespace UnityEditor.Recorder
                     break;
                 }
             }
-            var newIndex = EditorGUILayout.Popup("Collection method", index, m_Groups[groupIndex].captions);
+            
+            var newIndex = EditorGUILayout.Popup("Capture", index, m_Groups[groupIndex].captions);
 
             if (index != newIndex)
             {
-                input = recSettings.NewInputSettingsObj( m_Groups[groupIndex].types[newIndex], m_Groups[groupIndex].title );
+                input = m_RecorderSettings.NewInputSettingsObj( m_Groups[groupIndex].types[newIndex], m_Groups[groupIndex].title );
                 return true;
             }
 

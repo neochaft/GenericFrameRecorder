@@ -51,7 +51,7 @@ namespace UnityEditor.Recorder
         }
 #endif
 
-        public override void OutputFormatGUI()
+        protected override void FileTypeAndFormatGUI()
         {
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
             //base.OutputFormatGUI();
