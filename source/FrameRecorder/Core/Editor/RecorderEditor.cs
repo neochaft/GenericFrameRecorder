@@ -131,17 +131,16 @@ namespace UnityEditor.Recorder
             CaptureOptionsGUI();
             
             EditorGUILayout.LabelField(string.Empty, GUI.skin.horizontalSlider);
-            //EditorGUILayout.Separator();
-            
-            OnEncodingGroupGui();
-            
-            EditorGUILayout.Separator();
             
             NameAndPathGUI();
 
             ImageRenderOptionsGUI();
             
             ExtraOptionsGUI();
+            
+            EditorGUILayout.Separator();
+            
+            OnEncodingGroupGui();
 
             serializedObject.ApplyModifiedProperties();
 
@@ -242,7 +241,7 @@ namespace UnityEditor.Recorder
 
         protected virtual void ExtraOptionsGUI()
         {
-            EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Every n'th frame"));
+            EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Render Step Frame"));
         }
 
 //        public virtual void CaptureOptionsGUI()

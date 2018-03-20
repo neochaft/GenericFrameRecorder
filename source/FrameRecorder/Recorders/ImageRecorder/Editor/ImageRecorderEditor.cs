@@ -9,7 +9,6 @@ namespace UnityEditor.Recorder
     public class ImageRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
-        SerializedProperty m_IncludeAlpha;
         
         [MenuItem("Tools/Recorder/Video")]
         static void ShowRecorderWindow()
@@ -26,7 +25,6 @@ namespace UnityEditor.Recorder
 
             var pf = new PropertyFinder<ImageRecorderSettings>(serializedObject);
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
-            m_IncludeAlpha = pf.Find(w => w.m_IncludeAlpha);
         }
 
         protected override void OnEncodingGroupGui()
@@ -35,21 +33,10 @@ namespace UnityEditor.Recorder
         }
 
         protected override void FileTypeAndFormatGUI()
-        {
-            //serializedObject.Update();
-            
+        {           
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
-
-            if (m_OutputFormat.intValue != (int)ImageRecorderOutputFormat.JPEG)
-            {
-                ++EditorGUI.indentLevel;
-                EditorGUILayout.PropertyField(m_IncludeAlpha);
-                --EditorGUI.indentLevel;
-            }
-            
-            //serializedObject.ApplyModifiedProperties();
         }
-
+        
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
         {
             if (property.name == "m_AllowTransparency")

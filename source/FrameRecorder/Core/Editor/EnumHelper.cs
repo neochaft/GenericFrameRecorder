@@ -71,19 +71,19 @@ namespace UnityEditor.Recorder
             return 0;
         }
 
-        public delegate string EnumToStringDelegate(int value); 
-        public static string[] MaskOutEnumNames<TEnum>(int mask, EnumToStringDelegate toString )
-        {
-            if (!typeof(TEnum).IsEnum) throw new ArgumentException("Arg not an enum");
-            var values = Enum.GetValues(typeof(TEnum));
-            var result = new List<String>();    
-            for( int i = 0; i < values.Length; i++ )
-            {
-                if( ((int)values.GetValue(i) & mask ) != 0 )
-                    result.Add( toString( (int)values.GetValue(i) ));
-            }
-            return result.ToArray();
-        }
+//        public delegate string EnumToStringDelegate(int value); 
+//        public static string[] MaskOutEnumNames<TEnum>(int mask, EnumToStringDelegate toString )
+//        {
+//            if (!typeof(TEnum).IsEnum) throw new ArgumentException("Arg not an enum");
+//            var values = Enum.GetValues(typeof(TEnum));
+//            var result = new List<String>();    
+//            for( int i = 0; i < values.Length; i++ )
+//            {
+//                if( ((int)values.GetValue(i) & mask ) != 0 )
+//                    result.Add( toString( (int)values.GetValue(i) ));
+//            }
+//            return result.ToArray();
+//        }
 
         public static string[] MaskOutEnumNames<TEnum>(int mask )
         {
@@ -99,7 +99,8 @@ namespace UnityEditor.Recorder
             return result.ToArray();
         }
 
-        public static string[] ClipOutEnumNames<TEnum>(int start, int end )
+        public delegate string EnumToStringDelegate<in TEnum>(TEnum value); 
+        public static string[] ClipOutEnumNames<TEnum>(int start, int end, EnumToStringDelegate<TEnum> toString)
         {
             if (!typeof(TEnum).IsEnum) throw new ArgumentException("Arg not an enum");
             var names = Enum.GetNames(typeof(TEnum));
@@ -107,8 +108,9 @@ namespace UnityEditor.Recorder
             var result = new List<String>();
             for( int i = 0; i < values.Length; i++ )
             {
-                if( (int)values.GetValue(i) >= start && (int)values.GetValue(i) <= end  )
-                    result.Add( (string)names.GetValue(i) );
+                var v = values.GetValue(i);
+                if( (int)v >= start && (int)v <= end  )
+                    result.Add( toString((TEnum) v));
             }
             return result.ToArray();
         }

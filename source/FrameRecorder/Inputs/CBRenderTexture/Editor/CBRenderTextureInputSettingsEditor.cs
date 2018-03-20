@@ -69,7 +69,7 @@ namespace UnityEditor.Recorder.Input
             {
                 AddProperty(m_RenderSize, () =>
                 {
-                    m_ResSelector.OnInspectorGUI((target as ImageInputSettings).maxSupportedSize, m_RenderSize);
+                    m_ResSelector.OnInspectorGUI(((ImageInputSettings)target).maxSupportedSize, m_RenderSize);
                 });
 
                 if (m_RenderSize.intValue > (int)EImageDimension.Window)
@@ -98,11 +98,21 @@ namespace UnityEditor.Recorder.Input
 
         public override void CaptureOptionsGUI()
         {
+            serializedObject.Update();
+            
+            ++EditorGUI.indentLevel;
+            
             var inputType = (EImageSource)m_Source.intValue;
             if (inputType == EImageSource.ActiveCameras)
             {
                 EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI"));
             }
-    }
+            
+            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Include alpha")));
+            
+            --EditorGUI.indentLevel;
+            
+            serializedObject.ApplyModifiedProperties();
+        }
     }
 }
