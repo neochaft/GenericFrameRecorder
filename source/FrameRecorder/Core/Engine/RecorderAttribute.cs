@@ -10,9 +10,10 @@ namespace UnityEngine.Recorder
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class RecorderAttribute : Attribute
     {
-        public Type settings;
-        public string category;
-        public string displayName;
+        public readonly Type settings;
+        public readonly string category;
+        public readonly string displayName;
+        public readonly string iconName;
 
         public RecorderAttribute(Type settingsType, string category, string displayName)
         {
@@ -20,6 +21,15 @@ namespace UnityEngine.Recorder
             this.category = category;
             this.displayName = displayName;
         }
+        
+        public RecorderAttribute(Type settingsType, string category, string displayName, string iconName)
+        {
+            this.iconName = iconName;
+            this.settings = settingsType;
+            this.category = category;
+            this.displayName = displayName;
+        }
+
     }
 
     /// <summary>
@@ -34,5 +44,4 @@ namespace UnityEngine.Recorder
         {
         }
     }
-
 }

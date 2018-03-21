@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngineInternal;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace UnityEngine.Recorder
         public Type settingsClass;
         public string category;
         public string displayName;
+        public string iconName;
     }
 
 
@@ -84,7 +86,7 @@ namespace UnityEngine.Recorder
             {
                 if (m_AvailableCategories == null)
                 {
-                    m_AvailableCategories = RecordersInventory.ListRecorders()
+                    m_AvailableCategories = ListRecorders()
                         .GroupBy(x => x.category)
                         .Select(x => x.Key)
                         .OrderBy(x => x)
@@ -96,21 +98,22 @@ namespace UnityEngine.Recorder
 #endif
 
         static bool AddRecorder(Type recorderType)
-        {
+        {          
             var recorderAttribs = recorderType.GetCustomAttributes(typeof(RecorderAttribute), false);
             if (recorderAttribs.Length == 1)
             {
-                var recorderAttrib = recorderAttribs[0] as RecorderAttribute;
+                var recorderAttrib = (RecorderAttribute)recorderAttribs[0];
             
                 if (m_Recorders == null)
                     m_Recorders = new SortedDictionary<string, RecorderInfo>();
 
-                var info = new RecorderInfo()
+                var info = new RecorderInfo
                 {
                     recorderType = recorderType,
                     settingsClass = recorderAttrib.settings,
                     category = recorderAttrib.category,
-                    displayName = recorderAttrib.displayName
+                    displayName = recorderAttrib.displayName,
+                    iconName = recorderAttrib.iconName
                 };
 
                 m_Recorders.Add(info.recorderType.FullName, info);

@@ -344,7 +344,8 @@ namespace UnityEditor.Recorder
 
             foreach (var recorderSettings in m_RecordersList.recorders)
             {
-                m_Recordings.Add(new RecorderItem(recorderSettings, OnRecordMouseUp));
+                var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
+                m_Recordings.Add(new RecorderItem(recorderSettings, info.iconName, OnRecordMouseUp));
             }
             
             SelectRecording(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
@@ -537,7 +538,7 @@ namespace UnityEditor.Recorder
         {
             var recorderName = ObjectNames.GetUniqueName(m_Recordings.Children().Select(r => ((RecorderItem)r).settings.name).ToArray(),
                 ObjectNames.NicifyVariableName(info.displayName));
-            m_Recordings.Add(new RecorderItem(m_RecordersList, info.recorderType, recorderName, OnRecordMouseUp));
+            m_Recordings.Add(new RecorderItem(m_RecordersList, info.recorderType, recorderName, info.iconName, OnRecordMouseUp));
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -628,22 +629,22 @@ namespace UnityEditor.Recorder
             Color m_Color;
             //public string title { get; set; }
 
-            public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
                 var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
                 savedSettings.name = recorderName;
                 
                 recordersList.Add(savedSettings);
 
-                Init(savedSettings, onRecordMouseUp);
+                Init(savedSettings, iconName, onRecordMouseUp);
             }
             
-            public RecorderItem(RecorderSettings savedSettings, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
-                Init(savedSettings, onRecordMouseUp);
+                Init(savedSettings, iconName, onRecordMouseUp);
             }
             
-            void Init(RecorderSettings savedSettings, EventCallback<MouseUpEvent> onRecordMouseUp)
+            void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
                 settings = savedSettings;
 
@@ -669,6 +670,27 @@ namespace UnityEditor.Recorder
                 
                 
                 Add(toggle);
+
+
+                var t = Resources.Load<Texture2D>(iconName); // TODO Cache?
+
+                //if (t != null)
+                {
+                    var recordIcon = new Image
+                    {
+                        image = t,
+
+                        style =
+                        {
+                            backgroundColor = RandomColor(),
+                            height = 16.0f,
+                            width = 16.0f,
+                        }
+                    };
+                    
+                    Add(recordIcon);
+                }
+
                 
                 //Add(new Label(title));
                 var titleField = new TextField { text = settings.name };
