@@ -42,10 +42,22 @@ namespace UnityEngine.Recorder
     /// </summary>    
     public abstract class RecorderSettings : ScriptableObject
     {
-        [SerializeField]
-        string m_AssetID;
+        public FileNameGenerator baseFileName;
+        public OutputPath destinationPath;
         public int captureEveryNthFrame = 1;
         
+        [SerializeField] string m_AssetID;
+        [SerializeField] bool m_IsEnabled = true; // TODO Move this to the Editor namespace?
+
+        [SerializeField] InputSettingsList m_InputsSettings = new InputSettingsList();
+        [SerializeField] string m_RecorderTypeName;
+        
+        public bool enabled
+        {
+            get { return m_IsEnabled; }
+            set { m_IsEnabled = value; }
+        }
+
         public static FrameRatePlayback frameRatePlayback
         {
             get { return GlobalSettings.instance.frameRatePlayback; }
@@ -85,21 +97,12 @@ namespace UnityEngine.Recorder
         {
             get { return GlobalSettings.instance.synchFrameRate; }
         }
-        
-        public FileNameGenerator baseFileName;
-        public OutputPath destinationPath;
-
-        [SerializeField]
-        InputSettingsList m_InputsSettings = new InputSettingsList();
 
         public InputSettingsList inputsSettings
         {
             get { return m_InputsSettings; }
         }
-
-        [SerializeField]
-        string m_RecorderTypeName;
-
+        
         public string assetID
         {
             get { return m_AssetID; }
@@ -125,11 +128,6 @@ namespace UnityEngine.Recorder
                 return Type.GetType(m_RecorderTypeName);
             }
             set { m_RecorderTypeName = value == null ? string.Empty : value.AssemblyQualifiedName; }
-        }
-
-        public bool fixedDuration
-        {
-            get { return recordMode != RecordMode.Manual; }
         }
 
         public virtual bool ValidityCheck( List<string> errors )

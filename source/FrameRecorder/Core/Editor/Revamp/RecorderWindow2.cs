@@ -11,11 +11,11 @@ using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Recorder.Input;
 using UnityEngine.Timeline;
-using UnityEngine.UI;
 using Button = UnityEngine.Experimental.UIElements.Button;
 using Image = UnityEngine.Experimental.UIElements.Image;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using Toggle = UnityEngine.Experimental.UIElements.Toggle;
 
 namespace UnityEditor.Recorder
 {
@@ -381,6 +381,14 @@ namespace UnityEditor.Recorder
             {
                 var recorderItem = (RecorderItem) visualElement;
                 var settings = recorderItem.settings;
+
+                if (!settings.enabled)
+                {
+                    if (Verbose.enabled)
+                        Debug.Log("Ignoring disabled recorder '" + settings.name + "'");
+                    
+                    continue;
+                }
                 
                 var session = new RecordingSession
                 {
@@ -527,7 +535,9 @@ namespace UnityEditor.Recorder
 
         void OnAddNewRecorder(RecorderInfo info)
         {
-            m_Recordings.Add(new RecorderItem(m_RecordersList, info.recorderType, OnRecordMouseUp));
+            var recorderName = ObjectNames.GetUniqueName(m_Recordings.Children().Select(r => ((RecorderItem)r).settings.name).ToArray(),
+                ObjectNames.NicifyVariableName(info.displayName));
+            m_Recordings.Add(new RecorderItem(m_RecordersList, info.recorderType, recorderName, OnRecordMouseUp));
         }
 
         void OnRecordMouseUp(MouseUpEvent evt)
@@ -612,14 +622,16 @@ namespace UnityEditor.Recorder
         {
             public RecorderSettings settings { get; private set; }
             public RecorderEditor editor { get; private set; }
+
             //public UnityEngine.Recorder.Recorder recorder { get; private set; }
 
             Color m_Color;
             //public string title { get; set; }
 
-            public RecorderItem(RecordersList recordersList, Type recorderType, EventCallback<MouseUpEvent> onRecordMouseUp)
+            public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, EventCallback<MouseUpEvent> onRecordMouseUp)
             {
                 var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
+                savedSettings.name = recorderName;
                 
                 recordersList.Add(savedSettings);
 
@@ -635,23 +647,32 @@ namespace UnityEditor.Recorder
             {
                 settings = savedSettings;
 
-                var recorderType = settings.recorderType;
+                //var recorderType = settings.recorderType;
 
                 //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
                 //settings.inputsSettings.AddRange(settings.GetDefaultInputSettings());
                 
                 //recorder = 
                 editor = (RecorderEditor)Editor.CreateEditor(settings);
-                var title = recorderType.Name; //s.displayName; // TODO Add number or something?
+
                 style.flex = 1.0f;
                 style.flexDirection = FlexDirection.Row;
                 style.backgroundColor = m_Color = RandomColor();
 
                 //container.RegisterCallback<MouseUpEvent>(OnRecordMouseUp);
-                Add(new UnityEngine.Experimental.UIElements.Toggle(() => { }));
+                var toggle = new Toggle(null) { on = settings.enabled };
+                
+                toggle.OnToggle(() =>
+                {
+                    settings.enabled = toggle.on;
+                });
+                
+                
+                Add(toggle);
+                
                 //Add(new Label(title));
-                var titleField = new TextField { text = title };
-                titleField.OnValueChanged(evt => title = evt.newValue);
+                var titleField = new TextField { text = settings.name };
+                titleField.OnValueChanged(evt => settings.name = evt.newValue);
                 Add(titleField);
                 
                 
