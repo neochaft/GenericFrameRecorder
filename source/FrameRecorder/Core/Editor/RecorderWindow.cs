@@ -137,7 +137,6 @@ namespace UnityEditor.Recorder
 
                     if (m_Editor != null)
                     {
-                        m_Editor.showBounds = true;
                         using (new EditorGUI.DisabledScope(EditorApplication.isPlaying))
                         {
                             EditorGUILayout.Separator();
@@ -270,18 +269,18 @@ namespace UnityEditor.Recorder
                 case RecordMode.SingleFrame:
                 case RecordMode.FrameInterval:
                 {
-                    var label = (session.frameIndex < settings.m_StartFrame) ? 
-                            string.Format("Skipping first {0} frames...", settings.m_StartFrame-1) : 
+                    var label = (session.frameIndex < settings.startFrame) ? 
+                            string.Format("Skipping first {0} frames...", settings.startFrame-1) : 
                             string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
-                    EditorGUI.ProgressBar(rect, (session.frameIndex +1) / (float)(settings.m_EndFrame +1), label );
+                    EditorGUI.ProgressBar(rect, (session.frameIndex +1) / (float)(settings.endFrame +1), label );
                     break;
                 }
                 case RecordMode.TimeInterval:
                 {
-                    var label = (session.m_CurrentFrameStartTS < settings.m_StartTime) ?
-                        string.Format("Skipping first {0} seconds...", settings.m_StartTime) :
+                    var label = (session.m_CurrentFrameStartTS < settings.startTime) ?
+                        string.Format("Skipping first {0} seconds...", settings.startTime) :
                         string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
-                    EditorGUI.ProgressBar(rect,(float)session.m_CurrentFrameStartTS / (settings.m_EndTime == 0f ? 0.0001f : settings.m_EndTime), label );
+                    EditorGUI.ProgressBar(rect,(float)session.m_CurrentFrameStartTS / (settings.endTime == 0f ? 0.0001f : settings.endTime), label );
                     break;
                 }
             }

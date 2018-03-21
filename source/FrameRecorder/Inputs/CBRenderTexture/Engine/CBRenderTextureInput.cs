@@ -71,7 +71,7 @@ namespace UnityEngine.Recorder.Input
                 {
                     m_CopyMaterial = new Material(copyShader);
                     copyMaterial.EnableKeyword("OFFSCREEN");
-                    if (cbSettings.m_AllowTransparency)
+                    if (cbSettings.allowTransparency)
                         m_CopyMaterial.EnableKeyword("TRANSPARENCY_ON");
                 }
                 return m_CopyMaterial;
@@ -80,7 +80,7 @@ namespace UnityEngine.Recorder.Input
 
         public override void BeginRecording(RecordingSession session)
         {
-            if (cbSettings.m_FlipFinalOutput)
+            if (cbSettings.flipFinalOutput)
                 m_VFlipper = new TextureFlipper();
 
             m_quad = CreateFullscreenQuad();
@@ -93,7 +93,7 @@ namespace UnityEngine.Recorder.Input
                     int screenWidth = Screen.width;
                     int screenHeight = Screen.height;
 #if UNITY_EDITOR
-                    switch (cbSettings.m_OutputSize)
+                    switch (cbSettings.outputSize)
                     {
                         case EImageDimension.Window:
                         {
@@ -101,7 +101,7 @@ namespace UnityEngine.Recorder.Input
                             outputWidth = screenWidth;
                             outputHeight = screenHeight;
 
-                            if (cbSettings.m_ForceEvenSize)
+                            if (cbSettings.forceEvenSize)
                             {
                                 outputWidth = (outputWidth + 1) & ~1;
                                 outputHeight = (outputHeight + 1) & ~1;
@@ -112,10 +112,10 @@ namespace UnityEngine.Recorder.Input
 
                         default:
                         {
-                            outputHeight = (int)cbSettings.m_OutputSize;
-                            outputWidth = (int)(outputHeight * AspectRatioHelper.GetRealAR(cbSettings.m_AspectRatio));
+                            outputHeight = (int)cbSettings.outputSize;
+                            outputWidth = (int)(outputHeight * AspectRatioHelper.GetRealAR(cbSettings.aspectRatio));
 
-                            if (cbSettings.m_ForceEvenSize)
+                            if (cbSettings.forceEvenSize)
                             {
                                 outputWidth = (outputWidth + 1) & ~1;
                                 outputHeight = (outputHeight + 1) & ~1;
@@ -147,7 +147,7 @@ namespace UnityEngine.Recorder.Input
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (cbSettings.m_CaptureUI)
+            if (cbSettings.captureUI)
             {
                 var uiGO = new GameObject();
                 uiGO.name = "UICamera";
@@ -197,7 +197,7 @@ namespace UnityEngine.Recorder.Input
                 }
                 case EImageSource.TaggedCamera:
                 {
-                    var tag = (settings as CBRenderTextureInputSettings).m_CameraTag;
+                    var tag = (settings as CBRenderTextureInputSettings).cameraTag;
 
                     if (targetCamera == null || targetCamera.gameObject.tag != tag )
                     {
@@ -252,7 +252,7 @@ namespace UnityEngine.Recorder.Input
 
         public override void NewFrameReady(RecordingSession session)
         {
-            if (cbSettings.m_CaptureUI)
+            if (cbSettings.captureUI)
             {
                 // Find canvases
                 var canvases = Object.FindObjectsOfType<Canvas>();
@@ -293,7 +293,7 @@ namespace UnityEngine.Recorder.Input
                 }
             }
 
-            if( cbSettings.m_FlipFinalOutput )
+            if( cbSettings.flipFinalOutput )
                 m_VFlipper.Flip(outputRT);
         }
 

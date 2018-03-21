@@ -18,14 +18,14 @@ namespace UnityEngine.Recorder
 
         ImageRecorderSettings()
         {
-            m_BaseFileName.pattern = "image_<0000>.<ext>";
+            baseFileName.pattern = "image_<0000>.<ext>";
         }
 
         public override List<RecorderInputSetting> GetDefaultInputSettings()
         {
             return new List<RecorderInputSetting>
             {
-                NewInputSettingsObj<CBRenderTextureInputSettings>("Pixels") 
+                NewInputSettingsObj<CBRenderTextureInputSettings>() 
             };
         }
 
@@ -33,12 +33,12 @@ namespace UnityEngine.Recorder
         {
             var ok = base.ValidityCheck(errors);
 
-            if( string.IsNullOrEmpty(m_DestinationPath.GetFullPath() ))
+            if( string.IsNullOrEmpty(destinationPath.GetFullPath() ))
             {
                 ok = false;
                 errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(m_BaseFileName.pattern))
+            if(  string.IsNullOrEmpty(baseFileName.pattern))
             {
                 ok = false;
                 errors.Add("missing file name");
@@ -47,51 +47,36 @@ namespace UnityEngine.Recorder
             return ok;
         }
 
-        public override bool SelfAdjustSettings()
+        public override void SelfAdjustSettings()
         {
             if (inputsSettings.Count == 0 )
-                return false;
-
-            bool adjusted = false;
+                return;
 
             var input = inputsSettings[0] as RenderTextureSamplerSettings;
             if (input != null)
             {
                 var colorSpace = m_OutputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
-                if (input.m_ColorSpace != colorSpace)
-                {
-                    input.m_ColorSpace = colorSpace;
-                    adjusted = true;
-                }
+                input.colorSpace = colorSpace;
             }
 
             var iis = inputsSettings[0] as ImageInputSettings;
             if (iis != null)
             {
-                if (iis.maxSupportedSize != EImageDimension.x4320p_8K)
-                {
-                    iis.maxSupportedSize = EImageDimension.x4320p_8K;
-                    adjusted = true;
-                }
+                iis.maxSupportedSize = EImageDimension.x4320p_8K;
             }
-
-            return adjusted;
         }
 
-        public override List<InputGroupFilter> GetInputGroups()
+        public override InputGroups GetInputGroups()
         {
-            return new List<InputGroupFilter>()
+            return new InputGroups
             {
-                new InputGroupFilter()
+                new List<Type>
                 {
-                    title = "Pixels", typesFilter = new List<InputFilter>()
-                    {
-                        new TInputFilter<ScreenCaptureInputSettings>("Game View"),
-                        new TInputFilter<CBRenderTextureInputSettings>("Targeted Camera(s)"),
-                        new TInputFilter<Camera360InputSettings>("360 View"),
-                        new TInputFilter<RenderTextureInputSettings>("Render Texture Asset"),
-                        new TInputFilter<RenderTextureSamplerSettings>("Sampling"),
-                    }
+                    typeof(ScreenCaptureInputSettings),
+                    typeof(CBRenderTextureInputSettings),
+                    typeof(Camera360InputSettings),
+                    typeof(RenderTextureInputSettings),
+                    typeof(RenderTextureSamplerSettings)
                 }
             };
         }

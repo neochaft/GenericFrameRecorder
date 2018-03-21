@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Recorder;
-using UnityEngine.SocialPlatforms;
 
 namespace UnityEditor.Recorder
 {
@@ -18,8 +17,7 @@ namespace UnityEditor.Recorder
 
         protected class InputEditorState
         {
-            InputEditor.IsFieldAvailableDelegate m_Validator;
-            public bool visible;
+            readonly InputEditor.IsFieldAvailableDelegate m_Validator;
             public InputEditor editor { get; private set; }
 
             RecorderInputSetting m_SettingsObj;
@@ -33,9 +31,9 @@ namespace UnityEditor.Recorder
                     if (editor != null)
                         UnityHelpers.Destroy(editor);
 
-                    editor = Editor.CreateEditor(m_SettingsObj) as InputEditor;
-                    if (editor is InputEditor)
-                        (editor as InputEditor).isFieldAvailableForHost = m_Validator;
+                    editor = CreateEditor(m_SettingsObj) as InputEditor;
+                    if (editor != null)
+                        editor.isFieldAvailableForHost = m_Validator;
                 }
             }
 
@@ -47,8 +45,8 @@ namespace UnityEditor.Recorder
         }
 
         protected List<InputEditorState> m_InputEditors;
-        protected List<string> m_SettingsErrors = new List<string>();
-        RTInputSelector m_RTInputSelector;
+        readonly List<string> m_SettingsErrors = new List<string>();
+        InputSelector m_InputSelector;
 
         SerializedProperty m_CaptureEveryNthFrame;
         SerializedProperty m_DestinationPath;
@@ -61,11 +59,11 @@ namespace UnityEditor.Recorder
                 m_InputEditors = new List<InputEditorState>();
                 
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
-                m_CaptureEveryNthFrame = pf.Find(x => x.m_CaptureEveryNthFrame);
-                m_DestinationPath = pf.Find(w => w.m_DestinationPath);
-                m_BaseFileName = pf.Find(w => w.m_BaseFileName);
+                m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
+                m_DestinationPath = pf.Find(w => w.destinationPath);
+                m_BaseFileName = pf.Find(w => w.baseFileName);
 
-                m_RTInputSelector = new RTInputSelector((RecorderSettings) target);
+                m_InputSelector = new InputSelector((RecorderSettings) target);
 
                 BuildInputEditors();
             }
@@ -85,12 +83,8 @@ namespace UnityEditor.Recorder
             m_InputEditors.Clear();
 
             foreach (var input in rs.inputsSettings)
-                m_InputEditors.Add(new InputEditorState(GetFieldDisplayState, input) { visible = true });
+                m_InputEditors.Add(new InputEditorState(GetFieldDisplayState, input));
         }
-
-        protected virtual void OnDisable() {}
-
-        protected virtual void Awake() {}
 
         public bool ValidityCheck(List<string> errors)
         {
@@ -98,24 +92,11 @@ namespace UnityEditor.Recorder
                 && ((RecorderSettings) target).isPlatformSupported;
         }
 
-        public bool showBounds { get; set; }
-
         bool m_FoldoutInput = true;
         bool m_FoldoutEncoder = true;
         bool m_FoldoutTime = true;
         bool m_FoldoutBounds = true;
         bool m_FoldoutOutput = true;
-
-//        protected virtual void OnGroupGui()
-//        {
-//            //OnInputGroupGui();
-//            //
-//            OnEncodingGroupGui();
-//            OutputPathsGUI();
-//            //OnFrameRateGroupGui();
-//            //OnBoundsGroupGui();
-//            //OnExtraGroupsGui();
-//        }
 
         public override void OnInspectorGUI()
         {
@@ -151,26 +132,19 @@ namespace UnityEditor.Recorder
             OnValidateSettingsGUI();
         }
 
-        public virtual void OnValidateSettingsGUI()
+        protected virtual void OnValidateSettingsGUI()
         {
             m_SettingsErrors.Clear();
             if (!((RecorderSettings) target).ValidityCheck(m_SettingsErrors))
             {
-                for (int i = 0; i < m_SettingsErrors.Count; i++)
+                foreach (var error in m_SettingsErrors)
                 {
-                    EditorGUILayout.HelpBox(m_SettingsErrors[i], MessageType.Warning);
+                    EditorGUILayout.HelpBox(error, MessageType.Warning);
                 }
             }
         }
 
-        protected void AddInputSettings(RecorderInputSetting inputSettings)
-        {
-            var inputs = ((RecorderSettings) target).inputsSettings;
-            inputs.Add(inputSettings);
-            m_InputEditors.Add(new InputEditorState(GetFieldDisplayState, inputSettings) { visible = true });
-        }
-
-        public void ChangeInputSettings(int atIndex, RecorderInputSetting newSettings)
+        void ChangeInputSettings(int atIndex, RecorderInputSetting newSettings)
         {
             if (newSettings != null)
             {
@@ -190,7 +164,7 @@ namespace UnityEditor.Recorder
             for (int i = 0; i < inputs.Count; i++)
             {
                 var input = inputs[i];
-                if (m_RTInputSelector.OnInputGui(i, ref input))
+                if (m_InputSelector.OnInputGui(i, ref input))
                     ChangeInputSettings(i, input);
 
                 m_InputEditors[i].editor.CaptureOptionsGUI();
@@ -219,35 +193,17 @@ namespace UnityEditor.Recorder
         {
             var inputs = ((RecorderSettings) target).inputsSettings;
 
-            //bool multiInputs = inputs.Count > 1;
             for (int i = 0; i < inputs.Count; i++)
             {
                 EditorGUILayout.Separator();
-                //if (multiInputs)
-                //{
-                //m_InputEditors[i].visible = EditorGUILayout.Foldout(m_InputEditors[i].visible, m_InputEditors[i].settingsObj.m_DisplayName ?? "Input " + (i + 1));
-                //EditorGUI.indentLevel++;
-                //}
-
-                //if (m_InputEditors[i].visible)
-                {
-                    OnInputGui(i);
-                }
-
-                //if (multiInputs)
-                //    EditorGUI.indentLevel--;
+                OnInputGui(i);
             }
         }
 
         protected virtual void ExtraOptionsGUI()
         {
-            EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Render Step Frame"));
+            AddProperty(m_CaptureEveryNthFrame, () => EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Render Step Frame")));
         }
-
-//        public virtual void CaptureOptionsGUI()
-//        {
-//            
-//        }
 
         protected virtual void FileTypeAndFormatGUI()
         {   

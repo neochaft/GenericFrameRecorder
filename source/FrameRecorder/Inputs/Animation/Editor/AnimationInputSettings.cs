@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Recorder;
@@ -8,16 +9,16 @@ namespace UnityEditor.Experimental.Recorder.Input
 {
     [Serializable]
     [StoreInScene]
+    [DisplayName("Animation")]
     public class AnimationInputSettings : RecorderInputSetting
     {
         public GameObject gameObject;
-        public bool enabled = false;
+        public bool enabled;
         public bool recursive = true;
-
-        public bool fold = true;
                    
         [HideInInspector]
-        public List<string> bindingTypeName = new List<string>();       
+        public List<string> bindingTypeName = new List<string>();
+
         public List<Type> bindingType
         {
             get

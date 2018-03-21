@@ -39,20 +39,20 @@ namespace UnityEngine.Recorder.Input
         {
             switch (sc)
             {
-                case ESuperSamplingCount.x1:
+                case ESuperSamplingCount.X1:
                     samples[0] = new Vector2(0.0f, 0.0f);
                     break;
-                case ESuperSamplingCount.x2:
+                case ESuperSamplingCount.X2:
                     samples[0] = new Vector2(4.0f, 4.0f);
                     samples[1] = new Vector2(-4.0f, -4.0f);
                     break;
-                case ESuperSamplingCount.x4:
+                case ESuperSamplingCount.X4:
                     samples[0] = new Vector2(-2.0f, -6.0f);
                     samples[1] = new Vector2(6.0f, -2.0f);
                     samples[2] = new Vector2(-6.0f, 2.0f);
                     samples[3] = new Vector2(2.0f, 6.0f);
                     break;
-                case ESuperSamplingCount.x8:
+                case ESuperSamplingCount.X8:
                     samples[0] = new Vector2(1.0f, -3.0f);
                     samples[1] = new Vector2(-1.0f, 3.0f);
                     samples[2] = new Vector2(5.0f, 1.0f);
@@ -63,7 +63,7 @@ namespace UnityEngine.Recorder.Input
                     samples[6] = new Vector2(3.0f, 7.0f);
                     samples[7] = new Vector2(7.0f, -7.0f);
                     break;
-                case ESuperSamplingCount.x16:
+                case ESuperSamplingCount.X16:
                     samples[0] = new Vector2(1.0f, 1.0f);
                     samples[1] = new Vector2(-1.0f, -3.0f);
                     samples[2] = new Vector2(-3.0f, 2.0f);
@@ -102,22 +102,22 @@ namespace UnityEngine.Recorder.Input
             accumulateShader = Shader.Find("Hidden/BeautyShot/Accumulate");
             normalizeShader = Shader.Find("Hidden/BeautyShot/Normalize");
 
-            if( rtsSettings.m_FlipFinalOutput )
+            if( rtsSettings.flipFinalOutput )
                 m_VFlipper = new TextureFlipper();
 
             // Below here is considered 'void Start()', but we run it for directly "various reasons".
-            if (rtsSettings.m_OutputSize > rtsSettings.m_RenderSize)
+            if (rtsSettings.outputSize > rtsSettings.renderSize)
                 throw new UnityException("Upscaling is not supported! Output dimension must be smaller or equal to render dimension.");
 
             // Calculate aspect and render/output sizes
             // Clamp size to 16K, which is the min always supported size in d3d11
             // Force output to divisible by two as x264 doesn't approve of odd image dimensions.
-            var aspect = AspectRatioHelper.GetRealAR(rtsSettings.m_AspectRatio);
-            m_renderHeight = (int)rtsSettings.m_RenderSize;
+            var aspect = AspectRatioHelper.GetRealAR(rtsSettings.aspectRatio);
+            m_renderHeight = (int)rtsSettings.renderSize;
             m_renderWidth = Mathf.Min(16 * 1024, Mathf.RoundToInt(m_renderHeight * aspect));
-            outputHeight = (int)rtsSettings.m_OutputSize;
+            outputHeight = (int)rtsSettings.outputSize;
             outputWidth = Mathf.Min(16 * 1024, Mathf.RoundToInt(outputHeight * aspect));
-            if (rtsSettings.m_ForceEvenSize)
+            if (rtsSettings.forceEvenSize)
             {
                 outputWidth = (outputWidth + 1) & ~1;
                 outputHeight = (outputHeight + 1) & ~1;
@@ -143,8 +143,8 @@ namespace UnityEngine.Recorder.Input
             var rt = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
             rt.Create();
             outputRT = rt;
-            m_samples = new Vector2[(int)rtsSettings.m_SuperSampling];
-            GenerateSamplesMSAA(m_samples, rtsSettings.m_SuperSampling);
+            m_samples = new Vector2[(int)rtsSettings.superSampling];
+            GenerateSamplesMSAA(m_samples, rtsSettings.superSampling);
 
             m_hookedCameras = new List<HookedCamera>();
         }
@@ -213,7 +213,7 @@ namespace UnityEngine.Recorder.Input
                 case EImageSource.TaggedCamera:
                 {
                     GameObject[] taggedObjs;
-                    var tag = (settings as RenderTextureSamplerSettings).m_CameraTag;
+                    var tag = (settings as RenderTextureSamplerSettings).cameraTag;
                     try
                     {
                         taggedObjs = GameObject.FindGameObjectsWithTag(tag);
@@ -302,25 +302,25 @@ namespace UnityEngine.Recorder.Input
         {
             PerformSubSampling();
 
-            if (rtsSettings.m_RenderSize == rtsSettings.m_OutputSize)
+            if (rtsSettings.renderSize == rtsSettings.outputSize)
             {
                 // Blit with normalization if sizes match.
-                m_normalizeMaterial.SetFloat("_NormalizationFactor", 1.0f / (float)rtsSettings.m_SuperSampling);
-                m_normalizeMaterial.SetInt("_ApplyGammaCorrection", QualitySettings.activeColorSpace == ColorSpace.Linear && rtsSettings.m_ColorSpace == ColorSpace.Gamma ? 1 : 0);
+                m_normalizeMaterial.SetFloat("_NormalizationFactor", 1.0f / (float)rtsSettings.superSampling);
+                m_normalizeMaterial.SetInt("_ApplyGammaCorrection", QualitySettings.activeColorSpace == ColorSpace.Linear && rtsSettings.colorSpace == ColorSpace.Gamma ? 1 : 0);
                 Graphics.Blit(m_renderRT, outputRT, m_normalizeMaterial);
             }
             else
             {
                 // Ideally we would use a separable filter here, but we're massively bound by readback and disk anyway for hi-res.
                 m_superMaterial.SetVector("_Target_TexelSize", new Vector4(1f / outputWidth, 1f / outputHeight, outputWidth, outputHeight));
-                m_superMaterial.SetFloat("_KernelCosPower", rtsSettings.m_SuperKernelPower);
-                m_superMaterial.SetFloat("_KernelScale", rtsSettings.m_SuperKernelScale);
-                m_superMaterial.SetFloat("_NormalizationFactor", 1.0f / (float)rtsSettings.m_SuperSampling);
-                m_superMaterial.SetInt("_ApplyGammaCorrection", QualitySettings.activeColorSpace == ColorSpace.Linear && rtsSettings.m_ColorSpace == ColorSpace.Gamma ? 1 : 0);
+                m_superMaterial.SetFloat("_KernelCosPower", rtsSettings.superKernelPower);
+                m_superMaterial.SetFloat("_KernelScale", rtsSettings.superKernelScale);
+                m_superMaterial.SetFloat("_NormalizationFactor", 1.0f / (float)rtsSettings.superSampling);
+                m_superMaterial.SetInt("_ApplyGammaCorrection", QualitySettings.activeColorSpace == ColorSpace.Linear && rtsSettings.colorSpace == ColorSpace.Gamma ? 1 : 0);
                 Graphics.Blit(m_renderRT, outputRT, m_superMaterial);
             }
 
-            if (rtsSettings.m_FlipFinalOutput)
+            if (rtsSettings.flipFinalOutput)
                 m_VFlipper.Flip(outputRT);
         }
 
@@ -354,7 +354,7 @@ namespace UnityEngine.Recorder.Input
             {
                 var cam = hookedCam.camera;
 
-                for (int i = 0, n = (int)rtsSettings.m_SuperSampling; i < n; i++)
+                for (int i = 0, n = (int)rtsSettings.superSampling; i < n; i++)
                 {
                     var oldProjectionMatrix = cam.projectionMatrix;
                     var oldRect = cam.rect;

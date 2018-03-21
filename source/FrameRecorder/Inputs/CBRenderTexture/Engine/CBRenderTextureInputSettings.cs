@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace UnityEngine.Recorder.Input
 {
+    [DisplayName("Targeted Camera(s)")]
     public class CBRenderTextureInputSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.ActiveCameras;
-        public string m_CameraTag;
-        public bool m_FlipFinalOutput = false;
-        public bool m_AllowTransparency = false;
-        public bool m_CaptureUI = false;
+        public string cameraTag;
+        public bool flipFinalOutput;
+        public bool allowTransparency;
+        public bool captureUI;
 
         public override Type inputType
         {
@@ -19,7 +21,7 @@ namespace UnityEngine.Recorder.Input
         public override bool ValidityCheck( List<string> errors )
         {
             var ok = base.ValidityCheck(errors);
-            if (source == EImageSource.TaggedCamera && string.IsNullOrEmpty(m_CameraTag))
+            if (source == EImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
             {
                 ok = false;
                 errors.Add("Missing tag for camera selection");

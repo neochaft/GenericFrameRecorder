@@ -27,31 +27,9 @@ namespace UnityEngine.Recorder
         FrameInterval,
         TimeInterval
     }
-
-    public class InputFilter
+    
+    public class InputGroups : List<IEnumerable<Type>>
     {
-        public InputFilter(string title, Type type)
-        {
-            this.title = title;
-            this.type = type;
-        }
-        public string title { get; private set; }
-        public Type type { get; private set; }
-
-    }
-
-
-    public class TInputFilter<T> : InputFilter
-    {
-        public TInputFilter(string title) : base( title, typeof(T))
-        {
-        }
-    }
-
-    public struct InputGroupFilter
-    {
-        public string title;
-        public List<InputFilter> typesFilter;
     }
 
     /// <summary>
@@ -62,39 +40,38 @@ namespace UnityEngine.Recorder
     /// - Some of the fields in this class actually don't apply to ALL recorders but are so common that they are included 
     ///   here for convenience.
     /// </summary>    
-    //[ExecuteInEditMode]
     public abstract class RecorderSettings : ScriptableObject
     {
         [SerializeField]
         string m_AssetID;
-        public int m_CaptureEveryNthFrame = 1;
+        public int captureEveryNthFrame = 1;
         
-        public FrameRatePlayback frameRatePlayback
+        public static FrameRatePlayback frameRatePlayback
         {
             get { return GlobalSettings.instance.frameRatePlayback; }
         }
         
-        public double m_FrameRate
+        public double frameRate
         {
             get { return GlobalSettings.instance.frameRate; }
         }
         
-        public int m_StartFrame
+        public int startFrame
         {
             get { return GlobalSettings.instance.startFrame; }
         }
         
-        public int m_EndFrame
+        public int endFrame
         {
             get { return GlobalSettings.instance.endFrame; }
         }
         
-        public float m_StartTime
+        public float startTime
         {
             get { return GlobalSettings.instance.startTime; }
         }
         
-        public float m_EndTime
+        public float endTime
         {
             get { return GlobalSettings.instance.endTime; }
         }
@@ -104,22 +81,21 @@ namespace UnityEngine.Recorder
             get { return GlobalSettings.instance.recordMode; }
         }
         
-        public bool m_SynchFrameRate
+        public bool synchFrameRate
         {
             get { return GlobalSettings.instance.synchFrameRate; }
         }
         
-        public FileNameGenerator m_BaseFileName;
-        public OutputPath m_DestinationPath;
+        public FileNameGenerator baseFileName;
+        public OutputPath destinationPath;
 
         [SerializeField]
-        private InputSettingsList m_InputsSettings = new InputSettingsList();
+        InputSettingsList m_InputsSettings = new InputSettingsList();
 
         public InputSettingsList inputsSettings
         {
             get { return m_InputsSettings; }
         }
-
 
         [SerializeField]
         string m_RecorderTypeName;
@@ -136,8 +112,8 @@ namespace UnityEngine.Recorder
 
         protected RecorderSettings()
         {
-            m_DestinationPath.root = OutputPath.ERoot.Current;
-            m_DestinationPath.leaf = "Recordings";
+            destinationPath.root = OutputPath.ERoot.Current;
+            destinationPath.leaf = "Recordings";
         }
 
         public Type recorderType
@@ -170,13 +146,13 @@ namespace UnityEngine.Recorder
                 }
             }
 
-            if (Math.Abs(m_FrameRate) <= float.Epsilon)
+            if (Math.Abs(frameRate) <= float.Epsilon)
             {
                 ok = false;
                 errors.Add("Invalid frame rate.");
             }
 
-            if (m_CaptureEveryNthFrame <= 0)
+            if (captureEveryNthFrame <= 0)
             {
                 ok = false;
                 errors.Add("Invalid frame skip value");
@@ -229,28 +205,26 @@ namespace UnityEngine.Recorder
 
         public abstract List<RecorderInputSetting> GetDefaultInputSettings();
 
-        public T NewInputSettingsObj<T>(string title) where T : class
+        protected T NewInputSettingsObj<T>() where T : class
         {
-            return NewInputSettingsObj(typeof(T), title) as T;
+            return NewInputSettingsObj(typeof(T)) as T;
         }
 
-        public virtual RecorderInputSetting NewInputSettingsObj(Type type, string title)
+        public virtual RecorderInputSetting NewInputSettingsObj(Type type)
         {
-            var obj = (RecorderInputSetting)ScriptableObject.CreateInstance(type);
-            obj.m_DisplayName = title;
+            var obj = (RecorderInputSetting) CreateInstance(type);
             obj.name = Guid.NewGuid().ToString();
             return obj;
         }
 
-        public abstract List<InputGroupFilter> GetInputGroups();
+        public abstract InputGroups GetInputGroups();
 
         /// <summary>
         /// Allows for recorder specific settings logic to correct/adjust settings that might be missed by it's editor.
         /// </summary>
         /// <returns>true if setting where changed</returns>
-        public virtual bool SelfAdjustSettings()
+        public virtual void SelfAdjustSettings()
         {
-            return false;
         }
 
     }

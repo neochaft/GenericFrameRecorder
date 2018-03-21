@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
 
             settings.SelfAdjustSettings(); // ignore return value.
 
-            var fixedRate = settings.frameRatePlayback == FrameRatePlayback.Constant ? (int)settings.m_FrameRate : 0;
+            var fixedRate = RecorderSettings.frameRatePlayback == FrameRatePlayback.Constant ? (int)settings.frameRate : 0;
             if (fixedRate > 0)
             {
                 if (Time.captureFramerate != 0 && fixedRate != Time.captureFramerate )
@@ -69,7 +69,7 @@ namespace UnityEngine.Recorder
                 else if( Time.captureFramerate == 0 && Verbose.enabled )
                     Debug.Log("Frame recorder set fixed frame rate to " + fixedRate);
 
-                Time.captureFramerate = (int)fixedRate;
+                Time.captureFramerate = fixedRate;
 
                 sm_CaptureFrameRateCount++;
                 m_ModifiedCaptureFR = true;
@@ -78,7 +78,7 @@ namespace UnityEngine.Recorder
             m_Inputs = new List<RecorderInput>();
             foreach (var inputSettings in settings.inputsSettings)
             {
-                var input = Activator.CreateInstance(inputSettings.inputType) as RecorderInput;
+                var input = (RecorderInput)Activator.CreateInstance(inputSettings.inputType);
                 input.settings = inputSettings;
                 m_Inputs.Add(input);
                 SignalInputsOfStage(ERecordingSessionStage.SessionCreated, session);
@@ -116,14 +116,16 @@ namespace UnityEngine.Recorder
 
             foreach (var input in m_Inputs)
             {
-                if (input is IDisposable)
-                    (input as IDisposable).Dispose();
+                if (input != null)
+                    input.Dispose();
             }
 
             if(Verbose.enabled)
                 Debug.Log(string.Format("{0} recording stopped, total frame count: {1}", GetType().Name, recordedFramesCount));
         }
+        
         public abstract void RecordFrame(RecordingSession ctx);
+        
         public virtual void PrepareNewFrame(RecordingSession ctx)
         {
         }
@@ -131,10 +133,10 @@ namespace UnityEngine.Recorder
         public virtual bool SkipFrame(RecordingSession ctx)
         {
             return !recording 
-                || (ctx.frameIndex % settings.m_CaptureEveryNthFrame) != 0 
-                || ( settings.recordMode == RecordMode.TimeInterval && ctx.m_CurrentFrameStartTS < settings.m_StartTime )
-                || ( settings.recordMode == RecordMode.FrameInterval && ctx.frameIndex < settings.m_StartFrame )
-                || ( settings.recordMode == RecordMode.SingleFrame && ctx.frameIndex < settings.m_StartFrame );
+                || (ctx.frameIndex % settings.captureEveryNthFrame) != 0 
+                || ( settings.recordMode == RecordMode.TimeInterval && ctx.m_CurrentFrameStartTS < settings.startTime )
+                || ( settings.recordMode == RecordMode.FrameInterval && ctx.frameIndex < settings.startFrame )
+                || ( settings.recordMode == RecordMode.SingleFrame && ctx.frameIndex < settings.startFrame );
         }
 
         public bool recording { get; protected set; }

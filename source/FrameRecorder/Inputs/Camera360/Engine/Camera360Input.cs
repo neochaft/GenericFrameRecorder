@@ -40,10 +40,10 @@ namespace UnityEngine.Recorder.Input
 
         public override void BeginRecording(RecordingSession session)
         {
-            if (settings360.m_FlipFinalOutput)
+            if (settings360.flipFinalOutput)
                 m_VFlipper = new TextureFlipper();
-            outputWidth = settings360.m_OutputWidth;
-            outputHeight = settings360.m_OutputHeight;
+            outputWidth = settings360.outputWidth;
+            outputHeight = settings360.outputHeight;
         }
 
         public override void NewFrameStarting(RecordingSession session)
@@ -59,7 +59,7 @@ namespace UnityEngine.Recorder.Input
 
                 case EImageSource.TaggedCamera:
                 {
-                    var tag = settings360.m_CameraTag;
+                    var tag = settings360.cameraTag;
 
                     if (targetCamera == null || targetCamera.gameObject.tag != tag )
                     {
@@ -91,12 +91,12 @@ namespace UnityEngine.Recorder.Input
         {
             var eyesEyeSepBackup = targetCamera.stereoSeparation;
             var eyeMaskBackup = targetCamera.stereoTargetEye;
-            if (settings360.m_RenderStereo)
+            if (settings360.renderStereo)
             {
-                targetCamera.stereoSeparation = settings360.m_StereoSeparation;
+                targetCamera.stereoSeparation = settings360.stereoSeparation;
                 targetCamera.stereoTargetEye = StereoTargetEyeMask.Both;
                 targetCamera.RenderToCubemap(m_Cubemap1, 63, Camera.MonoOrStereoscopicEye.Left);
-                targetCamera.stereoSeparation = settings360.m_StereoSeparation;
+                targetCamera.stereoSeparation = settings360.stereoSeparation;
                 targetCamera.stereoTargetEye = StereoTargetEyeMask.Both;
                 targetCamera.RenderToCubemap(m_Cubemap2, 63, Camera.MonoOrStereoscopicEye.Right);
             }
@@ -105,7 +105,7 @@ namespace UnityEngine.Recorder.Input
                 targetCamera.RenderToCubemap(m_Cubemap1, 63, Camera.MonoOrStereoscopicEye.Mono);
             }
             
-            if (settings360.m_RenderStereo)
+            if (settings360.renderStereo)
             {
                 m_Cubemap1.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Left);
                 m_Cubemap2.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Right);
@@ -115,7 +115,7 @@ namespace UnityEngine.Recorder.Input
                 m_Cubemap1.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Mono);
             }
             
-            if (settings360.m_FlipFinalOutput)
+            if (settings360.flipFinalOutput)
                 m_VFlipper.Flip(outputRT);
                 
             targetCamera.stereoSeparation = eyesEyeSepBackup;
@@ -156,12 +156,12 @@ namespace UnityEngine.Recorder.Input
                 dimension = TextureDimension.Tex2D,
                 antiAliasing = 1
             };
-            m_Cubemap1 = new RenderTexture(settings360.m_MapSize, settings360.m_MapSize, 24, RenderTextureFormat.ARGB32)
+            m_Cubemap1 = new RenderTexture(settings360.mapSize, settings360.mapSize, 24, RenderTextureFormat.ARGB32)
             {
                 dimension = TextureDimension.Cube ,
                 
             };
-            m_Cubemap2 = new RenderTexture(settings360.m_MapSize, settings360.m_MapSize, 24, RenderTextureFormat.ARGB32)
+            m_Cubemap2 = new RenderTexture(settings360.mapSize, settings360.mapSize, 24, RenderTextureFormat.ARGB32)
             {
                 dimension = TextureDimension.Cube 
             };

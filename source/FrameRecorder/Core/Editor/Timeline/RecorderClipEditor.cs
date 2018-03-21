@@ -43,7 +43,6 @@ namespace UnityEditor.Recorder.Timeline
 
                 if (m_Editor != null)
                 {
-                    m_Editor.showBounds = false;
                     m_Timeline = FindTimelineAsset();
 
                     PushTimelineIntoRecorder();
@@ -146,7 +145,7 @@ namespace UnityEditor.Recorder.Timeline
             //settings.recordMode = RecordMode.Manual; // TODO Fix Me!!!
 
             // Time
-            m_Timeline.editorSettings.fps = (float)settings.m_FrameRate;
+            m_Timeline.editorSettings.fps = (float)settings.frameRate;
         }
     }
 }

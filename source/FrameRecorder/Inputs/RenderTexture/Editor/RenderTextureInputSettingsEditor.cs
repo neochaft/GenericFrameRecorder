@@ -16,7 +16,7 @@ namespace UnityEditor.Recorder.Input
                 return;
 
             var pf = new PropertyFinder<RenderTextureInputSettings>(serializedObject);
-            m_SourceRTxtr = pf.Find(w => w.m_SourceRTxtr);
+            m_SourceRTxtr = pf.Find(w => w.sourceRTxtr);
         }
 
         public override void OnInspectorGUI()

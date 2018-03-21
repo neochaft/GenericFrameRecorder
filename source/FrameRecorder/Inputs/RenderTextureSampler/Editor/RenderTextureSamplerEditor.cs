@@ -26,12 +26,12 @@ namespace UnityEditor.Recorder.Input
 
             var pf = new PropertyFinder<RenderTextureSamplerSettings>(serializedObject);
             m_Source = pf.Find(w => w.source);
-            m_RenderSize = pf.Find(w => w.m_RenderSize);
-            m_AspectRatio = pf.Find(w => w.m_AspectRatio);
-            m_SuperSampling = pf.Find(w => w.m_SuperSampling);
-            m_FinalSize = pf.Find(w => w.m_OutputSize);
-            m_CameraTag = pf.Find(w => w.m_CameraTag);
-            m_FlipFinalOutput = pf.Find( w => w.m_FlipFinalOutput );
+            m_RenderSize = pf.Find(w => w.renderSize);
+            m_AspectRatio = pf.Find(w => w.aspectRatio);
+            m_SuperSampling = pf.Find(w => w.superSampling);
+            m_FinalSize = pf.Find(w => w.outputSize);
+            m_CameraTag = pf.Find(w => w.cameraTag);
+            m_FlipFinalOutput = pf.Find( w => w.flipFinalOutput );
             m_ResSelector = new ResolutionSelector();
         }
 
@@ -89,7 +89,7 @@ namespace UnityEditor.Recorder.Input
             {
                 using (new EditorGUI.DisabledScope(true))
                 {
-                    EditorGUILayout.TextField("Color Space", (target as RenderTextureSamplerSettings).m_ColorSpace.ToString());
+                    EditorGUILayout.TextField("Color Space", (target as RenderTextureSamplerSettings).colorSpace.ToString());
                     EditorGUILayout.PropertyField(m_FlipFinalOutput, new GUIContent("Flip output"));
                 }
             }

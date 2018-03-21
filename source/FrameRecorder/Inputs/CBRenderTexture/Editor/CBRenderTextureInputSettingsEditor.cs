@@ -27,13 +27,13 @@ namespace UnityEditor.Recorder.Input
 
             var pf = new PropertyFinder<CBRenderTextureInputSettings>(serializedObject);
             m_Source = pf.Find(w => w.source);
-            m_CameraTag = pf.Find(w => w.m_CameraTag);
+            m_CameraTag = pf.Find(w => w.cameraTag);
 
-            m_RenderSize = pf.Find(w => w.m_OutputSize);
-            m_RenderAspect = pf.Find(w => w.m_AspectRatio);
-            m_FlipFinalOutput = pf.Find( w => w.m_FlipFinalOutput );
-            m_Transparency = pf.Find(w => w.m_AllowTransparency);
-            m_IncludeUI = pf.Find(w => w.m_CaptureUI);
+            m_RenderSize = pf.Find(w => w.outputSize);
+            m_RenderAspect = pf.Find(w => w.aspectRatio);
+            m_FlipFinalOutput = pf.Find( w => w.flipFinalOutput );
+            m_Transparency = pf.Find(w => w.allowTransparency);
+            m_IncludeUI = pf.Find(w => w.captureUI);
 
             m_ResSelector = new ResolutionSelector();
         }

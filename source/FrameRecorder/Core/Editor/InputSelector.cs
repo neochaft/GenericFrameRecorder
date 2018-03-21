@@ -1,49 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    public class RTInputSelector
+    public class InputSelector
     {
         readonly RecorderSettings m_RecorderSettings;
 
         struct InputGroup
         {
-            public string title;
             public string[] captions;
             public Type[] types;
         }
 
         readonly SortedDictionary<int, InputGroup> m_Groups;
 
-        public RTInputSelector( RecorderSettings recorderSettings  )
+        public InputSelector(RecorderSettings recorderSettings)
         {
             m_Groups = new SortedDictionary<int, InputGroup>();
             m_RecorderSettings = recorderSettings;
 
-            AddGroups( recorderSettings.GetInputGroups() );
+            AddGroups(recorderSettings.GetInputGroups());
         }
 
-        void AddGroups(IList<InputGroupFilter> groups)
+        void AddGroups(InputGroups typeGroups)
         {
-            for(int i = 0; i < groups.Count; i++)
+            foreach (var group in typeGroups)
             {
                 m_Groups.Add(m_Groups.Count,
-                    new InputGroup()
+                    new InputGroup
                     {
-                        title = groups[i].title,
-                        captions = groups[i].typesFilter.Select(x => x.title).ToArray(),
-                        types = groups[i].typesFilter.Select(x => x.type).ToArray(),
+                        captions = group.Select(GetTypeDisplayName).ToArray(),
+                        types = group.ToArray()
                     });
             }
         }
 
-        public bool OnInputGui( int groupIndex, ref RecorderInputSetting input)
+        static string GetTypeDisplayName(Type type)
+        {
+            var displayNameAttribute = type.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute;
+
+            return displayNameAttribute != null
+                ? displayNameAttribute.DisplayName
+                : ObjectNames.NicifyVariableName(type.Name);
+        }
+
+        public bool OnInputGui(int groupIndex, ref RecorderInputSetting input)
         {
             if (!m_Groups.ContainsKey(groupIndex))
                 return false;
+            
             if (m_Groups[groupIndex].types.Length < 2)
                 return false;
 
@@ -61,7 +71,7 @@ namespace UnityEditor.Recorder
 
             if (index != newIndex)
             {
-                input = m_RecorderSettings.NewInputSettingsObj( m_Groups[groupIndex].types[newIndex], m_Groups[groupIndex].title );
+                input = m_RecorderSettings.NewInputSettingsObj(m_Groups[groupIndex].types[newIndex]);
                 return true;
             }
 

@@ -1,27 +1,20 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace UnityEngine.Recorder
 {
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
-    public abstract class  RecorderInputSetting : ScriptableObject
+    public abstract class RecorderInputSetting : ScriptableObject
     {
         public abstract Type inputType { get; }
         public abstract bool ValidityCheck(List<string> errors);
-        public string m_DisplayName;
-        public string m_Id;
+        
+        public string id;
 
-        protected virtual void OnEnable()
+        protected void OnEnable()
         {
-            if (string.IsNullOrEmpty(m_Id))
-                m_Id = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(id))
+                id = Guid.NewGuid().ToString();
         }
-
 
         public bool storeInScene
         {

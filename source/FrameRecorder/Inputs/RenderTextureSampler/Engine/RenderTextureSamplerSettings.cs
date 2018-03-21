@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace UnityEngine.Recorder.Input
 {
-    /// <summary>
-    /// What is it: 
-    /// Motivation: 
-    /// </summary>
     public enum ESuperSamplingCount
     {
-        x1 = 1,
-        x2 = 2,
-        x4 = 4,
-        x8 = 8,
-        x16 = 16,
+        X1 = 1,
+        X2 = 2,
+        X4 = 4,
+        X8 = 8,
+        X16 = 16,
     }
 
+    [DisplayName("Texture Sampling")]
     public class RenderTextureSamplerSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.ActiveCameras;
-        public EImageDimension m_RenderSize = EImageDimension.x720p_HD;
-        public ESuperSamplingCount m_SuperSampling = ESuperSamplingCount.x1;
-        public float m_SuperKernelPower = 16f;
-        public float m_SuperKernelScale = 1f;
-        public string m_CameraTag;
-        public ColorSpace m_ColorSpace = ColorSpace.Gamma;
-        public bool m_FlipFinalOutput = false;
+        public EImageDimension renderSize = EImageDimension.x720p_HD;
+        public ESuperSamplingCount superSampling = ESuperSamplingCount.X1;
+        public float superKernelPower = 16f;
+        public float superKernelScale = 1f;
+        public string cameraTag;
+        public ColorSpace colorSpace = ColorSpace.Gamma;
+        public bool flipFinalOutput = false;
 
         public override Type inputType
         {

@@ -26,15 +26,15 @@ namespace UnityEditor.Recorder
 
         MediaRecorderSettings()
         {
-            m_BaseFileName.pattern = "movie.<ext>";
+            baseFileName.pattern = "movie.<ext>";
         }
 
         public override List<RecorderInputSetting> GetDefaultInputSettings()
         {
             return new List<RecorderInputSetting>()
             {
-                NewInputSettingsObj<CBRenderTextureInputSettings>("Pixels"),
-                NewInputSettingsObj<AudioInputSettings>("Audio")
+                NewInputSettingsObj<CBRenderTextureInputSettings>(),
+                NewInputSettingsObj<AudioInputSettings>()
             };
         }
 
@@ -42,12 +42,12 @@ namespace UnityEditor.Recorder
         {
             var ok = base.ValidityCheck(errors);
 
-            if( string.IsNullOrEmpty(m_DestinationPath.GetFullPath() ))
+            if( string.IsNullOrEmpty(destinationPath.GetFullPath() ))
             {
                 ok = false;
                 errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(m_BaseFileName.pattern))
+            if(  string.IsNullOrEmpty(baseFileName.pattern))
             {
                 ok = false;
                 errors.Add("missing file name");
@@ -56,72 +56,56 @@ namespace UnityEditor.Recorder
             return ok;
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type, string title)
+        public override RecorderInputSetting NewInputSettingsObj(Type type)
         {
-            var obj = base.NewInputSettingsObj(type, title);
-            if (type == typeof(CBRenderTextureInputSettings))
+            var obj = base.NewInputSettingsObj(type);
+
+            var imageInput = obj as ImageInputSettings;
+            if (imageInput != null)
             {
-                (obj as CBRenderTextureInputSettings).m_ForceEvenSize = true;
-                (obj as CBRenderTextureInputSettings).m_FlipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
+                imageInput.forceEvenSize = true;
             }
-            if (type == typeof(RenderTextureSamplerSettings))
+            
+            var cbRenderTexture = obj as CBRenderTextureInputSettings;
+            if (cbRenderTexture != null)
             {
-                (obj as RenderTextureSamplerSettings).m_ForceEvenSize = true;
-            }
-            if (type == typeof(ScreenCaptureInputSettings))
-            {
-                (obj as ScreenCaptureInputSettings).m_ForceEvenSize = true;
+                cbRenderTexture.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
             }
 
             return obj ;
         }
 
-        public override List<InputGroupFilter> GetInputGroups()
+        public override InputGroups GetInputGroups()
         {
-            return new List<InputGroupFilter>()
+            return new InputGroups
             {
-                new InputGroupFilter()
+                new List<Type>
                 {
-                    title = "Pixels",
-                    typesFilter = new List<InputFilter>()
-                    {
-                        new TInputFilter<ScreenCaptureInputSettings>("Game View"),
-                        new TInputFilter<CBRenderTextureInputSettings>("Targeted Camera(s)"),
-                        new TInputFilter<Camera360InputSettings>("360 View"),
-                        new TInputFilter<RenderTextureInputSettings>("Render Texture Asset"),
-                        new TInputFilter<RenderTextureSamplerSettings>("Sampling"),
-                    }
+                    typeof(ScreenCaptureInputSettings),
+                    typeof(CBRenderTextureInputSettings),
+                    typeof(Camera360InputSettings),
+                    typeof(RenderTextureInputSettings),
+                    typeof(RenderTextureSamplerSettings)
                 },
-                new InputGroupFilter()
+                
+                new List<Type>
                 {
-                    title = "Sound",
-                    typesFilter = new List<InputFilter>()
-                    {
-                        new TInputFilter<AudioInputSettings>("Audio"),
-                    }
+                    typeof(AudioInputSettings)
                 }
             };
         }
 
-        public override bool SelfAdjustSettings()
+        public override void SelfAdjustSettings()
         {
             if (inputsSettings.Count == 0 )
-                return false;
+                return;
 
-            var adjusted = false;
-
-            if (inputsSettings[0] is ImageInputSettings)
+            var iis = inputsSettings[0] as ImageInputSettings;
+            if (iis != null)
             {
-                var iis = (ImageInputSettings)inputsSettings[0];
                 var maxRes = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
-                if (iis.maxSupportedSize != maxRes)
-                {
-                    iis.maxSupportedSize = maxRes;
-                    adjusted = true;
-                }
+                iis.maxSupportedSize = maxRes;
             }
-
-            return adjusted;
         }
        
     }

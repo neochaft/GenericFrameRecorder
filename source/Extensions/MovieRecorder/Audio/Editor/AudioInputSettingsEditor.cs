@@ -22,7 +22,7 @@ namespace UnityEditor.Recorder.Input
                 return;
 
             var pf = new PropertyFinder<AudioInputSettings>(serializedObject);
-            m_PreserveAudio = pf.Find(w => w.m_PreserveAudio);
+            m_PreserveAudio = pf.Find(w => w.preserveAudio);
 
 #if RECORD_AUDIO_MIXERS
 	    m_AudioMixerGroups = serializedObject.FindProperty<AudioInputSettings>(x => x.m_AudioMixerGroups);

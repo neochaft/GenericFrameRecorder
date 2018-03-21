@@ -40,7 +40,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         protected override EFieldDisplayState GetFieldDisplayState( SerializedProperty property)
         {
-            if( property.name == "m_CaptureEveryNthFrame" || property.name == "m_AllowTransparency" )
+            if( property.name == "captureEveryNthFrame" || property.name == "allowTransparency" )
                 return EFieldDisplayState.Hidden;
             return base.GetFieldDisplayState(property);
         }

@@ -7,15 +7,15 @@ namespace UnityEngine.Recorder.Input
     public abstract class ImageInputSettings : RecorderInputSetting
     {
         public EImageDimension maxSupportedSize { get; set; } // dynamic & contextual: do not save
-        public EImageDimension m_OutputSize = EImageDimension.x720p_HD;
-        public EImageAspect m_AspectRatio = EImageAspect.x16_9;
-        public bool m_ForceEvenSize = false;
+        public EImageDimension outputSize = EImageDimension.x720p_HD;
+        public EImageAspect aspectRatio = EImageAspect.x16_9;
+        public bool forceEvenSize;
 
         public override bool ValidityCheck( List<string> errors )
         {
             var ok = true;
 
-            if (m_OutputSize > maxSupportedSize)
+            if (outputSize > maxSupportedSize)
             {
                 ok = false;
                 errors.Add("Output size exceeds maximum supported size: " + (int)maxSupportedSize );

@@ -41,7 +41,7 @@ namespace UnityEngine.Recorder
                     bool found = false;
                     foreach (var input in sceneInputs.m_Settings)
                     {
-                        if (input.m_Id == inputAsset.m_Id)
+                        if (input.id == inputAsset.id)
                         {
                             m_InputsSettings.Add(input);
                             found = true;
@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
                             else if( Verbose.enabled )
                                 Debug.Log("Recorder input setting missing from scene, adding with default state.");
                             var replacementInput = ScriptableObject.CreateInstance(binder.inputType) as RecorderInputSetting;
-                            replacementInput.m_Id = inputAsset.m_Id;
+                            replacementInput.id = inputAsset.id;
                             m_InputsSettings.Add(replacementInput);
                         }
                     }
@@ -146,7 +146,7 @@ namespace UnityEngine.Recorder
             {
                 var x = m_InputsSettings[i];
                 var ib = x as InputBinder;
-                if ( ib != null && ib.m_Id == input.m_Id) 
+                if ( ib != null && ib.id == input.id) 
                 {
                     m_InputsSettings[i] = input;
                     return;
@@ -180,9 +180,8 @@ namespace UnityEngine.Recorder
             {
                 var binder = ScriptableObject.CreateInstance<InputBinder>();
                 binder.name = "Scene-Stored";
-                binder.m_DisplayName = input.m_DisplayName;
                 binder.typeName = input.GetType().AssemblyQualifiedName;
-                binder.m_Id = input.m_Id;
+                binder.id = input.id;
                 m_InputsSettingsAssets[index] = binder;
                 SceneHook.RegisterInputSettingObj(ownerRecorderSettingsAssetId, input);
 
@@ -232,8 +231,7 @@ namespace UnityEngine.Recorder
                 if (ib != null && m_InputsSettings[i] == null)
                 {
                     var newInput = ScriptableObject.CreateInstance(ib.inputType) as RecorderInputSetting;
-                    newInput.m_DisplayName = ib.m_DisplayName;
-                    newInput.m_Id = ib.m_Id;
+                    newInput.id = ib.id;
                     m_InputsSettings[i] = newInput;
                     SceneHook.RegisterInputSettingObj(ownerRecorderSettingsAssetId, newInput);
                 }

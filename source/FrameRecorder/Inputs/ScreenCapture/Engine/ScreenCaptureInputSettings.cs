@@ -3,9 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.ComponentModel;
 
 namespace UnityEngine.Recorder.Input
 {
+    [DisplayName("Game View")]
     public class ScreenCaptureInputSettings : ImageInputSettings
     {
         public override Type inputType

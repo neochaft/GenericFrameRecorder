@@ -21,7 +21,7 @@ namespace UnityEditor.Experimental.Recorder
         {
             return new List<RecorderInputSetting>()
             {
-                NewInputSettingsObj<AnimationInputSettings>("Animation") 
+                NewInputSettingsObj<AnimationInputSettings>() 
             };
         }
         
@@ -35,17 +35,13 @@ namespace UnityEditor.Experimental.Recorder
             }
         }
 
-        public override List<InputGroupFilter> GetInputGroups()
+        public override InputGroups GetInputGroups()
         {
-            return new List<InputGroupFilter>()
+            return new InputGroups
             {
-                new InputGroupFilter()
+                new List<Type>
                 {
-                    title = "Animation",
-                    typesFilter = new List<InputFilter>()
-                    {
-                        new TInputFilter<AnimationClipSettings>("GameObject Recorder"),
-                    }
+                    typeof(AnimationClipSettings)
                 }
             };
         }
@@ -59,6 +55,7 @@ namespace UnityEditor.Experimental.Recorder
                 ok = false;
                 errors.Add("Invalid state!");
             }
+            
             if (!inputsSettings.Cast<AnimationInputSettings>().Any(x => x != null && x.enabled && x.gameObject != null ))
             {
                 ok = false;

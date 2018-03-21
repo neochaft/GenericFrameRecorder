@@ -47,7 +47,7 @@ namespace UnityEngine.Recorder
 
         public float recorderTime
         {
-            get { return (float)(m_CurrentFrameStartTS - settings.m_StartTime); }
+            get { return (float)(m_CurrentFrameStartTS - settings.startTime); }
         }
 
         void AllowInBackgroundMode()
@@ -141,11 +141,11 @@ namespace UnityEngine.Recorder
             }
 
             // Note: This is not great when multiple recorders are simultaneously active...
-            if (m_Recorder.settings.frameRatePlayback == FrameRatePlayback.Variable ||
-                (m_Recorder.settings.frameRatePlayback == FrameRatePlayback.Constant && m_Recorder.settings.m_SynchFrameRate))
+            if (RecorderSettings.frameRatePlayback == FrameRatePlayback.Variable ||
+                (RecorderSettings.frameRatePlayback == FrameRatePlayback.Constant && m_Recorder.settings.synchFrameRate))
             {
                 var frameCount = Time.renderedFrameCount - m_InitialFrame;
-                var frameLen = 1.0f / m_Recorder.settings.m_FrameRate;
+                var frameLen = 1.0f / m_Recorder.settings.frameRate;
                 var elapsed = Time.unscaledTime - m_FPSTimeStart;
                 var target = frameLen * (frameCount + 1);
                 var sleep = (int)((target - elapsed) * 1000);

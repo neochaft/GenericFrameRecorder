@@ -40,20 +40,20 @@ namespace UnityEngine.Recorder
                     }
                     case RecordMode.FrameInterval:
                     {
-                        if (session.frameIndex > session.settings.m_EndFrame)
+                        if (session.frameIndex > session.settings.endFrame)
                             enabled = false;
                         break;
                     }
                     case RecordMode.TimeInterval:
                     {
-                        if (session.settings.frameRatePlayback == FrameRatePlayback.Variable)
+                        if (RecorderSettings.frameRatePlayback == FrameRatePlayback.Variable)
                         {
-                            if (session.m_CurrentFrameStartTS >= session.settings.m_EndTime)
+                            if (session.m_CurrentFrameStartTS >= session.settings.endTime)
                                 enabled = false;
                         }
                         else
                         {
-                            var expectedFrames = (session.settings.m_EndTime - session.settings.m_StartTime) * session.settings.m_FrameRate;
+                            var expectedFrames = (session.settings.endTime - session.settings.startTime) * session.settings.frameRate;
                             if (session.RecordedFrameSpan >= expectedFrames)
                                 enabled = false;
                         }

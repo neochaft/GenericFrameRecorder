@@ -20,8 +20,8 @@ namespace UnityEditor.Recorder.Input
                 return;
 
             var pf = new PropertyFinder<ScreenCaptureInputSettings>(serializedObject);
-            m_RenderSize = pf.Find(w => w.m_OutputSize);
-            m_RenderAspect = pf.Find(w => w.m_AspectRatio);
+            m_RenderSize = pf.Find(w => w.outputSize);
+            m_RenderAspect = pf.Find(w => w.aspectRatio);
 
             m_ResSelector = new ResolutionSelector();
         }

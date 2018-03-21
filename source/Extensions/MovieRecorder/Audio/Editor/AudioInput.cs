@@ -118,13 +118,13 @@ namespace UnityEditor.Recorder.Input
                 Debug.Log(string.Format(
                               "AudioInput.BeginRecording for capture frame rate {0}", Time.captureFramerate));
 
-            if (audioSettings.m_PreserveAudio)
+            if (audioSettings.preserveAudio)
                 AudioRenderer.Start();
         }
 
         public override void NewFrameReady(RecordingSession session)
         {
-            if (!audioSettings.m_PreserveAudio)
+            if (!audioSettings.preserveAudio)
                 return;
 
             var sampleFrameCount = (uint)AudioRenderer.GetSampleCountForCaptureFrame();
@@ -160,7 +160,7 @@ namespace UnityEditor.Recorder.Input
 
         public override void FrameDone(RecordingSession session)
         {
-            if (!audioSettings.m_PreserveAudio)
+            if (!audioSettings.preserveAudio)
                 return;
 
             m_BufferManager.Dispose();
@@ -169,7 +169,7 @@ namespace UnityEditor.Recorder.Input
 
         public override void EndRecording(RecordingSession session)
         {
-            if (audioSettings.m_PreserveAudio)
+            if (audioSettings.preserveAudio)
                 AudioRenderer.Stop();
         }
     }

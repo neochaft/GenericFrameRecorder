@@ -14,7 +14,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         WEBMRecorderSettings()
         {
-            m_BaseFileName.pattern = "movie.<ext>";
+            baseFileName.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
         }
 
@@ -22,15 +22,15 @@ namespace UTJ.FrameCapturer.Recorders
         {
             return new List<RecorderInputSetting>()
             {
-                NewInputSettingsObj<CBRenderTextureInputSettings>("Pixels") 
+                NewInputSettingsObj<CBRenderTextureInputSettings>() 
             };
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type, string title )
+        public override RecorderInputSetting NewInputSettingsObj(Type type)
         {
-            var obj = base.NewInputSettingsObj(type, title);
+            var obj = base.NewInputSettingsObj(type);
             if (type == typeof(CBRenderTextureInputSettings))
-                (obj as CBRenderTextureInputSettings).m_ForceEvenSize = true;
+                (obj as CBRenderTextureInputSettings).forceEvenSize = true;
 
             return obj ;
         }

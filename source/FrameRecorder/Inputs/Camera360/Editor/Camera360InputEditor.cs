@@ -1,6 +1,4 @@
-﻿#if UNITY_2018_1_OR_NEWER
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
 
@@ -28,14 +26,14 @@ namespace UnityEditor.Recorder.Input
 
             var pf = new PropertyFinder<Camera360InputSettings>(serializedObject);
             m_Source = pf.Find(w => w.source);
-            m_CameraTag = pf.Find(w => w.m_CameraTag);
+            m_CameraTag = pf.Find(w => w.cameraTag);
 
-            m_StereoSeparation = pf.Find(w => w.m_StereoSeparation);
-            m_FlipFinalOutput = pf.Find( w => w.m_FlipFinalOutput );
-            m_CubeMapSz = pf.Find( w => w.m_MapSize );
-            m_OutputWidth = pf.Find(w => w.m_OutputWidth);
-            m_OutputHeight = pf.Find(w => w.m_OutputHeight);
-            m_RenderStereo = pf.Find(w => w.m_RenderStereo);
+            m_StereoSeparation = pf.Find(w => w.stereoSeparation);
+            m_FlipFinalOutput = pf.Find( w => w.flipFinalOutput );
+            m_CubeMapSz = pf.Find( w => w.mapSize );
+            m_OutputWidth = pf.Find(w => w.outputWidth);
+            m_OutputHeight = pf.Find(w => w.outputHeight);
+            m_RenderStereo = pf.Find(w => w.renderStereo);
         }
 
         public override void OnInspectorGUI()
@@ -104,5 +102,3 @@ namespace UnityEditor.Recorder.Input
         }
     }
 }
-
-#endif

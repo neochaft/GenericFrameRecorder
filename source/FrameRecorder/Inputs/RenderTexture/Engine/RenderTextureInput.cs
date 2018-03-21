@@ -17,12 +17,12 @@ namespace UnityEngine.Recorder.Input
 
         public override void BeginRecording(RecordingSession session)
         {
-            if (cbSettings.m_SourceRTxtr == null)
+            if (cbSettings.sourceRTxtr == null)
                 throw new Exception("No Render Texture object provided as source");
 
-            outputHeight = cbSettings.m_SourceRTxtr.height;
-            outputWidth = cbSettings.m_SourceRTxtr.width;
-            outputRT = cbSettings.m_SourceRTxtr;
+            outputHeight = cbSettings.sourceRTxtr.height;
+            outputWidth = cbSettings.sourceRTxtr.width;
+            outputRT = cbSettings.sourceRTxtr;
         }
     }
 }

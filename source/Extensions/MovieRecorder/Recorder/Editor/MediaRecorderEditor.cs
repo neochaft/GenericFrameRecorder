@@ -1,11 +1,5 @@
-#if UNITY_2017_3_OR_NEWER
-
 using System;
-using System.Collections.Generic;
-using UnityEditor.Recorder.Input;
 using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder
 {
@@ -13,11 +7,8 @@ namespace UnityEditor.Recorder
     public class MediaRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
-#if UNITY_2018_1_OR_NEWER
         SerializedProperty m_EncodingBitRateMode;
-#endif
-        SerializedProperty m_FlipVertical;
-        RTInputSelector m_RTInputSelector;
+        InputSelector m_InputSelector;
 
         [MenuItem("Window/Recorder/Video")]
         static void ShowRecorderWindow()
@@ -34,39 +25,30 @@ namespace UnityEditor.Recorder
 
             var pf = new PropertyFinder<MediaRecorderSettings>(serializedObject);
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
-#if UNITY_2018_1_OR_NEWER
             m_EncodingBitRateMode = pf.Find(w => w.m_VideoBitRateMode);
-#endif
         }
 
-#if UNITY_2018_1_OR_NEWER
         protected override void OnEncodingGui()
         {
             AddProperty(m_EncodingBitRateMode, () => EditorGUILayout.PropertyField(m_EncodingBitRateMode, new GUIContent("Bitrate Mode")));
         }
-#else
-        protected override void OnEncodingGroupGui()
-        {
-            // hiding this group by not calling parent class's implementation.  
-        }
-#endif
 
         protected override void FileTypeAndFormatGUI()
         {
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
-            //base.OutputFormatGUI();
         }
 
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
         {
-            if (property.name == "m_FlipVertical" || property.name == "m_CaptureEveryNthFrame" )
+            if (property.name == "captureEveryNthFrame" )
                 return EFieldDisplayState.Hidden;
+            
             if (property.name == "m_FrameRateMode" )
                 return EFieldDisplayState.Disabled;
 
-            if (property.name == "m_AllowTransparency")
+            if (property.name == "allowTransparency")
             {
-                return (target as MediaRecorderSettings).m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EFieldDisplayState.Disabled : EFieldDisplayState.Enabled;
+                return ((MediaRecorderSettings) target).m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EFieldDisplayState.Disabled : EFieldDisplayState.Enabled;
             }
 
             return base.GetFieldDisplayState(property);
@@ -75,5 +57,3 @@ namespace UnityEditor.Recorder
 
     }
 }
-
-#endif

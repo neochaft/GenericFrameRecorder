@@ -12,12 +12,12 @@ namespace UTJ.FrameCapturer.Recorders
         {
             var ok = base.ValidityCheck(errors);
             
-            if( string.IsNullOrEmpty(m_DestinationPath.GetFullPath() ))
+            if( string.IsNullOrEmpty(destinationPath.GetFullPath() ))
             {
                 ok = false;
                 errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(m_BaseFileName.pattern))
+            if(  string.IsNullOrEmpty(baseFileName.pattern))
             {
                 ok = false;
                 errors.Add("missing file name");
@@ -31,64 +31,54 @@ namespace UTJ.FrameCapturer.Recorders
             get
             {
                 return Application.platform == RuntimePlatform.WindowsEditor || 
-                        Application.platform == RuntimePlatform.WindowsPlayer ||
-                        Application.platform == RuntimePlatform.OSXEditor ||
-                        Application.platform == RuntimePlatform.OSXPlayer ||
-                        Application.platform == RuntimePlatform.LinuxEditor ||
-                        Application.platform == RuntimePlatform.LinuxPlayer;
+                       Application.platform == RuntimePlatform.WindowsPlayer ||
+                       Application.platform == RuntimePlatform.OSXEditor ||
+                       Application.platform == RuntimePlatform.OSXPlayer ||
+                       Application.platform == RuntimePlatform.LinuxEditor ||
+                       Application.platform == RuntimePlatform.LinuxPlayer;
             }
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type, string title )
+        public override RecorderInputSetting NewInputSettingsObj(Type type)
         {
-            var obj = base.NewInputSettingsObj(type, title);
+            var obj = base.NewInputSettingsObj(type);
             if (type == typeof(CBRenderTextureInputSettings))
             {
                 var settings = (CBRenderTextureInputSettings)obj;
-                settings.m_FlipFinalOutput = true;
+                settings.flipFinalOutput = true;
             }
             else if (type == typeof(RenderTextureSamplerSettings))
             {
                 var settings = (RenderTextureSamplerSettings)obj;
-                settings.m_FlipFinalOutput = true;
+                settings.flipFinalOutput = true;
             }
 
             return obj ;
         }
 
-        public override List<InputGroupFilter> GetInputGroups()
+        public override InputGroups GetInputGroups()
         {
-            return new List<InputGroupFilter>()
+            return new InputGroups
             {
-                new InputGroupFilter()
+                new List<Type>
                 {
-                    title = "Pixels", typesFilter = new List<InputFilter>()
-                    {
-                        new TInputFilter<CBRenderTextureInputSettings>("Camera(s)"),
-                        new TInputFilter<RenderTextureSamplerSettings>("Sampling"),
-                        new TInputFilter<RenderTextureInputSettings>("Render Texture"),
-                    }
+                    typeof(CBRenderTextureInputSettings),
+                    typeof(RenderTextureSamplerSettings),
+                    typeof(RenderTextureInputSettings)
                 }
             };
         }
 
-        public override bool SelfAdjustSettings()
+        public override void SelfAdjustSettings()
         {
             if (inputsSettings.Count == 0 )
-                return false;
+                return;
 
-            var adjusted = false;
-
-            if (inputsSettings[0] is ImageInputSettings)
+            var iis = inputsSettings[0] as ImageInputSettings;
+            if (iis != null)
             {
-                var iis = (ImageInputSettings)inputsSettings[0];
-                if (iis.maxSupportedSize != EImageDimension.x4320p_8K)
-                {
-                    iis.maxSupportedSize = EImageDimension.x4320p_8K;
-                    adjusted = true;
-                }
+                iis.maxSupportedSize = EImageDimension.x4320p_8K;
             }
-            return adjusted;
         }
 
 

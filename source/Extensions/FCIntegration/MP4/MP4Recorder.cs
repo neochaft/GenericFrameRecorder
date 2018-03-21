@@ -19,7 +19,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             if (!base.BeginRecording(session)) { return false; }
 
-            m_Settings.m_DestinationPath.CreateDirectory();
+            m_Settings.destinationPath.CreateDirectory();
 
             var input = (BaseRenderTextureInput)m_Inputs[0];
             if (input.outputWidth > 4096 || input.outputHeight > 2160 )
@@ -46,19 +46,19 @@ namespace UTJ.FrameCapturer.Recorders
 
             if(!m_ctx)
             {
-                var settings = m_Settings.m_MP4EncoderSettings;
-                settings.video = true;
-                settings.audio = false;
-                settings.videoWidth = frame.width;
-                settings.videoHeight = frame.height;
-                settings.videoTargetFramerate = (int)Math.Ceiling(m_Settings.m_FrameRate);
+                var s = m_Settings.m_MP4EncoderSettings;
+                s.video = true;
+                s.audio = false;
+                s.videoWidth = frame.width;
+                s.videoHeight = frame.height;
+                s.videoTargetFramerate = (int)Math.Ceiling(m_Settings.frameRate);
                 if (m_Settings.m_AutoSelectBR)
                 {
-                    settings.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (settings.videoTargetFramerate / 48.0 + 0.5) * 1000000);
+                    s.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (s.videoTargetFramerate / 48.0 + 0.5) * 1000000);
                 }
-                var fileName = m_Settings.m_BaseFileName.BuildFileName( session, recordedFramesCount, frame.width, frame.height, "mp4");
-                var path = Path.Combine( m_Settings.m_DestinationPath.GetFullPath(), fileName);
-                m_ctx = fcAPI.fcMP4OSCreateContext(ref settings, path);
+                var fileName = m_Settings.baseFileName.BuildFileName( session, recordedFramesCount, frame.width, frame.height, "mp4");
+                var path = Path.Combine( m_Settings.destinationPath.GetFullPath(), fileName);
+                m_ctx = fcAPI.fcMP4OSCreateContext(ref s, path);
             }
 
             fcAPI.fcLock(frame, TextureFormat.RGB24, (data, fmt) =>

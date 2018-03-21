@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace UnityEngine.Recorder.Input
 {
+    [DisplayName("Render Texture Asset")]
     public class RenderTextureInputSettings : ImageInputSettings
     {
-        public RenderTexture m_SourceRTxtr;
+        public RenderTexture sourceRTxtr;
 
         public override Type inputType
         {
@@ -16,7 +18,7 @@ namespace UnityEngine.Recorder.Input
         {
             var ok = true;
 
-            if (m_SourceRTxtr == null)
+            if (sourceRTxtr == null)
             {
                 ok = false;
                 errors.Add("Missing source render texture object/asset.");
@@ -24,6 +26,5 @@ namespace UnityEngine.Recorder.Input
 
             return ok;
         }
-
     }
 }

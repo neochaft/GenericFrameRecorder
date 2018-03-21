@@ -30,13 +30,13 @@ namespace UTJ.FrameCapturer
             EditorGUI.indentLevel--;
         }
 
-        public virtual void FramerateControl()
+        protected virtual void FramerateControl()
         {
-            var recorder = target as RecorderBase;
+            var recorder = (RecorderBase)target;
             var so = serializedObject;
 
             EditorGUILayout.PropertyField(so.FindProperty("m_framerateMode"));
-            if (recorder.framerateMode == MovieRecorder.FrameRateMode.Constant)
+            if (recorder.framerateMode == RecorderBase.FrameRateMode.Constant)
             {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.PropertyField(so.FindProperty("m_targetFramerate"));
@@ -51,9 +51,9 @@ namespace UTJ.FrameCapturer
             }
         }
 
-        public virtual void RecordingControl()
+        protected virtual void RecordingControl()
         {
-            var recorder = target as RecorderBase;
+            var recorder = (RecorderBase)target;
             var so = serializedObject;
 
             // capture control

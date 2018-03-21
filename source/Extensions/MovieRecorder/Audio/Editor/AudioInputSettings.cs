@@ -1,14 +1,14 @@
-#if UNITY_2017_3_OR_NEWER
 using System;
 using System.Collections.Generic;
-using UnityEngine.Audio;
+using System.ComponentModel;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder.Input
 {
+    [DisplayName("Audio")]
     public class AudioInputSettings : RecorderInputSetting
     {
-        public bool                         m_PreserveAudio = true;
+        public bool preserveAudio = true;
 
 #if RECORD_AUDIO_MIXERS
         [System.Serializable]
@@ -34,4 +34,3 @@ namespace UnityEditor.Recorder.Input
         }
     }
 }
-#endif

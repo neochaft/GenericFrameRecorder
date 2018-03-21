@@ -14,7 +14,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         MP4RecorderSettings()
         {
-            m_BaseFileName.pattern = "movie.<ext>";
+            baseFileName.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
         }
 
@@ -22,18 +22,18 @@ namespace UTJ.FrameCapturer.Recorders
         {
             return new List<RecorderInputSetting>()
             {
-                NewInputSettingsObj<CBRenderTextureInputSettings>("Pixels") 
+                NewInputSettingsObj<CBRenderTextureInputSettings>() 
             };
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type, string title )
+        public override RecorderInputSetting NewInputSettingsObj(Type type)
         {
-            var obj = base.NewInputSettingsObj(type, title);
+            var obj = base.NewInputSettingsObj(type);
             if (type == typeof(CBRenderTextureInputSettings))
             {
                 var settings = (CBRenderTextureInputSettings)obj;
-                settings.m_ForceEvenSize = true;
-                settings.m_FlipFinalOutput = true;
+                settings.forceEvenSize = true;
+                settings.flipFinalOutput = true;
             }
 
             return obj ;
@@ -47,23 +47,16 @@ namespace UTJ.FrameCapturer.Recorders
             }
         }
 
-        public override bool SelfAdjustSettings()
+        public override void SelfAdjustSettings()
         {
             if (inputsSettings.Count == 0 )
-                return false;
+                return;
 
-            var adjusted = false;
-
-            if (inputsSettings[0] is ImageInputSettings)
+            var iis = inputsSettings[0] as ImageInputSettings;
+            if (iis != null)
             {
-                var iis = (ImageInputSettings)inputsSettings[0];
-                if (iis.maxSupportedSize != EImageDimension.x2160p_4K)
-                {
-                    iis.maxSupportedSize = EImageDimension.x2160p_4K;
-                    adjusted = true;
-                }
+                iis.maxSupportedSize = EImageDimension.x2160p_4K;
             }
-            return adjusted;
         }
 
     }

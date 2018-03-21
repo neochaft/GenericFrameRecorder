@@ -39,7 +39,7 @@ namespace UnityEditor.Recorder
         
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
         {
-            if (property.name == "m_AllowTransparency")
+            if (property.name == "allowTransparency")
             {
                 return (target as ImageRecorderSettings).m_OutputFormat == ImageRecorderOutputFormat.JPEG ? EFieldDisplayState.Hidden : EFieldDisplayState.Enabled;
             }
