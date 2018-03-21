@@ -83,7 +83,7 @@ namespace UnityEditor.Recorder.Input
 //                }
             }
 
-            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"))); // TODO Do same this as wih Include UI
+            //AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"))); // TODO Do same this as wih Include UI
 
             if (Verbose.enabled)
             {
