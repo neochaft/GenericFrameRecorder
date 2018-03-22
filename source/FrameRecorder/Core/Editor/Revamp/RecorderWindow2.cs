@@ -286,7 +286,6 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            
             // TODO UIElements
             m_RecorderSettingPanel = new IMGUIContainer(OnRecorderSettingsGUI)
             {
@@ -540,6 +539,7 @@ namespace UnityEditor.Recorder
             public RecorderEditor editor { get; private set; }
 
             Color m_Color;
+            EditableLabel m_EditableLabel;
             
             static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
 
@@ -604,16 +604,27 @@ namespace UnityEditor.Recorder
                 
                 Add(recordIcon);
                 
-                var titleField = new TextField { text = settings.name };
-                titleField.OnValueChanged(evt => settings.name = evt.newValue);
-                Add(titleField);
+                m_EditableLabel = new EditableLabel { text = settings.name };
+                m_EditableLabel.OnValueChanged(evt => settings.name = evt.newValue);
+                Add(m_EditableLabel);
                 
-                
+                RegisterCallback<MouseUpEvent>(InternalMouseUp);
                 RegisterCallback(onRecordMouseUp);
             }
 
+            void InternalMouseUp(MouseUpEvent evt)
+            {
+                if (evt.clickCount == 1 && m_Selected)
+                {
+                    evt.StopImmediatePropagation();
+                    m_EditableLabel.StartEditing();
+                }
+            }
+
+            bool m_Selected = false;
             public void SetSelected(bool value)
             {
+                m_Selected = value;
                 style.backgroundColor = value ? Color.white : m_Color;
 
             }
