@@ -1,25 +1,17 @@
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEditor.Experimental.UIElements;
 using UnityEngine;
 using UnityEngine.Recorder;
-using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Recorder.Input;
-using UnityEngine.Timeline;
-using Button = UnityEngine.Experimental.UIElements.Button;
-using Image = UnityEngine.Experimental.UIElements.Image;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
-using Toggle = UnityEngine.Experimental.UIElements.Toggle;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderWindow2 : EditorWindow
+    public class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
     {
         [MenuItem("Tools/Yolo Record !!")]
         public static void ShowRecorderWindow2()
@@ -33,10 +25,13 @@ namespace UnityEditor.Recorder
         }
 
         VisualElement m_Recordings;
-        VisualElement m_Parameters;
+        VisualElement m_SettingsPanel;
+        VisualElement m_RecordingsPanel;
+        [SerializeField] float m_RecordingsPanelWidth = 200.0f;
         RecorderEditor m_RecorderEditor;
-        VisualElement m_recorderHeader;
-        Button m_startRecordButton;
+        VisualElement m_RecorderHeader;
+        Button m_StartRecordButton;
+        PanelSplitter m_PanelSplitter;
 
         [SerializeField]
         int m_SelectedRecorderItemIndex = 0;
@@ -85,8 +80,6 @@ namespace UnityEditor.Recorder
 
             return asset;
         }
-
-        
         
         public void OnEnable()
         {           
@@ -163,12 +156,12 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            m_startRecordButton = new Button(OnRecordButtonClick)
+            m_StartRecordButton = new Button(OnRecordButtonClick)
             {
                 text = "Start Recording"
             };
 
-            leftButtonsStack.Add(m_startRecordButton);
+            leftButtonsStack.Add(m_StartRecordButton);
 
             m_GlobalSettings = GlobalSettings.instance; //LoadSettings<GlobalSettings>("GlobalSettings"); 
             
@@ -199,7 +192,7 @@ namespace UnityEditor.Recorder
             controlRightPane.Add(rightButtonsStack);
             
 
-            m_Parameters = new ScrollView
+            m_SettingsPanel = new ScrollView
             {
                 style =
                 {
@@ -208,8 +201,8 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            m_Parameters.contentContainer.style.positionLeft = 0;
-            m_Parameters.contentContainer.style.positionRight = 0;
+            m_SettingsPanel.contentContainer.style.positionLeft = 0;
+            m_SettingsPanel.contentContainer.style.positionRight = 0;
 
             var recordingAndParameters = new VisualElement
             {
@@ -223,17 +216,22 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            var recordingsPanel = new VisualElement
+            m_RecordingsPanel = new VisualElement
             {
                 style =
                 {
                     backgroundColor = RandomColor(),
-                    width = 200.0f,
+                    width = m_RecordingsPanelWidth,
+                    minWidth = 150.0f,
+                    maxWidth = 300.0f
                 }
             };
 
-            recordingAndParameters.Add(recordingsPanel);
-            recordingAndParameters.Add(m_Parameters);
+            m_PanelSplitter = new PanelSplitter(m_RecordingsPanel);
+            
+            recordingAndParameters.Add(m_RecordingsPanel);
+            recordingAndParameters.Add(m_PanelSplitter.uiElement);
+            recordingAndParameters.Add(m_SettingsPanel);
 
             root.Add(recordingAndParameters);
 
@@ -302,8 +300,8 @@ namespace UnityEditor.Recorder
             //for(var i = 0; i < 20; ++i)
             //    recordings.Add(Record("Recording [" + i + "]"));
 
-            recordingsPanel.Add(recordingControl);
-            recordingsPanel.Add(m_Recordings);
+            m_RecordingsPanel.Add(recordingControl);
+            m_RecordingsPanel.Add(m_Recordings);
 
             var parametersControl = new VisualElement
             {
@@ -317,15 +315,15 @@ namespace UnityEditor.Recorder
             
             
             // TODO UIElements
-            m_recorderHeader = new IMGUIContainer(OnRecorderHeader)
+            m_RecorderHeader = new IMGUIContainer(OnRecorderHeader)
             {
                 style = { flex = 1.0f }
             };
             
-            parametersControl.Add(m_recorderHeader);
+            parametersControl.Add(m_RecorderHeader);
             
 
-            m_Parameters.Add(parametersControl);
+            m_SettingsPanel.Add(parametersControl);
             
 //            m_RecorderInspector = new IMGUIContainer(OnGUIHandler)
 //            {
@@ -427,7 +425,7 @@ namespace UnityEditor.Recorder
 //                            StartRecording();
 //                    }
 
-                    m_startRecordButton.text = "Stop Recording";
+                    m_StartRecordButton.text = "Stop Recording";
                     
                     
                     m_State = State.WaitingForPlayModeToStartRecording;
@@ -454,7 +452,7 @@ namespace UnityEditor.Recorder
                 {   
                     StopRecording();
                     
-                    m_startRecordButton.text = "Start Recording";
+                    m_StartRecordButton.text = "Start Recording";
                     
 //                    var recorderGO = SceneHook.FindRecorder((RecorderSettings)m_Editor.target);
 //                    if (recorderGO == null)
@@ -614,7 +612,7 @@ namespace UnityEditor.Recorder
             if (m_RecorderEditor != null)
             {
                 //m_RecorderInspector.Dirty(ChangeType.Layout);
-                m_recorderHeader.Dirty(ChangeType.Layout);
+                m_RecorderHeader.Dirty(ChangeType.Layout);
             }
 
         }
@@ -674,7 +672,7 @@ namespace UnityEditor.Recorder
 
                 var t = Resources.Load<Texture2D>(iconName); // TODO Cache?
 
-                //if (t != null)
+                if (t != null) // TODO Use a default image?
                 {
                     var recordIcon = new Image
                     {
@@ -717,6 +715,16 @@ namespace UnityEditor.Recorder
                 .SelectMany(s => s.GetTypes())
                 .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
             return types;
+        }
+
+        public void OnBeforeSerialize()
+        {
+            m_RecordingsPanelWidth = m_RecordingsPanel.style.width;
+        }
+
+        public void OnAfterDeserialize()
+        {
+            // Nothing
         }
     }
     
