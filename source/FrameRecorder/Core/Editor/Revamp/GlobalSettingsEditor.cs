@@ -112,8 +112,6 @@ namespace UnityEditor.Recorder
             
             EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.SMaxFPSLabel : Styles.STargetFPSLabel);
 
-            //EditorGUILayout.EnumPopup((FrameRate) (m_FrameRateTypeProperty.enumValueIndex));
-
             if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRate.FR_CUSTOM)
             {
                 ++EditorGUI.indentLevel;

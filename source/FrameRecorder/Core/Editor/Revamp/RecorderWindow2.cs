@@ -29,9 +29,13 @@ namespace UnityEditor.Recorder
         VisualElement m_RecordingsPanel;
         
         RecorderEditor m_RecorderEditor;
-        VisualElement m_RecorderHeader;
+        VisualElement m_RecorderSettingPanel;
         Button m_StartRecordButton;
         PanelSplitter m_PanelSplitter;
+        VisualElement m_AddNewRecord;
+        
+        VisualElement m_RecordModeOptionsPanel;
+        VisualElement m_FrameRateOptionsPanel;
 
         [SerializeField] GlobalSettings m_GlobalSettings;
         [SerializeField] RecordersList m_RecordersList;
@@ -159,7 +163,7 @@ namespace UnityEditor.Recorder
             
             m_GlobalSettingsEditor = (GlobalSettingsEditor) Editor.CreateEditor(m_GlobalSettings);
                 
-            var globalOptions = new IMGUIContainer(() =>
+            m_RecordModeOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_GlobalSettingsEditor.RecordModeGUI())
                     EditorUtility.SetDirty(m_GlobalSettingsEditor);
@@ -168,11 +172,11 @@ namespace UnityEditor.Recorder
                 style = {flex = 1.0f,}
             };
 
-            leftButtonsStack.Add(globalOptions);
+            leftButtonsStack.Add(m_RecordModeOptionsPanel);
 
             controlLeftPane.Add(leftButtonsStack);
             
-            var rightButtonsStack = new IMGUIContainer(() =>
+            m_FrameRateOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_GlobalSettingsEditor.FrameRateGUI())
                     EditorUtility.SetDirty(m_GlobalSettingsEditor);
@@ -181,8 +185,7 @@ namespace UnityEditor.Recorder
                 style = {flex = 1.0f,}
             };
             
-            controlRightPane.Add(rightButtonsStack);
-            
+            controlRightPane.Add(m_FrameRateOptionsPanel);
 
             m_SettingsPanel = new ScrollView
             {
@@ -236,9 +239,9 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            var addNewRecord = new Label("+ Add New Recordings");
+            m_AddNewRecord = new Label("+ Add New Recordings");
             
-            addNewRecord.RegisterCallback<MouseUpEvent>(evt =>
+            m_AddNewRecord.RegisterCallback<MouseUpEvent>(evt =>
             {               
                 var newRecordMenu = new GenericMenu();
 
@@ -246,13 +249,16 @@ namespace UnityEditor.Recorder
                 
                 foreach (var info in recorderList)
                 {
-                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+                    if (ShouldDisableRecordSettings())
+                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
+                    else
+                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
                 }
                 
                 newRecordMenu.ShowAsContext();
             });
             
-            recordingControl.Add(addNewRecord);
+            recordingControl.Add(m_AddNewRecord);
             
             m_Recordings = new ScrollView
             {
@@ -282,12 +288,12 @@ namespace UnityEditor.Recorder
             
             
             // TODO UIElements
-            m_RecorderHeader = new IMGUIContainer(OnRecorderHeader)
+            m_RecorderSettingPanel = new IMGUIContainer(OnRecorderSettingsGUI)
             {
                 style = { flex = 1.0f }
             };
             
-            parametersControl.Add(m_RecorderHeader);
+            parametersControl.Add(m_RecorderSettingPanel);
             
             m_SettingsPanel.Add(parametersControl);            
             
@@ -301,7 +307,12 @@ namespace UnityEditor.Recorder
                 m_Recordings.Add(new RecorderItem(recorderSettings, info.iconName, OnRecordMouseUp));
             }
             
-            SelectRecording(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+            SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+        }
+
+        bool ShouldDisableRecordSettings()
+        {
+            return m_State != State.Idle || Application.isPlaying;
         }
 
         void Update()
@@ -313,6 +324,13 @@ namespace UnityEditor.Recorder
                     DelayedStartRecording();
                 }
             }
+            
+            // TODO Use events instead
+            var enable = !ShouldDisableRecordSettings();
+            m_AddNewRecord.SetEnabled(enable);
+            m_RecorderSettingPanel.SetEnabled(enable);
+            m_RecordModeOptionsPanel.SetEnabled(enable);
+            m_FrameRateOptionsPanel.SetEnabled(enable);
         }
         
         void DelayedStartRecording()
@@ -412,15 +430,21 @@ namespace UnityEditor.Recorder
             m_State = State.Idle;
         }
 
-        void OnRecorderHeader()
+        void OnRecorderSettingsGUI()
         {
             if (m_RecorderEditor != null)
             {
-                var rec = (RecorderSettings)m_RecorderEditor.target;               
-                
-                EditorGUILayout.LabelField("Recording Type",  rec.GetType().Name);
-                
-                m_RecorderEditor.OnInspectorGUI();
+                var rec = (RecorderSettings)m_RecorderEditor.target;
+
+                //using (new EditorGUI.DisabledScope(ShouldDisableRecordSettings()))
+                {
+                    EditorGUILayout.LabelField("Recording Type", rec.GetType().Name);
+
+                    m_RecorderEditor.OnInspectorGUI();
+
+                    if (GUI.changed)
+                        m_RecorderSettingPanel.Dirty(ChangeType.Layout);
+                }
             }
             else
             {
@@ -444,44 +468,43 @@ namespace UnityEditor.Recorder
             
             if (evt.button == (int) MouseButton.LeftMouse)
             {
-              SelectRecording(recorder);
+              SelectRecorder(recorder);
               evt.StopImmediatePropagation();
             }
             else
             {             
                 var contextMenu = new GenericMenu();
-                
-                contextMenu.AddItem(new GUIContent("Duplicate"), false, data => { }, recorder);
-                contextMenu.AddItem(new GUIContent("Delete"), false,
-                    data =>
-                    {
-                        var item = (RecorderItem) data;
-                        var s = item.settings;
-                        m_RecordersList.Remove(s);
-                        
-                        UnityHelpers.Destroy(s, true);
-                        UnityHelpers.Destroy(item.editor, true);
-                        
-                        m_Recordings.Remove(item);
-                        
-                        AssetDatabase.SaveAssets();
-                        
-                    }, recorder);
-                
+
+                if (ShouldDisableRecordSettings())
+                {
+                    contextMenu.AddDisabledItem(new GUIContent("Duplicate"));
+                    contextMenu.AddDisabledItem(new GUIContent("Delete"));
+                }
+                else
+                {
+                    contextMenu.AddItem(new GUIContent("Duplicate"), false, data => { }, recorder);
+                    contextMenu.AddItem(new GUIContent("Delete"), false,
+                        data =>
+                        {
+                            var item = (RecorderItem) data;
+                            var s = item.settings;
+                            m_RecordersList.Remove(s);
+
+                            UnityHelpers.Destroy(s, true);
+                            UnityHelpers.Destroy(item.editor, true);
+
+                            m_Recordings.Remove(item);
+
+                            AssetDatabase.SaveAssets();
+
+                        }, recorder);
+                }
+
                 contextMenu.ShowAsContext();
             }
         }
-
-        void SelectRecording(int index)
-        {
-            m_RecorderEditor = null;
-
-            var selected = m_Recordings.Children().ElementAt(index);
-
-            SelectRecording(selected);
-        }
-        
-        void SelectRecording(VisualElement selected)
+       
+        void SelectRecorder(VisualElement selected)
         {
             m_RecorderEditor = null;
             m_SelectedRecorderItemIndex = 0;
@@ -506,7 +529,7 @@ namespace UnityEditor.Recorder
 
             if (m_RecorderEditor != null)
             {
-                m_RecorderHeader.Dirty(ChangeType.Layout);
+                m_RecorderSettingPanel.Dirty(ChangeType.Layout);
             }
 
         }
