@@ -1,0 +1,92 @@
+﻿#recorderIcon {
+    width : 50;
+    height : 50;
+    margin-left : 5;
+    margin-right : 20;
+}
+
+#addRecordingsButton {
+    margin-left : 0;
+    margin-right : 0;
+    padding-left : 15;
+    padding-top : 6;
+    padding-bottom : 6;
+    background-color: #2C2C2C;
+    font-size: 12;
+    border-left-width:0;
+    border-top-width:1;
+    border-right-width:0;
+    border-bottom-width:1;
+    border-color: #404040;
+}
+
+#addRecordingsButton:hover {
+    background-color: #4C4C4C;
+}
+
+.StandardPanel {
+    margin-top : 15;
+    padding-left : 20;
+    padding-right : 20;
+    border-bottom-width:2;
+    border-color: #404040;
+}
+
+RecorderItem {
+
+    margin-top : 4;
+    padding-left : 5;
+    padding-right : 5;
+    padding-top : 5;
+    padding-bottom : 5;
+    
+    background-color: #404040;
+    border-left-width:0;
+    border-top-width:1;
+    border-right-width:0;
+    border-bottom-width:1;
+    border-color: #000000;
+}
+
+/*
+RecorderItem:hover {
+    border-color: #FFFFFF;
+    border-left-width:1;
+    border-right-width:1;
+}*/
+
+RecorderItem.selected {
+    background-color: #555555;
+    border-color: #567281;
+    border-left-width:1;
+    border-right-width:1;
+}
+
+RecorderItem > Image {
+    width : 20;
+    height : 20;
+    margin-left : 4;
+    margin-right : 4;
+}
+
+RecorderItem.selected > EditableLabel > * {
+    text-color: #FFFFFF;
+}
+
+PanelSplitter {
+    border-left-width:1;
+    border-top-width:1;
+    border-right-width:1;
+    border-bottom-width:1;
+    border-color: #2C2C2C;
+    background-color: #404040;
+}
+
+#statusBar {
+    background-color: #2C2C2C;
+    padding-top: 5;
+    padding-bottom: 5;
+    padding-left: 5;
+    padding-right: 5;
+}
+

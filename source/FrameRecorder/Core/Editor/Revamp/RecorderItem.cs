@@ -12,7 +12,6 @@ namespace UnityEditor.Recorder
         public RecorderSettings settings { get; private set; }
         public RecorderEditor editor { get; private set; }
     
-        Color m_Color;
         EditableLabel m_EditableLabel;
 
         bool m_Selected;
@@ -23,14 +22,17 @@ namespace UnityEditor.Recorder
             set
             {
                 m_Selected = value;
-                style.backgroundColor = m_Selected ? Color.white : m_Color;
+                if (m_Selected)
+                    AddToClassList("selected");
+                else
+                    RemoveFromClassList("selected");
             }
         }
 
         static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
     
         public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
-        {
+        {          
             var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
             savedSettings.name = recorderName;
             
@@ -45,7 +47,7 @@ namespace UnityEditor.Recorder
         }
         
         void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
-        {
+        {           
             settings = savedSettings;
     
             editor = (RecorderEditor)Editor.CreateEditor(settings);
@@ -53,7 +55,7 @@ namespace UnityEditor.Recorder
             style.flex = 1.0f;
             style.flexDirection = FlexDirection.Row;
     
-            var toggle = new Toggle(null) { @on = settings.enabled };
+            var toggle = new Toggle(null) { on = settings.enabled };
             
             toggle.OnToggle(() =>
             {
@@ -77,14 +79,7 @@ namespace UnityEditor.Recorder
             
             var recordIcon = new Image
             {
-                image = icon,
-    
-                style =
-                {
-                    backgroundColor = Color.black,
-                    height = 16.0f,
-                    width = 16.0f,
-                }
+                image = icon
             };
             
             Add(recordIcon);
@@ -95,8 +90,6 @@ namespace UnityEditor.Recorder
             
             RegisterCallback<MouseUpEvent>(InternalMouseUp);
             RegisterCallback(onRecordMouseUp);
-
-            m_Color = style.backgroundColor = Color.gray;
         }
     
         void InternalMouseUp(MouseUpEvent evt)

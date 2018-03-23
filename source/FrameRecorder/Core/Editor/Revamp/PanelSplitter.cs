@@ -4,10 +4,8 @@ using UnityEngine.Experimental.UIElements;
 
 namespace UnityEditor.Recorder
 {
-    class PanelSplitter
+    class PanelSplitter : VisualElement
     {
-        public VisualElement uiElement { get; private set; }
-
         readonly VisualElement m_AffectedElement;
 
         bool m_Grabbed;
@@ -20,22 +18,15 @@ namespace UnityEditor.Recorder
         public PanelSplitter(VisualElement affectedElement) // TODO Support more than one element
         {
             m_AffectedElement = affectedElement;
+
+            style.cursor = UIElementsEditorUtility.CreateDefaultCursorStyle(MouseCursor.ResizeHorizontal);
+            style.width = k_SplitterWidth;
+            style.minWidth = k_SplitterWidth;
+            style.maxWidth = k_SplitterWidth;
             
-            uiElement = new VisualElement
-            {
-                style =
-                {
-                    backgroundColor = Color.blue,
-                    cursor = UIElementsEditorUtility.CreateDefaultCursorStyle(MouseCursor.ResizeHorizontal),
-                    width = k_SplitterWidth,
-                    minWidth = k_SplitterWidth,
-                    maxWidth = k_SplitterWidth
-                }
-            };
-          
-            uiElement.RegisterCallback<MouseDownEvent>(OnMouseDown, Capture.Capture);
-            uiElement.RegisterCallback<MouseMoveEvent>(OnMouseMove, Capture.Capture);
-            uiElement.RegisterCallback<MouseUpEvent>(OnMouseUp, Capture.Capture);
+            RegisterCallback<MouseDownEvent>(OnMouseDown, Capture.Capture);
+            RegisterCallback<MouseMoveEvent>(OnMouseMove, Capture.Capture);
+            RegisterCallback<MouseUpEvent>(OnMouseUp, Capture.Capture);
         }
 
         void OnMouseDown(MouseDownEvent evt)
@@ -46,7 +37,7 @@ namespace UnityEditor.Recorder
             if (m_Grabbed)
                 return;
 
-            uiElement.TakeMouseCapture();
+            this.TakeMouseCapture();
 
             m_Grabbed = true;
             m_GrabbedMousePosition = evt.mousePosition;
@@ -79,7 +70,7 @@ namespace UnityEditor.Recorder
                 return;
 
             m_Grabbed = false;
-            uiElement.ReleaseMouseCapture();
+            this.ReleaseMouseCapture();
             
             evt.StopImmediatePropagation();
         }

@@ -7,21 +7,15 @@ using UnityEngine.Recorder;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Recorder.Input;
-using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
 {
-    public partial class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
+    public class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
     {
-        [MenuItem("Tools/Recorder")]
+        [MenuItem("Tools/New Recorder")]
         public static void ShowRecorderWindow2()
         {
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
-        }
-
-        static Color RandomColor(float alpha = 1.0f)
-        {
-            return new Color(Random.value, Random.value, Random.value, alpha);
         }
 
         VisualElement m_Recordings;
@@ -84,18 +78,14 @@ namespace UnityEditor.Recorder
         }
         
         public void OnEnable()
-        {           
-            Random.InitState(1337 + 42);
-
+        {             
             var root = this.GetRootVisualContainer();
-
-            const int padding = 10;
+            root.AddStyleSheetPath("recorder");
 
             var mainControls = new VisualElement
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     flexDirection = FlexDirection.Row,
                     minHeight = 110.0f 
                 }
@@ -106,7 +96,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     flex = 0.5f,
                     minWidth = 350.0f,
                     maxWidth = 450.0f,
@@ -118,7 +107,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     flex = 0.5f,
                     flexDirection = FlexDirection.Column,
                 }
@@ -126,17 +114,14 @@ namespace UnityEditor.Recorder
             
             mainControls.Add(controlLeftPane);
             mainControls.Add(controlRightPane);
+            
+            controlLeftPane.AddToClassList("StandardPanel");
+            controlRightPane.AddToClassList("StandardPanel");
 
             var recordIcon = new Image
             {
-                image = Resources.Load<Texture2D>("recorder_icon"),
-
-                style =
-                {
-                    backgroundColor = RandomColor(),
-                    width = 80.0f,
-                    height = 80.0f,
-                }
+                name = "recorderIcon",
+                image = Resources.Load<Texture2D>("recorder_icon")
             };
 
             controlLeftPane.Add(recordIcon);
@@ -146,9 +131,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
-                    paddingTop = padding,
-                    paddingBottom = padding,
                     flex = 1.0f,
                     flexDirection = FlexDirection.Column,
                 }
@@ -191,7 +173,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     flex = 1.0f,
                 }
             };
@@ -203,7 +184,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     flex = 1.0f,
                     alignSelf = Align.Stretch,
                     flexDirection = FlexDirection.Row,
@@ -215,7 +195,6 @@ namespace UnityEditor.Recorder
             {
                 style =
                 {
-                    backgroundColor = RandomColor(),
                     width = m_RecordingsPanelWidth,
                     minWidth = 150.0f,
                     maxWidth = 300.0f
@@ -225,21 +204,17 @@ namespace UnityEditor.Recorder
             m_PanelSplitter = new PanelSplitter(m_RecordingsPanel);
             
             recordingAndParameters.Add(m_RecordingsPanel);
-            recordingAndParameters.Add(m_PanelSplitter.uiElement);
+            recordingAndParameters.Add(m_PanelSplitter);
             recordingAndParameters.Add(m_SettingsPanel);
+            
+            m_SettingsPanel.AddToClassList("StandardPanel");
 
             root.Add(recordingAndParameters);
 
-            var recordingControl = new VisualElement
+            m_AddNewRecord = new Label("+ Add New Recordings")
             {
-                style =
-                {
-                    backgroundColor = RandomColor(0.8f),
-                    height = 20,
-                }
+                name = "addRecordingsButton"
             };
-
-            m_AddNewRecord = new Label("+ Add New Recordings");
             
             m_AddNewRecord.RegisterCallback<MouseUpEvent>(evt =>
             {               
@@ -258,7 +233,6 @@ namespace UnityEditor.Recorder
                 newRecordMenu.ShowAsContext();
             });
             
-            recordingControl.Add(m_AddNewRecord);
             
             m_Recordings = new ScrollView
             {
@@ -273,14 +247,13 @@ namespace UnityEditor.Recorder
             m_Recordings.contentContainer.style.positionLeft = 0;
             m_Recordings.contentContainer.style.positionRight = 0;
 
-            m_RecordingsPanel.Add(recordingControl);
+            m_RecordingsPanel.Add(m_AddNewRecord);
             m_RecordingsPanel.Add(m_Recordings);
 
             var parametersControl = new VisualElement
             {
                 style =
                 {
-                    backgroundColor = RandomColor(0.8f),
                     flex = 1.0f,
                     minWidth = 300.0f,
                 }
@@ -294,7 +267,7 @@ namespace UnityEditor.Recorder
 
             m_StatusBar = new IMGUIContainer(UpdateRecordingProgressGUI)
             {
-                style = { height = EditorGUIUtility.singleLineHeight }
+                name = "statusBar"
             };
             
             root.Add(m_StatusBar);
@@ -439,7 +412,7 @@ namespace UnityEditor.Recorder
 
         void UpdateRecordButtonText()
         {
-            m_StartRecordButton.text = m_State == State.Recording ? "Stop Recording" : "Start Recording";
+            m_StartRecordButton.text = m_State == State.Recording ? "STOP RECORDING" : "START RECORDING";
         }
               
         void StopRecording()
