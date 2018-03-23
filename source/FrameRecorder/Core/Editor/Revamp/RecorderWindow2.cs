@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
+    public partial class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
     {
         [MenuItem("Tools/Yolo Record !!")]
         public static void ShowRecorderWindow2()
@@ -37,12 +37,13 @@ namespace UnityEditor.Recorder
         VisualElement m_RecordModeOptionsPanel;
         VisualElement m_FrameRateOptionsPanel;
 
+        VisualElement m_StatusBar;
+
         [SerializeField] GlobalSettings m_GlobalSettings;
         [SerializeField] RecordersList m_RecordersList;
         
         [SerializeField] float m_RecordingsPanelWidth = 200.0f;
         [SerializeField] int m_SelectedRecorderItemIndex = 0;
-
         
         enum State
         {
@@ -52,6 +53,7 @@ namespace UnityEditor.Recorder
         }
         
         State m_State = State.Idle;
+        int m_FrameCount = 0;
 
         GlobalSettingsEditor m_GlobalSettingsEditor;
         
@@ -152,10 +154,8 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            m_StartRecordButton = new Button(OnRecordButtonClick)
-            {
-                text = "Start Recording"
-            };
+            m_StartRecordButton = new Button(OnRecordButtonClick);
+            UpdateRecordButtonText();
 
             leftButtonsStack.Add(m_StartRecordButton);
 
@@ -291,6 +291,13 @@ namespace UnityEditor.Recorder
             {
                 style = { flex = 1.0f }
             };
+
+            m_StatusBar = new IMGUIContainer(UpdateRecordingProgressGUI)
+            {
+                style = { height = EditorGUIUtility.singleLineHeight }
+            };
+            
+            root.Add(m_StatusBar);
             
             parametersControl.Add(m_RecorderSettingPanel);
             
@@ -311,7 +318,7 @@ namespace UnityEditor.Recorder
 
         bool ShouldDisableRecordSettings()
         {
-            return m_State != State.Idle || Application.isPlaying;
+            return m_State != State.Idle || EditorApplication.isPlaying;
         }
 
         void Update()
@@ -323,6 +330,11 @@ namespace UnityEditor.Recorder
                     DelayedStartRecording();
                 }
             }
+            else
+            {
+                if (m_State == State.Recording)
+                    m_State = State.Idle;
+            }
             
             // TODO Use events instead
             var enable = !ShouldDisableRecordSettings();
@@ -330,6 +342,22 @@ namespace UnityEditor.Recorder
             m_RecorderSettingPanel.SetEnabled(enable);
             m_RecordModeOptionsPanel.SetEnabled(enable);
             m_FrameRateOptionsPanel.SetEnabled(enable);
+
+            if (m_State != State.Idle)
+            {
+                m_StartRecordButton.SetEnabled(EditorApplication.isPlaying && Time.frameCount - m_FrameCount > 5.0f);
+            }
+            else
+            {
+                m_StartRecordButton.SetEnabled(!EditorApplication.isPlaying);
+            }
+            
+            UpdateRecordButtonText();
+
+            if (m_State == State.Recording)
+            {
+                Repaint();
+            }
         }
         
         void DelayedStartRecording()
@@ -339,8 +367,6 @@ namespace UnityEditor.Recorder
 
         void StartRecording(bool autoExitPlayMode)
         {         
-            var go = SceneHook.HookupRecorder();
-
             var sessions = new List<RecordingSession>();
             
             foreach (var visualElement in m_Recordings.Children())
@@ -355,16 +381,8 @@ namespace UnityEditor.Recorder
                     
                     continue;
                 }
-                
-                var session = new RecordingSession
-                {
-                    m_Recorder = RecordersInventory.GenerateNewRecorder(settings.recorderType, settings),
-                    m_RecorderGO = go,
-                };
-                
-                var component = go.AddComponent<RecorderComponent>();
-                component.session = session;
-                component.autoExitPlayMode = autoExitPlayMode;
+
+                var session = SceneHook.CreateRecorderSession(settings, autoExitPlayMode);
                 
                 sessions.Add(session);
             }
@@ -372,7 +390,10 @@ namespace UnityEditor.Recorder
             var success = sessions.All(s => s.SessionCreated() && s.BeginRecording());
 
             if (success)
+            {
                 m_State = State.Recording;
+                m_FrameCount = 0;
+            }
             else
             {
                 StopRecording();
@@ -384,12 +405,11 @@ namespace UnityEditor.Recorder
             switch (m_State)
             {
                 case State.Idle:
-                {
-                    m_StartRecordButton.text = "Stop Recording";                   
-                    
+                {             
                     m_State = State.WaitingForPlayModeToStartRecording;
                     GameViewSize.DisableMaxOnPlay();
                     EditorApplication.isPlaying = true;
+                    m_FrameCount = Time.frameCount;
                     
                     break;
                 }
@@ -398,8 +418,6 @@ namespace UnityEditor.Recorder
                 case State.Recording:
                 {   
                     StopRecording();
-                    
-                    m_StartRecordButton.text = "Start Recording";
 
                     break;
                 }
@@ -407,26 +425,25 @@ namespace UnityEditor.Recorder
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            
+            UpdateRecordButtonText();
+        }
+
+        void UpdateRecordButtonText()
+        {
+            m_StartRecordButton.text = m_State == State.Recording ? "Stop Recording" : "Start Recording";
         }
               
         void StopRecording()
         {
-            foreach (var visualElement in m_Recordings.Children())
+            var recorderGO = SceneHook.GetRecorderHost();
+            if (recorderGO != null)
             {
-                var recorderItem = (RecorderItem) visualElement;
-                
-                var settings = recorderItem.settings;
-                if (settings != null)
-                {
-                    var recorderGO = SceneHook.FindRecorder(settings);
-                    if (recorderGO != null)
-                    {
-                        UnityHelpers.Destroy(recorderGO);
-                    }
-                }
+                UnityHelpers.Destroy(recorderGO);
             }
             
             m_State = State.Idle;
+            m_FrameCount = 0;
         }
 
         void OnRecorderSettingsGUI()
@@ -516,12 +533,12 @@ namespace UnityEditor.Recorder
                 if (recording == selected)
                 {
                     m_RecorderEditor = r.editor;
-                    r.SetSelected(true);
+                    r.selected = true;
                     m_SelectedRecorderItemIndex = i;
                 }
                 else
                 {
-                    r.SetSelected(false);
+                    r.selected = false;
                     ++i;
                 }
             }
@@ -530,113 +547,101 @@ namespace UnityEditor.Recorder
             {
                 m_RecorderSettingPanel.Dirty(ChangeType.Layout);
             }
-
         }
-        
-        class RecorderItem : VisualElement
+
+        void UpdateRecordingProgressGUI()
         {
-            public RecorderSettings settings { get; private set; }
-            public RecorderEditor editor { get; private set; }
-
-            Color m_Color;
-            EditableLabel m_EditableLabel;
-            
-            static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
-
-            public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+            if (m_State == State.Idle)
             {
-                var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
-                savedSettings.name = recorderName;
-                
-                recordersList.Add(savedSettings);
+                EditorGUILayout.LabelField(new GUIContent("Click START RECORDING button to trigger YOLO mode"));
+                return;
+            }
 
-                Init(savedSettings, iconName, onRecordMouseUp);
+            if (m_State == State.WaitingForPlayModeToStartRecording)
+            {
+                EditorGUILayout.LabelField(new GUIContent("Waiting for playmode to start..."));
+                return;
             }
             
-            public RecorderItem(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
-            {
-                Init(savedSettings, iconName, onRecordMouseUp);
-            }
+            var recordingSessions = SceneHook.GetCurrentRecordingSessions();
+
+            var session = recordingSessions.FirstOrDefault(); // Hack. We know each session uses the same global settings so take the first one...
+
+            if (session == null)
+                return;
+                    
+            var progressBarRect = EditorGUILayout.GetControlRect();
             
-            void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+            var settings = session.settings;
+
+            switch (settings.recordMode)
             {
-                settings = savedSettings;
-
-                editor = (RecorderEditor)Editor.CreateEditor(settings);
-
-                style.flex = 1.0f;
-                style.flexDirection = FlexDirection.Row;
-                style.backgroundColor = m_Color = RandomColor();
-
-                var toggle = new Toggle(null) { on = settings.enabled };
-                
-                toggle.OnToggle(() =>
+                case RecordMode.Manual:
                 {
-                    settings.enabled = toggle.on;
-                });
-                
-                Add(toggle);
+                    var label = string.Format("{0} Frames processed", session.frameIndex);
+                    EditorGUI.ProgressBar(progressBarRect, 0, label);
 
-                Texture2D icon = null;
-                
-                if (!string.IsNullOrEmpty(iconName))
-                {
-                    if (!s_IconCache.TryGetValue(iconName, out icon))
-                    {
-                        icon = s_IconCache[iconName] = Resources.Load<Texture2D>(iconName);
-                    }
+                    break;
                 }
-
-                if (icon == null)
-                    icon = Texture2D.whiteTexture;
-                
-                var recordIcon = new Image
+                case RecordMode.SingleFrame:
+                case RecordMode.FrameInterval:
                 {
-                    image = icon,
-
-                    style =
-                    {
-                        backgroundColor = RandomColor(),
-                        height = 16.0f,
-                        width = 16.0f,
-                    }
-                };
-                
-                Add(recordIcon);
-                
-                m_EditableLabel = new EditableLabel { text = settings.name };
-                m_EditableLabel.OnValueChanged(evt => settings.name = evt.newValue);
-                Add(m_EditableLabel);
-                
-                RegisterCallback<MouseUpEvent>(InternalMouseUp);
-                RegisterCallback(onRecordMouseUp);
-            }
-
-            void InternalMouseUp(MouseUpEvent evt)
-            {
-                if (evt.clickCount == 1 && m_Selected)
+                    var label = session.frameIndex < settings.startFrame
+                        ? string.Format("Skipping first {0} frames...", settings.startFrame - 1)
+                        : string.Format("{0} Frames processed", session.frameIndex - settings.startFrame + 1);
+                    EditorGUI.ProgressBar(progressBarRect, (session.frameIndex + 1) / (float) (settings.endFrame + 1), label);
+                    break;
+                }
+                case RecordMode.TimeInterval:
                 {
-                    evt.StopImmediatePropagation();
-                    m_EditableLabel.StartEditing();
+                    var label = session.m_CurrentFrameStartTS < settings.startTime
+                        ? string.Format("Skipping first {0} seconds...", settings.startTime)
+                        : string.Format("{0} Frames processed", session.frameIndex - settings.startFrame + 1);
+                    EditorGUI.ProgressBar(progressBarRect, (float) session.m_CurrentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
+                    
+                    break;
                 }
             }
-
-            bool m_Selected = false;
-            public void SetSelected(bool value)
-            {
-                m_Selected = value;
-                style.backgroundColor = value ? Color.white : m_Color;
-
-            }
-        }
-        
-        static IEnumerable<Type> GetRecorders()
-        {
-            var type = typeof(RecorderSettings);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => !p.IsAbstract && type.IsAssignableFrom(p));
-            return types;
+            
+//            var recordingSessions = SceneHook.GetCurrentRecordingSessions();
+//
+//            var session = recordingSessions.FirstOrDefault();
+//
+//            if (session == null)
+//                return;
+//                    
+//            var progressBarRect = EditorGUILayout.GetControlRect();
+//            
+//            var settings = session.settings;
+//
+//            switch (settings.recordMode)
+//            {
+//                case RecordMode.Manual:
+//                {
+//                    var label = string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
+//                    EditorGUI.ProgressBar(progressBarRect, 0, label);
+//
+//                    break;
+//                }
+//                case RecordMode.SingleFrame:
+//                case RecordMode.FrameInterval:
+//                {
+//                    var label = session.frameIndex < settings.startFrame
+//                        ? string.Format("Skipping first {0} frames...", settings.startFrame - 1)
+//                        : string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
+//                    EditorGUI.ProgressBar(progressBarRect, (session.frameIndex + 1) / (float) (settings.endFrame + 1), label);
+//                    break;
+//                }
+//                case RecordMode.TimeInterval:
+//                {
+//                    var label = session.m_CurrentFrameStartTS < settings.startTime
+//                        ? string.Format("Skipping first {0} seconds...", settings.startTime)
+//                        : string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
+//                    EditorGUI.ProgressBar(progressBarRect, (float) session.m_CurrentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
+//                    
+//                    break;
+//                }
+//            }
         }
 
         public void OnBeforeSerialize()

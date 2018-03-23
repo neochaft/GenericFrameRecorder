@@ -18,7 +18,7 @@ namespace UnityEngine.Recorder
             {
                 EditorPrefs.SetBool(MENU_NAME, value);
                 m_cachedState = value;
-                var go = SceneHook.GetGameObject(false);
+                var go = SceneHook.GetRecorderHost();
                 if (go != null)
                 {
                     go.hideFlags = value ? HideFlags.None : HideFlags.HideInHierarchy;
@@ -30,7 +30,7 @@ namespace UnityEngine.Recorder
         {
             enabled = EditorPrefs.GetBool(MENU_NAME, false);
 
-            /// Delaying until first editor tick so that the menu  will be populated before setting check state, and  re-apply correct action
+            // Delaying until first editor tick so that the menu  will be populated before setting check state, and  re-apply correct action
             EditorApplication.delayCall += () => PerformAction(enabled);
         }
 

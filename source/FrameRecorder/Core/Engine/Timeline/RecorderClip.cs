@@ -39,7 +39,7 @@ namespace UnityEngine.Recorder.Timeline
                 behaviour.session = new RecordingSession()
                 {
                     m_Recorder = RecordersInventory.GenerateNewRecorder(recorderType, m_Settings),
-                    m_RecorderGO = SceneHook.HookupRecorder(),
+                    m_RecorderGO = SceneHook.GetRecorderHost(true),
                 };
                 behaviour.OnEnd = () =>
                 {

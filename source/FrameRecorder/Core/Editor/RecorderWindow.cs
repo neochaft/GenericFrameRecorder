@@ -226,7 +226,7 @@ namespace UnityEditor.Recorder
 
                 case EState.Recording:
                 {
-                    var recorderGO = SceneHook.FindRecorder((RecorderSettings)m_Editor.target);
+                    var recorderGO = SceneHook.GetRecorderHost();
                     if (recorderGO == null)
                     {
                         GUILayout.Button("Start Recording"); // just to keep the ui system happy.
@@ -247,7 +247,7 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void UpdateRecordingProgress( GameObject go)
+        void UpdateRecordingProgress(GameObject go)
         {
             var rect = EditorGUILayout.BeginHorizontal(  );
             rect.height = 20;
@@ -305,16 +305,7 @@ namespace UnityEditor.Recorder
         void StartRecording(bool autoExitPlayMode)
         {
             var settings = (RecorderSettings)m_Editor.target;
-            var go = SceneHook.HookupRecorder();
-            var session = new RecordingSession()
-            {
-                m_Recorder = RecordersInventory.GenerateNewRecorder(m_recorderSelector.selectedRecorder, settings),
-                m_RecorderGO = go,
-            };
-
-            var component = go.AddComponent<RecorderComponent>();
-            component.session = session;
-            component.autoExitPlayMode = autoExitPlayMode;
+            var session = SceneHook.CreateRecorderSession(settings, autoExitPlayMode);
 
             if (session.SessionCreated() && session.BeginRecording())
                 m_State = EState.Recording;
@@ -326,18 +317,12 @@ namespace UnityEditor.Recorder
 
         void StopRecording()
         {
-            if (m_Editor != null)
+            var recorderGO = SceneHook.GetRecorderHost();
+            if (recorderGO != null)
             {
-                var settings = (RecorderSettings)m_Editor.target;
-                if (settings != null)
-                {
-                    var recorderGO = SceneHook.FindRecorder(settings);
-                    if (recorderGO != null)
-                    {
-                        UnityHelpers.Destroy(recorderGO);
-                    }
-                }
+                UnityHelpers.Destroy(recorderGO);
             }
+            
             m_FrameCount = 0;
             m_State = EState.Idle;
         }

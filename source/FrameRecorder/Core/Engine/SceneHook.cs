@@ -1,23 +1,17 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
 #endif
 
 namespace UnityEngine.Recorder
-{
-
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
+{  
     public static class SceneHook
     {
         const string k_HostGoName = "UnityEngine-Recorder";
 
-        internal static GameObject GetGameObject(bool createIfAbsent)
+        public static GameObject GetRecorderHost(bool createIfAbsent = false)
         {
             var go = GameObject.Find(k_HostGoName);
             /*if (go != null && go.scene != SceneManager.GetActiveScene())
@@ -37,28 +31,9 @@ namespace UnityEngine.Recorder
             return go;
         }
 
-        static GameObject GetRecordingSessionsRoot(bool createIfAbsent)
+        static GameObject GetSettingsRoot(bool createIfAbsent)
         {
-            var root = GetGameObject(createIfAbsent);
-            if (root == null)
-                return null;
-
-            var settingsTr = root.transform.Find("RecordingSessions");
-            GameObject settingsGO;
-            if (settingsTr == null)
-            {
-                settingsGO = new GameObject("RecordingSessions");
-                settingsGO.transform.parent = root.transform;
-            }
-            else
-                settingsGO = settingsTr.gameObject;
-
-            return settingsGO;
-        }
-
-        public static GameObject GetSettingsRoot(bool createIfAbsent)
-        {
-            var root = GetGameObject(createIfAbsent);
+            var root = GetRecorderHost(createIfAbsent);
             if (root == null)
                 return null;
 
@@ -75,32 +50,47 @@ namespace UnityEngine.Recorder
             return settingsGO;
         }
 
-        public static GameObject HookupRecorder()
+        public static IEnumerable<RecordingSession> GetCurrentRecordingSessions()
         {
-            var ctrl = GetRecordingSessionsRoot(true);
-
-            var recorderGO = new GameObject();
-
-            recorderGO.transform.parent = ctrl.transform;
-
-            return recorderGO;
+            var host = GetRecorderHost();
+            if (host != null)
+            {
+                var components = host.GetComponents<RecorderComponent>();
+                foreach (var component in components)
+                {
+                    yield return component.session;
+                }      
+            }
         }
-
-        public static GameObject FindRecorder(RecorderSettings settings)
+        
+        public static RecordingSession CreateRecorderSession(RecorderSettings settings, bool autoExitPlayMode)
         {
-            var ctrl = GetRecordingSessionsRoot(false);
-            if (ctrl == null)
+            var component = GetRecorderComponent(settings, true);
+            
+            var session = new RecordingSession
+            {
+                m_Recorder = RecordersInventory.GenerateNewRecorder(settings.recorderType, settings),
+                m_RecorderGO = component.gameObject
+            };
+         
+            component.autoExitPlayMode = autoExitPlayMode;
+            component.session = session;
+
+            return session;
+        }
+        
+        static RecorderComponent GetRecorderComponent(RecorderSettings settings, bool createIfAbsent)
+        {
+            var host = GetRecorderHost(createIfAbsent);
+            if (host == null)
                 return null;
 
-            for (int i = 0; i < ctrl.transform.childCount; i++)
-            {
-                var child = ctrl.transform.GetChild(i);
-                var settingsHost = child.GetComponent<RecorderComponent>();
-                if (settingsHost != null && settingsHost.session != null && settingsHost.session.settings == settings)
-                    return settingsHost.gameObject;
-            }
+            var component = host.GetComponentsInChildren<RecorderComponent>().FirstOrDefault(r => r.session.settings == settings);
 
-            return null;
+            if (component == null && createIfAbsent)
+                component = host.AddComponent<RecorderComponent>();
+
+            return component;
         }
 
         public static void RegisterInputSettingObj(string assetId, RecorderInputSetting input)
