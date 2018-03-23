@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 
@@ -9,6 +11,8 @@ namespace UnityEditor.Recorder
         readonly TextField m_TextField;
 
         bool m_IsEditing;
+
+        Action<string> m_OnValueChangedCallback;
         
         public string text
         {
@@ -33,9 +37,23 @@ namespace UnityEditor.Recorder
             m_TextField.RegisterCallback<FocusOutEvent>(OnTextFieldLostFocus);
         }
 
-        public void OnValueChanged(EventCallback<ChangeEvent<string>> func)
+        void SetValueAndNotify(string newValue)
         {
-            m_TextField.OnValueChanged(func);
+            if (EqualityComparer<string>.Default.Equals(m_Label.text, newValue))
+                return;
+
+            if (string.IsNullOrEmpty(newValue))
+                return;
+
+            m_Label.text = newValue;
+            
+            if (m_OnValueChangedCallback != null)
+                m_OnValueChangedCallback.Invoke(newValue);
+        }
+
+        public void OnValueChanged(Action<string> callback)
+        {
+            m_OnValueChangedCallback = callback;
         }
 
         public void StartEditing()
@@ -56,8 +74,9 @@ namespace UnityEditor.Recorder
             if (!m_IsEditing)
                 return;
 
+            SetValueAndNotify(m_TextField.text);
+            
             m_IsEditing = false;
-            m_Label.text = m_TextField.text;
             Remove(m_TextField);
             Add(m_Label);
         }

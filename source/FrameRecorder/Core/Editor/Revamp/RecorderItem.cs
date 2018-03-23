@@ -90,7 +90,7 @@ namespace UnityEditor.Recorder
             Add(recordIcon);
             
             m_EditableLabel = new EditableLabel { text = settings.name };
-            m_EditableLabel.OnValueChanged(evt => settings.name = evt.newValue);
+            m_EditableLabel.OnValueChanged(newValue => settings.name = newValue);
             Add(m_EditableLabel);
             
             RegisterCallback<MouseUpEvent>(InternalMouseUp);

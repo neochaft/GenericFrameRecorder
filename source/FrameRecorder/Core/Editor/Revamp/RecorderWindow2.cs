@@ -13,7 +13,7 @@ namespace UnityEditor.Recorder
 {
     public partial class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
     {
-        [MenuItem("Tools/Yolo Record !!")]
+        [MenuItem("Tools/Recorder")]
         public static void ShowRecorderWindow2()
         {
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
@@ -343,15 +343,23 @@ namespace UnityEditor.Recorder
             m_RecordModeOptionsPanel.SetEnabled(enable);
             m_FrameRateOptionsPanel.SetEnabled(enable);
 
-            if (m_State != State.Idle)
+            if (HaveActiveRecordings())
             {
-                m_StartRecordButton.SetEnabled(EditorApplication.isPlaying && Time.frameCount - m_FrameCount > 5.0f);
+                if (m_State != State.Idle)
+                {
+                    m_StartRecordButton.SetEnabled(EditorApplication.isPlaying &&
+                                                   Time.frameCount - m_FrameCount > 5.0f);
+                }
+                else
+                {
+                    m_StartRecordButton.SetEnabled(!EditorApplication.isPlaying);
+                }
             }
             else
             {
-                m_StartRecordButton.SetEnabled(!EditorApplication.isPlaying);
+                m_StartRecordButton.SetEnabled(false);
             }
-            
+
             UpdateRecordButtonText();
 
             if (m_State == State.Recording)
@@ -498,7 +506,7 @@ namespace UnityEditor.Recorder
                 }
                 else
                 {
-                    contextMenu.AddItem(new GUIContent("Duplicate"), false, data => { }, recorder);
+                    contextMenu.AddDisabledItem(new GUIContent("Duplicate (TODO)"));
                     contextMenu.AddItem(new GUIContent("Delete"), false,
                         data =>
                         {
@@ -549,17 +557,22 @@ namespace UnityEditor.Recorder
             }
         }
 
+        bool HaveActiveRecordings()
+        {
+            return m_RecordersList.recorders.Any(r => r.enabled);
+        }
+
         void UpdateRecordingProgressGUI()
         {
             if (m_State == State.Idle)
             {
-                EditorGUILayout.LabelField(new GUIContent("Click START RECORDING button to trigger YOLO mode"));
+                EditorGUILayout.LabelField(HaveActiveRecordings() ? new GUIContent("Ready to start recording") : new GUIContent("No active recording"));
                 return;
             }
 
             if (m_State == State.WaitingForPlayModeToStartRecording)
             {
-                EditorGUILayout.LabelField(new GUIContent("Waiting for playmode to start..."));
+                EditorGUILayout.LabelField(new GUIContent("Waiting for Playmode to start..."));
                 return;
             }
             
@@ -578,7 +591,7 @@ namespace UnityEditor.Recorder
             {
                 case RecordMode.Manual:
                 {
-                    var label = string.Format("{0} Frames processed", session.frameIndex);
+                    var label = string.Format("{0} Frame(s) processed", session.frameIndex);
                     EditorGUI.ProgressBar(progressBarRect, 0, label);
 
                     break;
@@ -587,61 +600,21 @@ namespace UnityEditor.Recorder
                 case RecordMode.FrameInterval:
                 {
                     var label = session.frameIndex < settings.startFrame
-                        ? string.Format("Skipping first {0} frames...", settings.startFrame - 1)
-                        : string.Format("{0} Frames processed", session.frameIndex - settings.startFrame + 1);
+                        ? string.Format("Skipping first {0} frame(s)...", settings.startFrame - 1)
+                        : string.Format("{0} Frame(s) processed", session.frameIndex - settings.startFrame + 1);
                     EditorGUI.ProgressBar(progressBarRect, (session.frameIndex + 1) / (float) (settings.endFrame + 1), label);
                     break;
                 }
                 case RecordMode.TimeInterval:
                 {
                     var label = session.m_CurrentFrameStartTS < settings.startTime
-                        ? string.Format("Skipping first {0} seconds...", settings.startTime)
-                        : string.Format("{0} Frames processed", session.frameIndex - settings.startFrame + 1);
+                        ? string.Format("Skipping first {0} second(s)...", settings.startTime)
+                        : string.Format("{0} Frame(s) processed", session.frameIndex - settings.startFrame + 1);
                     EditorGUI.ProgressBar(progressBarRect, (float) session.m_CurrentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
                     
                     break;
                 }
             }
-            
-//            var recordingSessions = SceneHook.GetCurrentRecordingSessions();
-//
-//            var session = recordingSessions.FirstOrDefault();
-//
-//            if (session == null)
-//                return;
-//                    
-//            var progressBarRect = EditorGUILayout.GetControlRect();
-//            
-//            var settings = session.settings;
-//
-//            switch (settings.recordMode)
-//            {
-//                case RecordMode.Manual:
-//                {
-//                    var label = string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
-//                    EditorGUI.ProgressBar(progressBarRect, 0, label);
-//
-//                    break;
-//                }
-//                case RecordMode.SingleFrame:
-//                case RecordMode.FrameInterval:
-//                {
-//                    var label = session.frameIndex < settings.startFrame
-//                        ? string.Format("Skipping first {0} frames...", settings.startFrame - 1)
-//                        : string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
-//                    EditorGUI.ProgressBar(progressBarRect, (session.frameIndex + 1) / (float) (settings.endFrame + 1), label);
-//                    break;
-//                }
-//                case RecordMode.TimeInterval:
-//                {
-//                    var label = session.m_CurrentFrameStartTS < settings.startTime
-//                        ? string.Format("Skipping first {0} seconds...", settings.startTime)
-//                        : string.Format("{0} Frames recorded", session.m_Recorder.recordedFramesCount);
-//                    EditorGUI.ProgressBar(progressBarRect, (float) session.m_CurrentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
-//                    
-//                    break;
-//                }
-//            }
         }
 
         public void OnBeforeSerialize()
