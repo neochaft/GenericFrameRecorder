@@ -24,14 +24,12 @@ namespace UnityEditor.Recorder
         
         RecorderEditor m_RecorderEditor;
         VisualElement m_RecorderSettingPanel;
-        Button m_StartRecordButton;
+        Button m_RecordButton;
         PanelSplitter m_PanelSplitter;
         VisualElement m_AddNewRecord;
         
         VisualElement m_RecordModeOptionsPanel;
         VisualElement m_FrameRateOptionsPanel;
-
-        VisualElement m_StatusBar;
 
         [SerializeField] GlobalSettings m_GlobalSettings;
         [SerializeField] RecordersList m_RecordersList;
@@ -80,7 +78,11 @@ namespace UnityEditor.Recorder
         public void OnEnable()
         {             
             var root = this.GetRootVisualContainer();
+
+            root.style.flexDirection = FlexDirection.Column; 
+            
             root.AddStyleSheetPath("recorder");
+            root.AddStyleSheetPath(EditorGUIUtility.isProSkin ? "recorder_darkSkin" : "recorder_lightSkin");
 
             var mainControls = new VisualElement
             {
@@ -136,10 +138,14 @@ namespace UnityEditor.Recorder
                 }
             };
 
-            m_StartRecordButton = new Button(OnRecordButtonClick);
+            m_RecordButton = new Button(OnRecordButtonClick)
+            {
+                name = "recordButton"
+            };
+            
             UpdateRecordButtonText();
 
-            leftButtonsStack.Add(m_StartRecordButton);
+            leftButtonsStack.Add(m_RecordButton);
 
             m_GlobalSettings = GlobalSettings.instance; 
             
@@ -151,7 +157,7 @@ namespace UnityEditor.Recorder
                     EditorUtility.SetDirty(m_GlobalSettingsEditor);
             })
             {
-                style = {flex = 1.0f,}
+                style = { flex = 1.0f }
             };
 
             leftButtonsStack.Add(m_RecordModeOptionsPanel);
@@ -164,17 +170,14 @@ namespace UnityEditor.Recorder
                     EditorUtility.SetDirty(m_GlobalSettingsEditor);
             })
             {
-                style = {flex = 1.0f,}
+                style = { flex = 1.0f }
             };
             
             controlRightPane.Add(m_FrameRateOptionsPanel);
 
             m_SettingsPanel = new ScrollView
             {
-                style =
-                {
-                    flex = 1.0f,
-                }
+                style = { flex = 1.0f }
             };
             
             m_SettingsPanel.contentContainer.style.positionLeft = 0;
@@ -191,15 +194,18 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            m_RecordingsPanel = new VisualElement
+            m_RecordingsPanel = new VisualContainer
             {
+                name = "recordingsPanel",
                 style =
                 {
                     width = m_RecordingsPanelWidth,
                     minWidth = 150.0f,
-                    maxWidth = 300.0f
+                    maxWidth = 500.0f
                 }
             };
+            
+            m_RecordingsPanel.AddToClassList("StandardPanel");
 
             m_PanelSplitter = new PanelSplitter(m_RecordingsPanel);
             
@@ -262,15 +268,18 @@ namespace UnityEditor.Recorder
             // TODO UIElements
             m_RecorderSettingPanel = new IMGUIContainer(OnRecorderSettingsGUI)
             {
+                name = "recorderSettings",
                 style = { flex = 1.0f }
             };
 
-            m_StatusBar = new IMGUIContainer(UpdateRecordingProgressGUI)
+            var statusBar = new VisualContainer
             {
                 name = "statusBar"
             };
+            // TODO UIElements
+            statusBar.Add(new IMGUIContainer(UpdateRecordingProgressGUI));
             
-            root.Add(m_StatusBar);
+            root.Add(statusBar);
             
             parametersControl.Add(m_RecorderSettingPanel);
             
@@ -320,17 +329,17 @@ namespace UnityEditor.Recorder
             {
                 if (m_State != State.Idle)
                 {
-                    m_StartRecordButton.SetEnabled(EditorApplication.isPlaying &&
+                    m_RecordButton.SetEnabled(EditorApplication.isPlaying &&
                                                    Time.frameCount - m_FrameCount > 5.0f);
                 }
                 else
                 {
-                    m_StartRecordButton.SetEnabled(!EditorApplication.isPlaying);
+                    m_RecordButton.SetEnabled(!EditorApplication.isPlaying);
                 }
             }
             else
             {
-                m_StartRecordButton.SetEnabled(false);
+                m_RecordButton.SetEnabled(false);
             }
 
             UpdateRecordButtonText();
@@ -412,7 +421,7 @@ namespace UnityEditor.Recorder
 
         void UpdateRecordButtonText()
         {
-            m_StartRecordButton.text = m_State == State.Recording ? "STOP RECORDING" : "START RECORDING";
+            m_RecordButton.text = m_State == State.Recording ? "STOP RECORDING" : "START RECORDING";
         }
               
         void StopRecording()
@@ -514,12 +523,12 @@ namespace UnityEditor.Recorder
                 if (recording == selected)
                 {
                     m_RecorderEditor = r.editor;
-                    r.selected = true;
+                    r.SetItemSelected(true);
                     m_SelectedRecorderItemIndex = i;
                 }
                 else
                 {
-                    r.selected = false;
+                    r.SetItemSelected(false);
                     ++i;
                 }
             }

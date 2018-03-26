@@ -19,10 +19,14 @@ namespace UnityEditor.Recorder
             get { return m_Label.text; }
             set { m_Label.text = value; }
         }
+        
+        public void SetLabelEnabled(bool value)
+        {
+            m_Label.SetEnabled(value);
+        }
 
         public EditableLabel()
         {
-            
             m_IsEditing = false;
             m_Label = new Label();
             m_TextField = new TextField();

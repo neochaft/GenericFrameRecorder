@@ -1,0 +1,36 @@
+﻿#addRecordingsButton {
+    background-color: #2C2C2C;
+    border-color: #404040;
+}
+
+#addRecordingsButton:hover {
+    background-color: #4C4C4C;
+}
+
+.StandardPanel {
+    border-color: #404040;
+}
+
+RecorderItem {
+    background-color: #404040;
+    border-color: #000000;
+}
+
+RecorderItem.selected {
+    background-color: #555555;
+    border-color: #567281;
+}
+
+RecorderItem.selected > EditableLabel > * {
+    text-color: #FFFFFF;
+}
+
+PanelSplitter {
+    border-color: #2C2C2C;
+    background-color: #404040;
+}
+
+#statusBar {
+    background-color: #2C2C2C;
+}
+

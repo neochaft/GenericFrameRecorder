@@ -13,20 +13,28 @@ namespace UnityEditor.Recorder
         public RecorderEditor editor { get; private set; }
     
         EditableLabel m_EditableLabel;
+        Image m_Icon;
 
         bool m_Selected;
-
-        public bool selected
+        
+        public void SetItemSelected(bool value)
         {
-            get { return m_Selected;}
-            set
-            {
-                m_Selected = value;
-                if (m_Selected)
-                    AddToClassList("selected");
-                else
-                    RemoveFromClassList("selected");
-            }
+            m_Selected = value;
+            m_Icon.SetEnabled(value);
+            if (value)
+                AddToClassList("selected");
+            else
+                RemoveFromClassList("selected");
+        }
+
+        void SetItemEnabled(bool value)
+        {
+            settings.enabled = value;
+            m_EditableLabel.SetLabelEnabled(value);
+            if (value)
+                RemoveFromClassList("disabled");
+            else
+                AddToClassList("disabled");
         }
 
         static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
@@ -59,7 +67,7 @@ namespace UnityEditor.Recorder
             
             toggle.OnToggle(() =>
             {
-                settings.enabled = toggle.on;
+                SetItemEnabled(toggle.on);
             });
             
             Add(toggle);
@@ -77,12 +85,14 @@ namespace UnityEditor.Recorder
             if (icon == null)
                 icon = Texture2D.whiteTexture;
             
-            var recordIcon = new Image
+            m_Icon = new Image
             {
                 image = icon
             };
+
+            m_Icon.SetEnabled(false);
             
-            Add(recordIcon);
+            Add(m_Icon);
             
             m_EditableLabel = new EditableLabel { text = settings.name };
             m_EditableLabel.OnValueChanged(newValue => settings.name = newValue);
@@ -90,11 +100,13 @@ namespace UnityEditor.Recorder
             
             RegisterCallback<MouseUpEvent>(InternalMouseUp);
             RegisterCallback(onRecordMouseUp);
+            
+            SetItemEnabled(settings.enabled);
         }
     
         void InternalMouseUp(MouseUpEvent evt)
         {
-            if (selected && evt.clickCount == 1 && evt.button == (int) MouseButton.LeftMouse)
+            if (m_Selected && evt.clickCount == 1 && evt.button == (int) MouseButton.LeftMouse)
             {
                 evt.StopImmediatePropagation();
                 m_EditableLabel.StartEditing();
