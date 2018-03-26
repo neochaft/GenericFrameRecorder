@@ -441,16 +441,13 @@ namespace UnityEditor.Recorder
             if (m_RecorderEditor != null)
             {
                 var rec = (RecorderSettings)m_RecorderEditor.target;
+                
+                EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(rec.GetType().Name));
 
-                //using (new EditorGUI.DisabledScope(ShouldDisableRecordSettings()))
-                {
-                    EditorGUILayout.LabelField("Recording Type", rec.GetType().Name);
+                m_RecorderEditor.OnInspectorGUI();
 
-                    m_RecorderEditor.OnInspectorGUI();
-
-                    if (GUI.changed)
-                        m_RecorderSettingPanel.Dirty(ChangeType.Layout);
-                }
+                if (GUI.changed)
+                    m_RecorderSettingPanel.Dirty(ChangeType.Layout);
             }
             else
             {

@@ -6,6 +6,7 @@
 }
 
 #addRecordingsButton {
+    margin-top : 0;
     margin-left : 0;
     margin-right : 0;
     padding-left : 15;
@@ -13,7 +14,7 @@
     padding-bottom : 6;
     font-size: 12;
     border-left-width:0;
-    border-top-width:1;
+    border-top-width:0;
     border-right-width:0;
     border-bottom-width:1;
 }
@@ -52,7 +53,10 @@ RecorderItem > Image {
 }
 
 PanelSplitter {
-
+    border-left-width:1;
+    border-top-width:0;
+    border-right-width:1;
+    border-bottom-width:0;
 }
 
 #statusBar {
@@ -69,6 +73,7 @@ PanelSplitter {
 
 #recordingsPanel {
     margin-top: 0;
+    padding-top: 0;
     padding-left: 0;
     padding-right: 0;
 }

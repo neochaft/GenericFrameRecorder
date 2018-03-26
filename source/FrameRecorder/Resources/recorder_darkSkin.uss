@@ -8,7 +8,7 @@
 }
 
 .StandardPanel {
-    border-color: #404040;
+    border-color: #292929;
 }
 
 RecorderItem {
@@ -18,7 +18,7 @@ RecorderItem {
 
 RecorderItem.selected {
     background-color: #555555;
-    border-color: #567281;
+    border-color: #4097C3;
 }
 
 RecorderItem.disabled {
@@ -30,8 +30,8 @@ RecorderItem.selected > EditableLabel > * {
 }
 
 PanelSplitter {
-    border-color: #2C2C2C;
-    background-color: #404040;
+    background-color: #2C2C2C;
+    border-color: #292929;
 }
 
 #statusBar {
