@@ -68,40 +68,6 @@ namespace UnityEditor.Recorder
                         m_Editor = null;
                         m_recorderSelector = null;
                     }
-                    
-//                    if (GUILayout.Button("Load Preset"))
-//                    {
-//                        EditorGUIUtility.ShowObjectPicker<RecorderWindowSettings>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
-//                    }
-//                    
-//                    if (Event.current.commandName == "ObjectSelectorClosed")
-//                    {
-//                        var candidate =  (RecorderWindowSettings) EditorGUIUtility.GetObjectPickerObject();
-//                        //Debug.Log(candidate);
-//
-//                        m_WindowSettingsAsset = candidate.Clone(); // candidate;
-//                        //m_WindowSettingsAsset = AssetDatabase.LoadAssetAtPath<RecorderWindowSettings>(path);
-//                        
-//                        m_recorderSelector = new RecorderSelector(OnRecorderSelected, false);
-//                        m_recorderSelector.Init(m_WindowSettingsAsset.m_Settings, m_Category);
-//                    }
-//
-//                    using (new EditorGUI.DisabledScope(m_recorderSelector == null))
-//                    {
-//                        if (GUILayout.Button("Save Preset"))
-//                        {
-//                            var path = EditorUtility.SaveFilePanelInProject("Save Preset", m_recorderSelector.selectedRecorder.Name + ".asset", "asset", "");
-//
-//                            if (path.Length != 0)
-//                            {
-//                                
-//                                var copy = m_WindowSettingsAsset.Clone();
-//                                AssetDatabase.CreateAsset(copy, path);
-//                                AssetDatabase.Refresh();
-//                            }
-//                        }
-//                    }
-
 
                     if (m_recorderSelector == null)
                     {

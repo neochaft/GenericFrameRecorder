@@ -68,7 +68,7 @@ namespace UnityEditor.Recorder
             if(asset == null)
             {
                 asset = CreateInstance<T>();
-                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".asset");
+                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".preset");
                 AssetDatabase.Refresh();
             }
 
@@ -294,8 +294,11 @@ namespace UnityEditor.Recorder
                 var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
                 m_Recordings.Add(new RecorderItem(recorderSettings, info.iconName, OnRecordMouseUp));
             }
-            
-            SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+
+            if (m_Recordings.Children().Any())
+            {
+                SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+            }
         }
 
         bool ShouldDisableRecordSettings()
@@ -441,6 +444,8 @@ namespace UnityEditor.Recorder
             if (m_RecorderEditor != null)
             {
                 var rec = (RecorderSettings)m_RecorderEditor.target;
+
+                OnRecorderSettingPresetGUI(rec);
                 
                 EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(rec.GetType().Name));
 
@@ -452,6 +457,51 @@ namespace UnityEditor.Recorder
             else
             {
                 EditorGUILayout.LabelField("Nothing selected");
+            }
+        }
+
+        void OnRecorderSettingPresetGUI(RecorderSettings recorderSettings)
+        {
+            if (GUILayout.Button("Load Preset"))
+            {
+                EditorGUIUtility.ShowObjectPicker<RecorderSettings>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
+            }
+            
+            if (Event.current.commandName == "ObjectSelectorClosed")
+            {
+                var candidate =  (RecorderSettings) EditorGUIUtility.GetObjectPickerObject();
+                Debug.Log(candidate);
+
+                //m_WindowSettingsAsset = candidate.Clone(); // candidate;
+                
+                //m_recorderSelector = new RecorderSelector(OnRecorderSelected, false);
+                //m_recorderSelector.Init(m_WindowSettingsAsset.m_Settings, m_Category);
+            }
+
+            using (new EditorGUI.DisabledScope(recorderSettings == null))
+            {
+                if (GUILayout.Button("Save Preset"))
+                {
+                    var path = EditorUtility.SaveFilePanelInProject("Save Preset", recorderSettings.GetType().Name + ".asset", "asset", "");
+
+                    if (path.Length != 0)
+                    {
+
+                        var copy = Instantiate(recorderSettings); //m_WindowSettingsAsset.Clone());
+                        AssetDatabase.CreateAsset(copy, path);
+                        
+                        copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
+                        
+                        for (int i = 0; i < copy.inputsSettings.Count; ++i)
+                        {
+                            var input = copy.inputsSettings[i];
+                            copy.inputsSettings.ReplaceAt(i, Instantiate(input), false);
+                        }
+                        
+                        
+                        AssetDatabase.Refresh();
+                    }
+                }
             }
         }
 
@@ -604,34 +654,6 @@ namespace UnityEditor.Recorder
         public void OnAfterDeserialize()
         {
             // Nothing
-        }
-    }
-    
-    static class UiElementsHelper
-    {
-        public static VisualElement FieldWithLabel(string label, VisualElement field, float indent = 0.0f)
-        {
-            var container = new VisualElement
-            {
-                style = { flexDirection = FlexDirection.Row } 
-            };
-
-            var labelElement = new Label(label);
-            labelElement.style.paddingLeft = indent;
-            labelElement.style.marginRight = 0.0f;
-            labelElement.style.marginLeft = 4.0f;
-            labelElement.style.width = 150.0f;
-            
-            container.Add(labelElement);
-            
-            field.style.flex = 1.0f;
-            field.style.minWidth = 55.0f;
-            field.style.marginLeft = 0.0f;
-            field.style.marginRight = 4.0f;
-            
-            container.Add(field);
-
-            return container;
         }
     }
 }

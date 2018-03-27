@@ -16,7 +16,7 @@ namespace UnityEditor.Recorder
     }
 
     //[ExecuteInEditMode]
-    public class MediaRecorderSettings : RecorderSettings
+    public class MediaRecorderSettings : RecorderSettings // TODO Rename
     {
         public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;
 #if UNITY_2018_1_OR_NEWER

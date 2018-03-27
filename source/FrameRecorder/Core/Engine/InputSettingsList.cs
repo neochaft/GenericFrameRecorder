@@ -167,13 +167,14 @@ namespace UnityEngine.Recorder
             }
         }
 
-        public void ReplaceAt(int index, RecorderInputSetting input)
+        public void ReplaceAt(int index, RecorderInputSetting input, bool release = true)
         {
             if (m_InputsSettingsAssets == null || m_InputsSettings.Count <= index)
                 throw new ArgumentException("Index out of range");
 
             // Release input
-            ReleaseAt(index);
+            if (release)
+                ReleaseAt(index);
 
             m_InputsSettings[index] = input;
             if (input.storeInScene)
