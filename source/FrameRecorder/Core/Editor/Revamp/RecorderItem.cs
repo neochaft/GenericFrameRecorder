@@ -17,6 +17,11 @@ namespace UnityEditor.Recorder
 
         bool m_Selected;
         
+        public bool IsItemSelected()
+        {
+            return m_Selected;
+        }
+        
         public void SetItemSelected(bool value)
         {
             m_Selected = value;
