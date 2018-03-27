@@ -467,15 +467,22 @@ namespace UnityEditor.Recorder
                 EditorGUIUtility.ShowObjectPicker<RecorderSettings>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
             }
             
-            if (Event.current.commandName == "ObjectSelectorClosed")
+            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "ObjectSelectorClosed")
             {
-                var candidate =  (RecorderSettings) EditorGUIUtility.GetObjectPickerObject();
-                Debug.Log(candidate);
+                var candidate = EditorGUIUtility.GetObjectPickerObject() as RecorderSettings;
 
-                //m_WindowSettingsAsset = candidate.Clone(); // candidate;
+                if (candidate == null)
+                    return;
                 
-                //m_recorderSelector = new RecorderSelector(OnRecorderSelected, false);
-                //m_recorderSelector.Init(m_WindowSettingsAsset.m_Settings, m_Category);
+                
+
+                var currentRecorderSettings = (RecorderSettings) m_RecorderEditor.target;
+                
+                Duplicate(candidate);
+                
+                // TODO Delete current and select new
+                
+                Event.current.Use();
             }
 
             using (new EditorGUI.DisabledScope(recorderSettings == null))
@@ -486,23 +493,51 @@ namespace UnityEditor.Recorder
 
                     if (path.Length != 0)
                     {
-
-                        var copy = Instantiate(recorderSettings); //m_WindowSettingsAsset.Clone());
-                        AssetDatabase.CreateAsset(copy, path);
-                        
-                        copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
-                        
-                        for (int i = 0; i < copy.inputsSettings.Count; ++i)
-                        {
-                            var input = copy.inputsSettings[i];
-                            copy.inputsSettings.ReplaceAt(i, Instantiate(input), false);
-                        }
-                        
-                        
-                        AssetDatabase.Refresh();
+                        Clone(recorderSettings, path);
                     }
                 }
             }
+        }
+        
+        void Duplicate(RecorderSettings candidate)
+        {
+            var copy = Instantiate(candidate);
+            m_RecordersList.Add(copy);
+                
+            AssetDatabase.AddObjectToAsset(copy, m_RecordersList);
+                        
+            copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
+            copy.name = ObjectNames.GetUniqueName(m_Recordings.Children().Select(r => ((RecorderItem)r).settings.name).ToArray(), candidate.name);
+                        
+            for (int i = 0; i < copy.inputsSettings.Count; ++i)
+            {
+                var input = copy.inputsSettings[i];
+                copy.inputsSettings.ReplaceAt(i, Instantiate(input), false);
+            }         
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+                
+            var info = RecordersInventory.GetRecorderInfo(copy.recorderType);
+            m_Recordings.Add(new RecorderItem(copy, info.iconName, OnRecordMouseUp));
+        }
+
+        RecorderSettings Clone(RecorderSettings recorderSettings, string path)
+        {
+            var copy = Instantiate(recorderSettings);
+            AssetDatabase.CreateAsset(copy, path);
+                        
+            copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
+                        
+            for (int i = 0; i < copy.inputsSettings.Count; ++i)
+            {
+                var input = copy.inputsSettings[i];
+                copy.inputsSettings.ReplaceAt(i, Instantiate(input), false);
+            }         
+                        
+            AssetDatabase.Refresh();
+
+            return copy;
         }
 
         void OnAddNewRecorder(RecorderInfo info)
@@ -535,7 +570,15 @@ namespace UnityEditor.Recorder
                 }
                 else
                 {
-                    contextMenu.AddDisabledItem(new GUIContent("Duplicate (TODO)"));
+                    contextMenu.AddItem(new GUIContent("Duplicate"), false,
+                        data =>
+                        {
+                            var item = (RecorderItem) data;
+                            var s = item.settings;
+                            Duplicate(s);
+
+                        }, recorder);
+                    
                     contextMenu.AddItem(new GUIContent("Delete"), false,
                         data =>
                         {
