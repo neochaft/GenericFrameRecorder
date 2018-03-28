@@ -306,6 +306,13 @@ namespace UnityEditor.Recorder
             //if (m_RecordersList == null)
                 //m_RecordersList = LoadSettings<RecordersList>("RecordersList");
 
+            ReloadRecordings();
+        }
+
+        void ReloadRecordings()
+        {
+            m_Recordings.Clear();
+            
             foreach (var recorderSettings in RecorderViewPrefs.recordersList.recorders)
             {
                 var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
@@ -316,6 +323,8 @@ namespace UnityEditor.Recorder
             {
                 SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
             }
+            
+            Repaint();
         }
 
         bool ShouldDisableRecordSettings()
@@ -489,13 +498,13 @@ namespace UnityEditor.Recorder
 
                 if (candidate == null)
                     return;
-                               
-                Debug.Log(candidate);
                 
-                // TODO Delete current and select new
                 RecorderViewPrefs.Load(candidate);
                 
                 Event.current.Use();
+
+                m_SelectedRecorderItemIndex = 0;
+                ReloadRecordings();
             }
 
             using (new EditorGUI.DisabledScope(RecorderViewPrefs.recordersList == null))
@@ -506,7 +515,6 @@ namespace UnityEditor.Recorder
 
                     if (path.Length != 0)
                     {
-                        //AssetDatabase.CopyAsset(AssetDatabase.GetAssetPath(RecorderSettings.recordersList), path);
                         RecorderListPreset.Save(RecorderViewPrefs.recordersList, path);
                     }
                 }
@@ -526,14 +534,8 @@ namespace UnityEditor.Recorder
 
                 if (candidate == null)
                     return;
-                
-                
-
-                //var currentRecorderSettings = (RecordingSetting) m_RecorderEditor.target;
-                
-                Duplicate(candidate.model);
-                
-                // TODO Delete current and select new
+                               
+                ReplaceCurrentRecording(candidate);
                 
                 Event.current.Use();
             }
@@ -555,7 +557,7 @@ namespace UnityEditor.Recorder
             RecorderViewPrefs.Release();
         }
 
-        void Duplicate(RecorderSettings candidate)
+        void DuplicateRecording(RecorderSettings candidate)
         {
             var newName = ObjectNames.GetUniqueName(m_Recordings.Children().Select(r => ((RecorderItem)r).settings.name).ToArray(), candidate.name);
             var copy = AssetSettingsHelper.Duplicate(candidate, newName, RecorderViewPrefs.recordersList);
@@ -563,9 +565,24 @@ namespace UnityEditor.Recorder
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-                
-            var info = RecordersInventory.GetRecorderInfo(copy.recorderType);
-            m_Recordings.Add(new RecorderItem(copy, info.iconName, OnRecordMouseUp));
+
+            ReloadRecordings();
+        }
+        
+        void ReplaceCurrentRecording(RecordingPreset preset)
+        {
+            var currentRecorderSettings = (RecorderSettings) m_RecorderEditor.target; // TODO More robust way to do this
+
+            var copy = AssetSettingsHelper.Duplicate(preset.model, preset.model.name, RecorderViewPrefs.recordersList);          
+            
+            RecorderViewPrefs.recordersList.Replace(currentRecorderSettings, copy);
+
+            UnityHelpers.Destroy(currentRecorderSettings, true);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            ReloadRecordings();
         }
 
         void OnAddNewRecorder(RecorderInfo info)
@@ -603,7 +620,7 @@ namespace UnityEditor.Recorder
                         {
                             var item = (RecorderItem) data;
                             var s = item.settings;
-                            Duplicate(s);
+                            DuplicateRecording(s);
 
                             SelectRecorder(m_Recordings.Last());
 

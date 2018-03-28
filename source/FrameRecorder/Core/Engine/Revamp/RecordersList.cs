@@ -23,5 +23,11 @@ namespace UnityEngine.Recorder
         {
             m_Recorders.Remove(s);
         }
+        
+        public void Replace(RecorderSettings s, RecorderSettings newSettings)
+        {
+            var i = m_Recorders.IndexOf(s);
+            m_Recorders[i] = newSettings;
+        }
     }
 }

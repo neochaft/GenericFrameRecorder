@@ -41,8 +41,7 @@ namespace UnityEngine.Recorder
             {
                 var copySettings = Duplicate(recorderSettings, recorderSettings.name, copy);
                     
-                copy.Remove(recorderSettings);
-                copy.Add(copySettings);
+                copy.Replace(recorderSettings, copySettings);
             }
 
             AssetDatabase.SaveAssets();
