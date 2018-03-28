@@ -20,7 +20,7 @@ namespace UnityEditor.Recorder
             var preset = CreateInstance<RecorderListPreset>();
             AssetDatabase.CreateAsset(preset, path);
 
-            preset.m_Model = AssetSettingsHelper.Duplicate(model, preset);
+            preset.m_Model = AssetSettingsHelper.Duplicate(model, model.name, preset);
             
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
