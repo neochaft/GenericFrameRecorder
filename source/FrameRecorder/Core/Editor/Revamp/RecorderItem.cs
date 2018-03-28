@@ -9,7 +9,7 @@ namespace UnityEditor.Recorder
 {
     class RecorderItem : VisualElement
     {
-        public RecorderSettings settings { get; private set; }
+        public UnityEngine.Recorder.RecorderSettings settings { get; private set; }
         public RecorderEditor editor { get; private set; }
     
         EditableLabel m_EditableLabel;
@@ -54,12 +54,12 @@ namespace UnityEditor.Recorder
             Init(savedSettings, iconName, onRecordMouseUp);
         }
         
-        public RecorderItem(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        public RecorderItem(UnityEngine.Recorder.RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {
             Init(savedSettings, iconName, onRecordMouseUp);
         }
         
-        void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        void Init(UnityEngine.Recorder.RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {           
             settings = savedSettings;
     

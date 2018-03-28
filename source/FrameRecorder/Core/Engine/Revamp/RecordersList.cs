@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Recorder;
 using UnityEngine;
 
 namespace UnityEngine.Recorder

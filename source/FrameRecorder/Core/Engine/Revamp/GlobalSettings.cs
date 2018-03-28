@@ -35,42 +35,42 @@ namespace UnityEditor.Recorder
 
         public bool synchFrameRate { get { return m_SynchFrameRate; } }
 
-        static GlobalSettings s_Instance;
-
-        public static GlobalSettings instance
-        {
-            get
-            {
-                if (s_Instance == null)
-                    s_Instance = LoadSettings<GlobalSettings>("GlobalSettings");
-
-                return s_Instance;
-            }
-        }
-        
-        static T LoadSettings<T>(string filename) where T : ScriptableObject
-        {
-            T asset = null;
-            
-            var candidates = AssetDatabase.FindAssets("t:" + filename);
-            if (candidates.Length > 0)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
-                asset = AssetDatabase.LoadAssetAtPath<T>(path);
-                if (asset == null)
-                {
-                    AssetDatabase.DeleteAsset(path);
-                }
-            }
-            
-            if(asset == null)
-            {
-                asset = CreateInstance<T>();
-                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".asset");
-                AssetDatabase.Refresh();
-            }
-
-            return asset;
-        }
+//        static GlobalSettings s_Instance;
+//
+//        public static GlobalSettings instance
+//        {
+//            get
+//            {
+//                if (s_Instance == null)
+//                    s_Instance = LoadSettings<GlobalSettings>("GlobalSettings");
+//
+//                return s_Instance;
+//            }
+//        }
+//        
+//        static T LoadSettings<T>(string filename) where T : ScriptableObject
+//        {
+//            T asset = null;
+//            
+//            var candidates = AssetDatabase.FindAssets("t:" + filename);
+//            if (candidates.Length > 0)
+//            {
+//                var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
+//                asset = AssetDatabase.LoadAssetAtPath<T>(path);
+//                if (asset == null)
+//                {
+//                    AssetDatabase.DeleteAsset(path);
+//                }
+//            }
+//            
+//            if(asset == null)
+//            {
+//                asset = CreateInstance<T>();
+//                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".asset");
+//                AssetDatabase.Refresh();
+//            }
+//
+//            return asset;
+//        }
     }
 }

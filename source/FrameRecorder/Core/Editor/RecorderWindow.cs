@@ -270,7 +270,7 @@ namespace UnityEditor.Recorder
 
         void StartRecording(bool autoExitPlayMode)
         {
-            var settings = (RecorderSettings)m_Editor.target;
+            var settings = (UnityEngine.Recorder.RecorderSettings)m_Editor.target;
             var session = SceneHook.CreateRecorderSession(settings, autoExitPlayMode);
 
             if (session.SessionCreated() && session.BeginRecording())

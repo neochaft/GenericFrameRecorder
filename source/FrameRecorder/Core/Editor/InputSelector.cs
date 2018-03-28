@@ -9,7 +9,7 @@ namespace UnityEditor.Recorder
 {
     public class InputSelector
     {
-        readonly RecorderSettings m_RecorderSettings;
+        readonly UnityEngine.Recorder.RecorderSettings m_RecorderSettings;
 
         struct InputGroup
         {
@@ -19,7 +19,7 @@ namespace UnityEditor.Recorder
 
         readonly SortedDictionary<int, InputGroup> m_Groups;
 
-        public InputSelector(RecorderSettings recorderSettings)
+        public InputSelector(UnityEngine.Recorder.RecorderSettings recorderSettings)
         {
             m_Groups = new SortedDictionary<int, InputGroup>();
             m_RecorderSettings = recorderSettings;

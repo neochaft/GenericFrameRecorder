@@ -30,7 +30,7 @@ namespace UnityEditor.Recorder
             m_SetRecorderCallback = setRecorderCallback;
         }
 
-        public void Init( RecorderSettings settings, string startingCategory = "" )
+        public void Init( UnityEngine.Recorder.RecorderSettings settings, string startingCategory = "" )
         {
             // Pre existing settings obj?
             if( settings != null )

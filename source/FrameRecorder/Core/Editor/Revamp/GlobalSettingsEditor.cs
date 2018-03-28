@@ -4,7 +4,6 @@ using UnityEngine.Recorder;
 namespace UnityEditor.Recorder
 {
     [CustomEditor(typeof(GlobalSettings))]
-    [CanEditMultipleObjects]
     class GlobalSettingsEditor : Editor
     {
         SerializedProperty m_RecordModeProperty;

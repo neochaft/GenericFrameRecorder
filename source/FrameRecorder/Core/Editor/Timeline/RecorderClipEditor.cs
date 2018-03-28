@@ -129,7 +129,7 @@ namespace UnityEditor.Recorder.Timeline
             if (m_Timeline == null)
                 return;
 
-            var settings = m_Editor.target as RecorderSettings;
+            var settings = m_Editor.target as UnityEngine.Recorder.RecorderSettings;
             //settings.recordMode = RecordMode.Manual; // TODO Fix Me!!!
 
             // Time
@@ -141,7 +141,7 @@ namespace UnityEditor.Recorder.Timeline
             if (m_Timeline == null)
                 return;
 
-            var settings = m_Editor.target as RecorderSettings;
+            var settings = m_Editor.target as UnityEngine.Recorder.RecorderSettings;
             //settings.recordMode = RecordMode.Manual; // TODO Fix Me!!!
 
             // Time

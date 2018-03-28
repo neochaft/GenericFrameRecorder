@@ -8,7 +8,7 @@ namespace UnityEditor.Recorder
     /// </summary>
     public class RecorderWindowSettings : ScriptableObject
     {
-        public RecorderSettings m_Settings;
+        public UnityEngine.Recorder.RecorderSettings m_Settings;
         
         public RecorderWindowSettings Clone()
         {
