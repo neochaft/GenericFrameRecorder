@@ -31,9 +31,6 @@ namespace UnityEditor.Recorder
         
         VisualElement m_RecordModeOptionsPanel;
         VisualElement m_FrameRateOptionsPanel;
-
-        //[SerializeField] GlobalSettings m_GlobalSettings;
-        //[SerializeField] RecordersList m_RecordersList;
         
         [SerializeField] float m_RecordingsPanelWidth = 200.0f;
         [SerializeField] int m_SelectedRecorderItemIndex = 0;
@@ -49,33 +46,7 @@ namespace UnityEditor.Recorder
         int m_FrameCount = 0;
 
         GlobalSettingsEditor m_GlobalSettingsEditor;
-        
-        
-//        static T LoadSettings<T>(string filename) where T : ScriptableObject
-//        {
-//            T asset = null;
-//            
-//            var candidates = AssetDatabase.FindAssets("t:" + filename);
-//            if (candidates.Length > 0)
-//            {
-//                var path = AssetDatabase.GUIDToAssetPath(candidates[0]);
-//                asset = AssetDatabase.LoadAssetAtPath<T>(path);
-//                if (asset == null)
-//                {
-//                    AssetDatabase.DeleteAsset(path);
-//                }
-//            }
-//            
-//            if(asset == null)
-//            {
-//                asset = CreateInstance<T>();
-//                AssetDatabase.CreateAsset(asset, "Assets/" + filename + ".preset");
-//                AssetDatabase.Refresh();
-//            }
-//
-//            return asset;
-//        }
-        
+               
         public void OnEnable()
         {             
             var root = this.GetRootVisualContainer();
@@ -146,12 +117,7 @@ namespace UnityEditor.Recorder
             
             UpdateRecordButtonText();
 
-            leftButtonsStack.Add(m_RecordButton);
-            
-            
-            //RecordersListViewPrefs.instance.LoadOrCreate();
-
-            //m_GlobalSettings = RecordersListViewPrefs.instance; //GlobalSettings.instance; 
+            leftButtonsStack.Add(m_RecordButton); 
             
             m_GlobalSettingsEditor = (GlobalSettingsEditor) Editor.CreateEditor(RecorderViewPrefs.globalSettings);
                 
@@ -221,7 +187,7 @@ namespace UnityEditor.Recorder
 
             root.Add(recordingAndParameters);
 
-            var stuff = new VisualContainer()
+            var stuff = new VisualContainer
             {
                 style =
                 {
@@ -299,12 +265,7 @@ namespace UnityEditor.Recorder
             
             parametersControl.Add(m_RecorderSettingPanel);
             
-            m_SettingsPanel.Add(parametersControl);            
-            
-            //RecordersListViewPrefs.instance.Save();
-            // Load recorders
-            //if (m_RecordersList == null)
-                //m_RecordersList = LoadSettings<RecordersList>("RecordersList");
+            m_SettingsPanel.Add(parametersControl);
 
             ReloadRecordings();
         }
