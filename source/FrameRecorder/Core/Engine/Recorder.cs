@@ -96,7 +96,7 @@ namespace UnityEngine.Recorder
             return recording = true;
         }
 
-        public virtual void EndRecording(RecordingSession ctx)
+        public virtual void EndRecording(RecordingSession session)
         {
             if (!recording)
                 return;

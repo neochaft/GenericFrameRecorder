@@ -12,14 +12,14 @@ namespace UnityEditor.Experimental.Recorder
     [Serializable]
     public class AnimationRecorderSettings : RecorderSettings
     {
-        public string outputPath = "AnimRecorder"+takeToken+"/"+goToken+"_"+inputToken;
-        public int take = 1;
-        public static string goToken = "<goName>";
-        public static string takeToken = "<take>";
-        public static string inputToken = "<input>";
+        AnimationRecorderSettings()
+        {
+            baseFileName.pattern = "animation_<0000>.anim";
+        }
+        
         public override List<RecorderInputSetting> GetDefaultInputSettings()
         {
-            return new List<RecorderInputSetting>()
+            return new List<RecorderInputSetting>
             {
                 NewInputSettingsObj<AnimationInputSettings>() 
             };
@@ -41,7 +41,7 @@ namespace UnityEditor.Experimental.Recorder
             {
                 new List<Type>
                 {
-                    typeof(AnimationClipSettings)
+                    typeof(AnimationInputSettings)
                 }
             };
         }
@@ -60,12 +60,6 @@ namespace UnityEditor.Experimental.Recorder
             {
                 ok = false;
                 errors.Add("No input object set/enabled.");
-            }
-
-            if ( string.IsNullOrEmpty(outputPath))
-            {
-                ok = false;
-                errors.Add("Invalid output path.");
             }
 
             return ok; 
