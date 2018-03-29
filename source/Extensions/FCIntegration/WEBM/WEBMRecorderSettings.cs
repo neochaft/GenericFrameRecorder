@@ -6,7 +6,6 @@ using UnityEngine.Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [ExecuteInEditMode]
     public class WEBMRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcWebMConfig m_WebmEncoderSettings = fcAPI.fcWebMConfig.default_value;

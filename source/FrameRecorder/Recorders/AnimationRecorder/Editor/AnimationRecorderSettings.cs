@@ -8,7 +8,6 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Experimental.Recorder
 {
-    [ExecuteInEditMode]
     [Serializable]
     public class AnimationRecorderSettings : RecorderSettings
     {

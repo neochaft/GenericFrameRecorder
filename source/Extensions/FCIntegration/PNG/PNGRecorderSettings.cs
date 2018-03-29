@@ -5,7 +5,6 @@ using UnityEngine.Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [ExecuteInEditMode]
     public class PNGRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcPngConfig m_PngEncoderSettings = fcAPI.fcPngConfig.default_value;

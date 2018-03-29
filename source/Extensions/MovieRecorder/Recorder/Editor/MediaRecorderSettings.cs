@@ -15,7 +15,6 @@ namespace UnityEditor.Recorder
         WEBM
     }
 
-    //[ExecuteInEditMode]
     public class MediaRecorderSettings : UnityEngine.Recorder.RecorderSettings // TODO Rename
     {
         public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;

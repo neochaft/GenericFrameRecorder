@@ -5,7 +5,6 @@ using UnityEngine.Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [ExecuteInEditMode]
     public class EXRRecorderSettings : BaseFCRecorderSettings
     {
 

@@ -5,7 +5,6 @@ using UnityEngine.Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [ExecuteInEditMode]
     public class GIFRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcGifConfig m_GifEncoderSettings = fcAPI.fcGifConfig.default_value;

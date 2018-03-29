@@ -39,7 +39,7 @@ namespace UnityEngine.Recorder
     /// Notes: 
     /// - Some of the fields in this class actually don't apply to ALL recorders but are so common that they are included 
     ///   here for convenience.
-    /// </summary>    
+    /// </summary>
     public abstract class RecorderSettings : ScriptableObject
     {
         public FileNameGenerator baseFileName;
