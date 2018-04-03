@@ -7,6 +7,7 @@ using System.ComponentModel;
 namespace UnityEngine.Recorder.Input
 {
     [DisplayName("360 View")]
+    [Serializable]
     public class Camera360InputSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.MainCamera;

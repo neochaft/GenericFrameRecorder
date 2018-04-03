@@ -22,7 +22,7 @@ namespace UnityEditor.Experimental.Recorder
 
             for (int i = 0; i < m_Inputs.Count; ++i)
             {
-                var set = (AnimationInputSettings)settings.inputsSettings[i];
+                var set = (AnimationInputSettings)settings.inputsSettings.ElementAt(i);
                 if (set.enabled)
                 {
                     var aInput = m_Inputs[i] as AnimationInput;

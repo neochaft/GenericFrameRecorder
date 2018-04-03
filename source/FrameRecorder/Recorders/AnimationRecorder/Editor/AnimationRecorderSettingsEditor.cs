@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor.Experimental.Recorder;
 using UnityEditor.Experimental.Recorder.Input;
 using UnityEditor.Recorder;
@@ -25,7 +26,7 @@ namespace UnityEditor.Experimental.FrameRecorder
             var aRecorderSettings = target as AnimationRecorderSettings;
             var inputs = aRecorderSettings.inputsSettings;
 
-            for (int i = 0; i < inputs.Count; i++)
+            for (int i = 0; i < inputs.Count(); i++)
             {
                                 
                 //GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));

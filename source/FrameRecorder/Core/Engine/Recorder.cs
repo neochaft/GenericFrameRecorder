@@ -77,7 +77,7 @@ namespace UnityEngine.Recorder
 
             m_Inputs = new List<RecorderInput>();
             foreach (var inputSettings in settings.inputsSettings)
-            {
+            {               
                 var input = (RecorderInput)Activator.CreateInstance(inputSettings.inputType);
                 input.settings = inputSettings;
                 m_Inputs.Add(input);

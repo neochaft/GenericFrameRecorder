@@ -8,6 +8,7 @@ using System.ComponentModel;
 namespace UnityEngine.Recorder.Input
 {
     [DisplayName("Game View")]
+    [Serializable]
     public class ScreenCaptureInputSettings : ImageInputSettings
     {
         public override Type inputType

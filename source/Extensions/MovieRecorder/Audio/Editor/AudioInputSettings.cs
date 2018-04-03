@@ -6,6 +6,7 @@ using UnityEngine.Recorder;
 namespace UnityEditor.Recorder.Input
 {
     [DisplayName("Audio")]
+    [Serializable]
     public class AudioInputSettings : RecorderInputSetting
     {
         public bool preserveAudio = true;

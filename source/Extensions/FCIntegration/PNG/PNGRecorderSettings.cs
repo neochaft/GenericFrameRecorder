@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using System;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -12,11 +9,6 @@ namespace UTJ.FrameCapturer.Recorders
         PNGRecorderSettings()
         {
             baseFileName.pattern = "image_<0000>.<ext>";
-        }
-
-        public override List<RecorderInputSetting> GetDefaultInputSettings()
-        {
-            return new List<RecorderInputSetting>() { NewInputSettingsObj<CBRenderTextureInputSettings>() };
         }
     }
 }

@@ -33,14 +33,14 @@ namespace UnityEditor.Recorder
 
         public virtual void OnValidateSettingsGUI()
         {
-            m_SettingsErrors.Clear();
-            if (!(target as RecorderInputSetting).ValidityCheck(m_SettingsErrors))
-            {
-                for (int i = 0; i < m_SettingsErrors.Count; i++)
-                {
-                    EditorGUILayout.HelpBox(m_SettingsErrors[i], MessageType.Warning);
-                }
-            }
+//            m_SettingsErrors.Clear();
+//            if (!(target as RecorderInputSetting).ValidityCheck(m_SettingsErrors))
+//            {
+//                for (int i = 0; i < m_SettingsErrors.Count; i++)
+//                {
+//                    EditorGUILayout.HelpBox(m_SettingsErrors[i], MessageType.Warning);
+//                }
+//            }
         }
 
         public virtual void CaptureOptionsGUI()

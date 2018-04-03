@@ -201,11 +201,12 @@ namespace UnityEngine.Recorder
                 settings.name = "Recorder Settings";
                 settings.recorderType = recorderType;
 
+                //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
+                //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() ); // TODO Put back the GetDefaultInputSettings I guess...
+                
                 AssetDatabase.AddObjectToAsset(settings, parent);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
-                settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() );
 
                 return settings;
             }

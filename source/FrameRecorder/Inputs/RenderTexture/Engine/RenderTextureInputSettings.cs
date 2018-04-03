@@ -5,6 +5,7 @@ using System.ComponentModel;
 namespace UnityEngine.Recorder.Input
 {
     [DisplayName("Render Texture Asset")]
+    [Serializable]
     public class RenderTextureInputSettings : ImageInputSettings
     {
         public RenderTexture sourceRTxtr;

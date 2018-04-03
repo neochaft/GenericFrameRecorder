@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using System;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -12,11 +9,6 @@ namespace UTJ.FrameCapturer.Recorders
         GIFRecorderSettings()
         {
             baseFileName.pattern = "image.<ext>";
-        }
-
-        public override List<RecorderInputSetting> GetDefaultInputSettings()
-        {
-            return new List<RecorderInputSetting>() { NewInputSettingsObj<CBRenderTextureInputSettings>() };
         }
     }
 }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 namespace UnityEngine.Recorder.Input
 {
     [DisplayName("Targeted Camera(s)")]
+    [Serializable]
     public class CBRenderTextureInputSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.ActiveCameras;

@@ -13,16 +13,16 @@ namespace UnityEngine.Recorder
                 
             AssetDatabase.AddObjectToAsset(copy, parentObject);
 
-            copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
+            //copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
             copy.name = name;
                         
-            for (int i = 0; i < copy.inputsSettings.Count; ++i)
-            {
-                var input = copy.inputsSettings[i];
-                var inputCopy = Object.Instantiate(input);
-                inputCopy.name = Guid.NewGuid().ToString();
-                copy.inputsSettings.ReplaceAt(i, inputCopy, false);
-            }         
+//            for (int i = 0; i < copy.inputsSettings.Count; ++i)
+//            {
+//                var input = copy.inputsSettings[i];
+//                var inputCopy = Object.Instantiate(input);
+//                inputCopy.name = Guid.NewGuid().ToString();
+//                copy.inputsSettings.ReplaceAt(i, inputCopy, false);
+//            }         
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

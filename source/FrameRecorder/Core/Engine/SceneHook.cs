@@ -106,7 +106,7 @@ namespace UnityEngine.Recorder
         {
             var settingsRoot = GetInputsComponent(assetId);
             settingsRoot.m_Settings.Remove(input);
-            UnityHelpers.Destroy(input);
+            //UnityHelpers.Destroy(input);
 #if UNITY_EDITOR
             EditorSceneManager.MarkSceneDirty( settingsRoot.gameObject.scene );
 #endif

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
@@ -17,27 +16,6 @@ namespace UTJ.FrameCapturer.Recorders
             m_AutoSelectBR = true;
         }
 
-        public override List<RecorderInputSetting> GetDefaultInputSettings()
-        {
-            return new List<RecorderInputSetting>()
-            {
-                NewInputSettingsObj<CBRenderTextureInputSettings>() 
-            };
-        }
-
-        public override RecorderInputSetting NewInputSettingsObj(Type type)
-        {
-            var obj = base.NewInputSettingsObj(type);
-            if (type == typeof(CBRenderTextureInputSettings))
-            {
-                var settings = (CBRenderTextureInputSettings)obj;
-                settings.forceEvenSize = true;
-                settings.flipFinalOutput = true;
-            }
-
-            return obj ;
-        }
-
         public override bool isPlatformSupported
         {
             get
@@ -48,10 +26,11 @@ namespace UTJ.FrameCapturer.Recorders
 
         public override void SelfAdjustSettings()
         {
-            if (inputsSettings.Count == 0 )
+            var selectedInput = m_VideoSelector.selected;
+            if (selectedInput == null)
                 return;
 
-            var iis = inputsSettings[0] as ImageInputSettings;
+            var iis = selectedInput as ImageInputSettings;
             if (iis != null)
             {
                 iis.maxSupportedSize = EImageDimension.x2160p_4K;

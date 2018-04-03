@@ -1,13 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor.Recorder;
 using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
+    [Serializable]
+    public class UTJVideoSelector : InputSettingsSelector
+    {
+        [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
+        [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
+        [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
+        
+        public UTJVideoSelector()
+        {
+            m_CbRenderTextureInputSettings.flipFinalOutput = true;
+            m_RenderTextureSamplerSettings.flipFinalOutput = true;
+        }
+    }
+    
     public abstract class BaseFCRecorderSettings : RecorderSettings
     {
+        [SerializeField] protected UTJVideoSelector m_VideoSelector = new UTJVideoSelector();
+
         public override bool ValidityCheck( List<string> errors )
         {
             var ok = base.ValidityCheck(errors);
@@ -39,48 +56,39 @@ namespace UTJ.FrameCapturer.Recorders
             }
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type)
-        {
-            var obj = base.NewInputSettingsObj(type);
-            if (type == typeof(CBRenderTextureInputSettings))
-            {
-                var settings = (CBRenderTextureInputSettings)obj;
-                settings.flipFinalOutput = true;
-            }
-            else if (type == typeof(RenderTextureSamplerSettings))
-            {
-                var settings = (RenderTextureSamplerSettings)obj;
-                settings.flipFinalOutput = true;
-            }
-
-            return obj ;
-        }
-
-        public override InputGroups GetInputGroups()
-        {
-            return new InputGroups
-            {
-                new List<Type>
-                {
-                    typeof(CBRenderTextureInputSettings),
-                    typeof(RenderTextureSamplerSettings),
-                    typeof(RenderTextureInputSettings)
-                }
-            };
-        }
+//        public override RecorderInputSetting NewInputSettingsObj(Type type)
+//        {
+//            var obj = base.NewInputSettingsObj(type);
+//            if (type == typeof(CBRenderTextureInputSettings))
+//            {
+//                var settings = (CBRenderTextureInputSettings)obj;
+//                settings.flipFinalOutput = true;
+//            }
+//            else if (type == typeof(RenderTextureSamplerSettings))
+//            {
+//                var settings = (RenderTextureSamplerSettings)obj;
+//                settings.flipFinalOutput = true;
+//            }
+//
+//            return obj ;
+//        }
 
         public override void SelfAdjustSettings()
         {
-            if (inputsSettings.Count == 0 )
+            var selectedInput = m_VideoSelector.selected;
+            if (selectedInput == null)
                 return;
 
-            var iis = inputsSettings[0] as ImageInputSettings;
+            var iis = selectedInput as ImageInputSettings;
             if (iis != null)
             {
                 iis.maxSupportedSize = EImageDimension.x4320p_8K;
             }
         }
 
-
+        public override IEnumerable<RecorderInputSetting> inputsSettings
+        {
+            get { yield return m_VideoSelector.selected; }
+        }
     }
 }

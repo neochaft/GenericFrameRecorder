@@ -7,9 +7,9 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Experimental.Recorder.Input
 {
+    [DisplayName("Animation")]
     [Serializable]
     [StoreInScene]
-    [DisplayName("Animation")]
     public class AnimationInputSettings : RecorderInputSetting
     {
         public GameObject gameObject;

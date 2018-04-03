@@ -8,6 +8,7 @@ namespace UnityEngine.Recorder
     /// Motivation: Input settings can be flagged to persist in the scene and not in the asset. This is to facilitate settings that target specific scene objects.
     ///             When settings are saved in the scene, need a place holder in the recorder asset that will indicate that the real settings should be read from the scene.
     /// </summary>
+    [Serializable]
     public class InputBinder : RecorderInputSetting
     {
         [SerializeField]

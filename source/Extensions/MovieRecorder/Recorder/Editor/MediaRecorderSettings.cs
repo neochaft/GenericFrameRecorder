@@ -1,40 +1,62 @@
-#if UNITY_2017_3_OR_NEWER
-
 using System;
 using System.Collections.Generic;
 using UnityEditor.Recorder.Input;
 using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
+
 namespace UnityEditor.Recorder
 {
-
     public enum MediaRecorderOutputFormat
     {
         MP4,
         WEBM
     }
 
-    public class MediaRecorderSettings : UnityEngine.Recorder.RecorderSettings // TODO Rename
+    [Serializable]
+    public class VideoSelector : InputSettingsSelector
+    {      
+        [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
+        [SerializeField] ScreenCaptureInputSettings m_ScreenCaptureInputSettings = new ScreenCaptureInputSettings();
+        [SerializeField] Camera360InputSettings m_Camera360InputSettings = new Camera360InputSettings();
+        [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
+        [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
+
+        public VideoSelector()
+        {               
+            m_ScreenCaptureInputSettings.forceEvenSize = true;
+                
+            m_CbRenderTextureInputSettings.forceEvenSize = true;
+            m_CbRenderTextureInputSettings.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
+                
+            m_Camera360InputSettings.forceEvenSize = true;
+                
+            m_RenderTextureInputSettings.forceEvenSize = true;
+                
+            m_RenderTextureSamplerSettings.forceEvenSize = true;
+        }
+    }
+
+    public class MediaRecorderSettings : RecorderSettings // TODO Rename
     {
         public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;
-#if UNITY_2018_1_OR_NEWER
-        public UnityEditor.VideoBitrateMode m_VideoBitRateMode = UnityEditor.VideoBitrateMode.High;
-#endif
+        public VideoBitrateMode m_VideoBitRateMode = VideoBitrateMode.High;
         public bool m_AppendSuffix = false;
+
+//        [SerializeField] ScreenCaptureInputSettings m_ScreenCaptureInputSettings = new ScreenCaptureInputSettings();
+//        [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
+//        [SerializeField] Camera360InputSettings m_Camera360InputSettings = new Camera360InputSettings();
+//        [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
+//        [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
+//
+        [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
+        [SerializeField] AudioInputSettings m_AudioInputSettings;
+        //InputSettingsList m_InputsSettings;
+
 
         MediaRecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
-        }
-
-        public override List<RecorderInputSetting> GetDefaultInputSettings()
-        {
-            return new List<RecorderInputSetting>()
-            {
-                NewInputSettingsObj<CBRenderTextureInputSettings>(),
-                NewInputSettingsObj<AudioInputSettings>()
-            };
         }
 
         public override bool ValidityCheck( List<string> errors )
@@ -55,51 +77,41 @@ namespace UnityEditor.Recorder
             return ok;
         }
 
-        public override RecorderInputSetting NewInputSettingsObj(Type type)
+//        public override RecorderInputSetting NewInputSettingsObj(Type type)
+//        {
+//            var obj = base.NewInputSettingsObj(type);
+//
+//            var imageInput = obj as ImageInputSettings;
+//            if (imageInput != null)
+//            {
+//                imageInput.forceEvenSize = true;
+//            }
+//            
+//            var cbRenderTexture = obj as CBRenderTextureInputSettings;
+//            if (cbRenderTexture != null)
+//            {
+//                cbRenderTexture.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
+//            }
+//
+//            return obj ;
+//        }
+
+        public override IEnumerable<RecorderInputSetting> inputsSettings
         {
-            var obj = base.NewInputSettingsObj(type);
-
-            var imageInput = obj as ImageInputSettings;
-            if (imageInput != null)
+            get
             {
-                imageInput.forceEvenSize = true;
+                yield return m_VideoSelector.selected;
+                yield return m_AudioInputSettings;
             }
-            
-            var cbRenderTexture = obj as CBRenderTextureInputSettings;
-            if (cbRenderTexture != null)
-            {
-                cbRenderTexture.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
-            }
-
-            return obj ;
-        }
-
-        public override InputGroups GetInputGroups()
-        {
-            return new InputGroups
-            {
-                new List<Type>
-                {
-                    typeof(ScreenCaptureInputSettings),
-                    typeof(CBRenderTextureInputSettings),
-                    typeof(Camera360InputSettings),
-                    typeof(RenderTextureInputSettings),
-                    typeof(RenderTextureSamplerSettings)
-                },
-                
-                new List<Type>
-                {
-                    typeof(AudioInputSettings)
-                }
-            };
         }
 
         public override void SelfAdjustSettings()
         {
-            if (inputsSettings.Count == 0 )
+            var selectedInput = m_VideoSelector.selected;
+            if (selectedInput == null)
                 return;
 
-            var iis = inputsSettings[0] as ImageInputSettings;
+            var iis = selectedInput as ImageInputSettings;
             if (iis != null)
             {
                 var maxRes = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
@@ -109,5 +121,3 @@ namespace UnityEditor.Recorder
        
     }
 }
-
-#endif

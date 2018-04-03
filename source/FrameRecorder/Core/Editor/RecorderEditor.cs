@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -31,7 +32,7 @@ namespace UnityEditor.Recorder
                     if (editor != null)
                         UnityHelpers.Destroy(editor);
 
-                    editor = CreateEditor(m_SettingsObj) as InputEditor;
+                    //editor = CreateEditor(m_SettingsObj) as InputEditor;
                     if (editor != null)
                         editor.isFieldAvailableForHost = m_Validator;
                 }
@@ -46,7 +47,6 @@ namespace UnityEditor.Recorder
 
         protected List<InputEditorState> m_InputEditors;
         readonly List<string> m_SettingsErrors = new List<string>();
-        InputSelector m_InputSelector;
 
         SerializedProperty m_CaptureEveryNthFrame;
         SerializedProperty m_DestinationPath;
@@ -58,12 +58,10 @@ namespace UnityEditor.Recorder
             {
                 m_InputEditors = new List<InputEditorState>();
                 
-                var pf = new PropertyFinder<UnityEngine.Recorder.RecorderSettings>(serializedObject);
+                var pf = new PropertyFinder<RecorderSettings>(serializedObject);
                 m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
                 m_DestinationPath = pf.Find(w => w.destinationPath);
                 m_BaseFileName = pf.Find(w => w.baseFileName);
-
-                m_InputSelector = new InputSelector((UnityEngine.Recorder.RecorderSettings) target);
 
                 BuildInputEditors();
             }
@@ -71,12 +69,12 @@ namespace UnityEditor.Recorder
 
         void BuildInputEditors()
         {
-            var rs = (UnityEngine.Recorder.RecorderSettings) target;
-            if (!rs.inputsSettings.hasBrokenBindings && rs.inputsSettings.Count == m_InputEditors.Count)
-                return;
-
-            if (rs.inputsSettings.hasBrokenBindings)
-                rs.BindSceneInputSettings();
+            var rs = (RecorderSettings) target;
+//            if (!rs.inputsSettings.hasBrokenBindings && rs.inputsSettings.Count == m_InputEditors.Count)
+//                return;
+//
+//            if (rs.inputsSettings.hasBrokenBindings)
+//                rs.BindSceneInputSettings();
 
             foreach (var editor in m_InputEditors)
                 UnityHelpers.Destroy(editor.editor);
@@ -88,8 +86,8 @@ namespace UnityEditor.Recorder
 
         public bool ValidityCheck(List<string> errors)
         {
-            return ((UnityEngine.Recorder.RecorderSettings) target).ValidityCheck(errors)
-                && ((UnityEngine.Recorder.RecorderSettings) target).isPlatformSupported;
+            return ((RecorderSettings) target).ValidityCheck(errors)
+                && ((RecorderSettings) target).isPlatformSupported;
         }
 
         bool m_FoldoutInput = true;
@@ -127,7 +125,7 @@ namespace UnityEditor.Recorder
 
             EditorGUI.EndChangeCheck();
 
-            ((UnityEngine.Recorder.RecorderSettings) target).SelfAdjustSettings();
+            ((RecorderSettings) target).SelfAdjustSettings();
 
             OnValidateSettingsGUI();
         }
@@ -135,7 +133,7 @@ namespace UnityEditor.Recorder
         protected virtual void OnValidateSettingsGUI()
         {
             m_SettingsErrors.Clear();
-            if (!((UnityEngine.Recorder.RecorderSettings) target).ValidityCheck(m_SettingsErrors))
+            if (!((RecorderSettings) target).ValidityCheck(m_SettingsErrors))
             {
                 foreach (var error in m_SettingsErrors)
                 {
@@ -148,9 +146,9 @@ namespace UnityEditor.Recorder
         {
             if (newSettings != null)
             {
-                var inputs = ((UnityEngine.Recorder.RecorderSettings) target).inputsSettings;
-                inputs.ReplaceAt(atIndex, newSettings);
-                m_InputEditors[atIndex].settingsObj = newSettings;
+//                var inputs = ((RecorderSettings) target).inputsSettings;
+//                inputs.ReplaceAt(atIndex, newSettings);
+//                m_InputEditors[atIndex].settingsObj = newSettings;
             }
             else if (m_InputEditors.Count == 0)
             {
@@ -160,21 +158,21 @@ namespace UnityEditor.Recorder
 
         protected virtual void CaptureOptionsGUI()
         {
-            var inputs = ((UnityEngine.Recorder.RecorderSettings) target).inputsSettings;
-            for (int i = 0; i < inputs.Count; i++)
-            {
-                var input = inputs[i];
-                if (m_InputSelector.OnInputGui(i, ref input))
-                    ChangeInputSettings(i, input);
-
-                m_InputEditors[i].editor.CaptureOptionsGUI();
-            }
+//            var inputs = ((UnityEngine.Recorder.RecorderSettings) target).inputsSettings;
+//            for (int i = 0; i < inputs.Count; i++)
+//            {
+//                var input = inputs[i];
+//                if (m_InputSelector.OnInputGui(i, ref input))
+//                    ChangeInputSettings(i, input);
+//
+//                m_InputEditors[i].editor.CaptureOptionsGUI();
+//            }
         }
 
         protected virtual void OnInputGui(int inputIndex)
         {
-            m_InputEditors[inputIndex].editor.OnInspectorGUI();
-            m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
+            //m_InputEditors[inputIndex].editor.OnInspectorGUI();
+            //m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
         }
 
         protected virtual void NameAndPathGUI()
@@ -191,9 +189,9 @@ namespace UnityEditor.Recorder
 
         protected virtual void ImageRenderOptionsGUI()
         {
-            var inputs = ((UnityEngine.Recorder.RecorderSettings) target).inputsSettings;
+            var inputs = ((RecorderSettings) target).inputsSettings;
 
-            for (int i = 0; i < inputs.Count; i++)
+            for (int i = 0; i < inputs.Count(); i++)
             {
                 EditorGUILayout.Separator();
                 OnInputGui(i);

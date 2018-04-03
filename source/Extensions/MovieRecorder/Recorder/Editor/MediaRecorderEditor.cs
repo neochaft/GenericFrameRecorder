@@ -8,7 +8,8 @@ namespace UnityEditor.Recorder
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_EncodingBitRateMode;
-        InputSelector m_InputSelector;
+        SerializedProperty m_VideoSelector;
+        SerializedProperty m_AudioSelector;       
 
         [MenuItem("Window/Recorder/Video")]
         static void ShowRecorderWindow()
@@ -26,6 +27,8 @@ namespace UnityEditor.Recorder
             var pf = new PropertyFinder<MediaRecorderSettings>(serializedObject);
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
             m_EncodingBitRateMode = pf.Find(w => w.m_VideoBitRateMode);
+            m_VideoSelector = serializedObject.FindProperty("m_VideoSelector");
+            m_AudioSelector = serializedObject.FindProperty("m_AudioInputSettings");
         }
 
         protected override void OnEncodingGui()
@@ -40,20 +43,22 @@ namespace UnityEditor.Recorder
 
         protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
         {
-            if (property.name == "captureEveryNthFrame" )
+            if (property.name == "captureEveryNthFrame")
                 return EFieldDisplayState.Hidden;
             
-            if (property.name == "m_FrameRateMode" )
+            if (property.name == "m_FrameRateMode")
                 return EFieldDisplayState.Disabled;
 
             if (property.name == "allowTransparency")
-            {
                 return ((MediaRecorderSettings) target).m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EFieldDisplayState.Disabled : EFieldDisplayState.Enabled;
-            }
 
             return base.GetFieldDisplayState(property);
         }
 
-
+        protected override void ImageRenderOptionsGUI()
+        {
+            EditorGUILayout.PropertyField(m_VideoSelector, true);
+            EditorGUILayout.PropertyField(m_AudioSelector, true);
+        }
     }
 }

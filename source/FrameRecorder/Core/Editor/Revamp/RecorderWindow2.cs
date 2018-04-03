@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.UIElements;
+using UnityEditor.Presets;
 using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Experimental.UIElements;
@@ -484,33 +485,40 @@ namespace UnityEditor.Recorder
 
         void OnRecorderSettingPresetGUI(RecorderSettings recorderSettings)
         {
-            if (GUILayout.Button("Load Preset"))
+            if (m_RecorderEditor.target != null)
             {
-                EditorGUIUtility.ShowObjectPicker<RecordingPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
-            }
-            
-            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "ObjectSelectorClosed")
-            {
-                var candidate = EditorGUIUtility.GetObjectPickerObject() as RecordingPreset;
+                var rect = EditorGUILayout.GetControlRect();
 
-                if (candidate == null)
-                    return;
-                               
-                ReplaceCurrentRecording(candidate);
-                
-                Event.current.Use();
+                PresetSelector.DrawPresetButton(rect, new[] {m_RecorderEditor.target});
             }
 
-            using (new EditorGUI.DisabledScope(recorderSettings == null))
-            {
-                if (GUILayout.Button("Save Preset"))
-                {
-                    var path = EditorUtility.SaveFilePanelInProject("Save Preset", recorderSettings.GetType().Name + ".asset", "asset", "");
-
-                    if (path.Length != 0)
-                        RecordingPreset.Save(recorderSettings, path);
-                }
-            }
+//            if (GUILayout.Button("Load Preset"))
+//            {
+//                EditorGUIUtility.ShowObjectPicker<RecordingPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
+//            }
+//            
+//            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "ObjectSelectorClosed")
+//            {
+//                var candidate = EditorGUIUtility.GetObjectPickerObject() as RecordingPreset;
+//
+//                if (candidate == null)
+//                    return;
+//                               
+//                ReplaceCurrentRecording(candidate);
+//                
+//                Event.current.Use();
+//            }
+//
+//            using (new EditorGUI.DisabledScope(recorderSettings == null))
+//            {
+//                if (GUILayout.Button("Save Preset"))
+//                {
+//                    var path = EditorUtility.SaveFilePanelInProject("Save Preset", recorderSettings.GetType().Name + ".asset", "asset", "");
+//
+//                    if (path.Length != 0)
+//                        RecordingPreset.Save(recorderSettings, path);
+//                }
+//            }
         }
 
         void OnDestroy()

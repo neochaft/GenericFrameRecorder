@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Recorder;
 
 namespace UnityEngine.Recorder
@@ -28,9 +29,19 @@ namespace UnityEngine.Recorder
         TimeInterval
     }
     
-    public class InputGroups : List<IEnumerable<Type>>
+    public class InputGroups : List<IEnumerable<RecorderInputSetting>>
     {
     }
+    
+//    public abstract class InputSettingsSelector
+//    {
+//        [SerializeField] protected RecorderInputSetting m_Selected;
+//
+//        public RecorderInputSetting selected
+//        {
+//            get { return m_Selected; }
+//        }
+//    }
 
     /// <summary>
     /// What is this: Base settings class for all Recorders.
@@ -46,10 +57,10 @@ namespace UnityEngine.Recorder
         public OutputPath destinationPath;
         public int captureEveryNthFrame = 1;
         
-        [SerializeField] string m_AssetID;
+        //[SerializeField] string m_AssetID;
         [SerializeField] bool m_IsEnabled = true; // TODO Move this to the Editor namespace?
 
-        [SerializeField] InputSettingsList m_InputsSettings = new InputSettingsList();
+        //[SerializeField] InputSettingsList m_InputsSettings = new InputSettingsList();
         [SerializeField] string m_RecorderTypeName;
         
         public bool enabled
@@ -98,20 +109,20 @@ namespace UnityEngine.Recorder
             get { return RecorderViewPrefs.globalSettings.synchFrameRate; }
         }
 
-        public InputSettingsList inputsSettings
-        {
-            get { return m_InputsSettings; }
-        }
+//        public InputSettingsList inputsSettings
+//        {
+//            get { return m_InputsSettings; }
+//        }
         
-        public string assetID
-        {
-            get { return m_AssetID; }
-            set
-            {
-                m_AssetID = value;
-                m_InputsSettings.ownerRecorderSettingsAssetId = value;
-            }
-        }
+//        public string assetID
+//        {
+//            get { return m_AssetID; }
+//            set
+//            {
+//                m_AssetID = value;
+//                //m_InputsSettings.ownerRecorderSettingsAssetId = value;
+//            }
+//        }
 
         protected RecorderSettings()
         {
@@ -134,10 +145,13 @@ namespace UnityEngine.Recorder
         {
             bool ok = true;
 
-            if (m_InputsSettings != null)
+            if (inputsSettings != null)
             {
                 var inputErrors = new List<string>();
-                if (!m_InputsSettings.ValidityCheck(inputErrors))
+
+                var valid = inputsSettings.All(x => x.ValidityCheck(inputErrors));
+                
+                if (!valid)
                 {
                     errors.Add("Input settings are incorrect.");
                     ok = false;
@@ -172,50 +186,55 @@ namespace UnityEngine.Recorder
 
         public virtual void OnEnable()
         {
-            m_InputsSettings.OnEnable(m_AssetID);
-            BindSceneInputSettings();
+            //m_InputsSettings.OnEnable(m_AssetID);
+            //BindSceneInputSettings();
         }
 
-        public void BindSceneInputSettings()
-        {
-            if (!m_InputsSettings.hasBrokenBindings)
-                return;
-
-            m_InputsSettings.Rebuild();
-
-#if UNITY_EDITOR
-            if (m_InputsSettings.hasBrokenBindings)
-            {
-                // only supported case is scene stored input settings are missing (for example: new scene loaded that does not contain the scene stored inputs.)
-                m_InputsSettings.RepareMissingBindings();
-            }
-#endif
-
-            if (m_InputsSettings.hasBrokenBindings)
-                Debug.LogError("Recorder: missing input settings");
-        }
+//        public void BindSceneInputSettings()
+//        {
+//            if (!m_InputsSettings.hasBrokenBindings)
+//                return;
+//
+//            m_InputsSettings.Rebuild();
+//
+//#if UNITY_EDITOR
+//            if (m_InputsSettings.hasBrokenBindings)
+//            {
+//                // only supported case is scene stored input settings are missing (for example: new scene loaded that does not contain the scene stored inputs.)
+//                m_InputsSettings.RepareMissingBindings();
+//            }
+//#endif
+//
+//            if (m_InputsSettings.hasBrokenBindings)
+//                Debug.LogError("Recorder: missing input settings");
+//        }
 
         public virtual void OnDestroy()
         {
-            if (m_InputsSettings != null)
-                m_InputsSettings.OnDestroy();
+            //if (m_InputsSettings != null)
+            //    m_InputsSettings.OnDestroy();
         }
 
-        public abstract List<RecorderInputSetting> GetDefaultInputSettings();
+        //
+//        protected T NewInputSettingsObj<T>() where T : class
+//        {
+//            return NewInputSettingsObj(typeof(T)) as T;
+//        }
+        
+        //public abstract List<InputSettingsSelector> GetInputSelectors();
 
-        protected T NewInputSettingsObj<T>() where T : class
-        {
-            return NewInputSettingsObj(typeof(T)) as T;
-        }
+//        public virtual RecorderInputSetting NewInputSettingsObj(Type type)
+//        {
+//            var obj = (RecorderInputSetting) CreateInstance(type);
+//            obj.name = Guid.NewGuid().ToString();
+//            return obj;
+//        }
+//
+        //public abstract InputGroups GetInputGroups();
+        //public abstract IEnumerable<InputSettingsSelector> GetInputSelectors();
 
-        public virtual RecorderInputSetting NewInputSettingsObj(Type type)
-        {
-            var obj = (RecorderInputSetting) CreateInstance(type);
-            obj.name = Guid.NewGuid().ToString();
-            return obj;
-        }
-
-        public abstract InputGroups GetInputGroups();
+        public abstract IEnumerable<RecorderInputSetting> inputsSettings { get; }
+//        {
 
         /// <summary>
         /// Allows for recorder specific settings logic to correct/adjust settings that might be missed by it's editor.

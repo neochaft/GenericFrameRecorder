@@ -14,6 +14,7 @@ namespace UnityEngine.Recorder.Input
     }
 
     [DisplayName("Texture Sampling")]
+    [Serializable]
     public class RenderTextureSamplerSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.ActiveCameras;
