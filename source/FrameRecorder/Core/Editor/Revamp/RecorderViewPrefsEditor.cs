@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -20,6 +21,14 @@ namespace UnityEditor.Recorder
         SerializedProperty m_SynchFrameRateProperty;
 
         GenericMenu m_FrameRateMenu;
+
+        class EditorState
+        {
+            public bool visible;
+            public Editor editor;
+        }
+        
+        readonly Dictionary<RecorderSettings, EditorState> m_InputEditorCache = new Dictionary<RecorderSettings, EditorState>();
 
         static class Styles
         {
@@ -51,10 +60,39 @@ namespace UnityEditor.Recorder
             m_SynchFrameRateProperty = serializedObject.FindProperty("m_SynchFrameRate");
         }
 
+        void OnDestroy()
+        {
+            foreach (var editorState in m_InputEditorCache.Values)
+                DestroyImmediate(editorState.editor); 
+        }
+
         public override void OnInspectorGUI()
         {
             RecordModeGUI();
+            EditorGUILayout.Separator();
             FrameRateGUI();
+            EditorGUILayout.Separator();
+
+            var viewPrefs = (RecorderViewPrefs) target;
+
+            foreach (var inputSettings in viewPrefs.recorders)
+            {
+                EditorState editorInfo;
+
+                if (!m_InputEditorCache.TryGetValue(inputSettings, out editorInfo))
+                {
+                    editorInfo = new EditorState {editor = (RecorderEditor) CreateEditor(inputSettings)};
+                    m_InputEditorCache[inputSettings] = editorInfo;
+                }
+                
+                editorInfo.visible = EditorGUILayout.Foldout(editorInfo.visible, inputSettings.name);
+                if (editorInfo.visible)
+                {
+                    ++EditorGUI.indentLevel;
+                    editorInfo.editor.OnInspectorGUI();
+                    --EditorGUI.indentLevel;
+                }
+            }
         }
 
         public bool RecordModeGUI()

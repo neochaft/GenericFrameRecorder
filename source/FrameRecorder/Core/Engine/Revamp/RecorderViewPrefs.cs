@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -8,7 +7,7 @@ namespace UnityEditor.Recorder
 {
     public class RecorderViewPrefs : ScriptableObject
     {
-        static readonly string s_FilePath = "Assets/recorderSettings.asset";
+        static readonly string s_FilePath = "Assets/RecorderSettings.asset";
        
         [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
         [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
@@ -76,11 +75,7 @@ namespace UnityEditor.Recorder
                     if(s_Instance == null)
                     {
                         s_Instance = CreateInstance<RecorderViewPrefs>();
-                        
                         AssetDatabase.CreateAsset(s_Instance, s_FilePath);
-                        
-                        //s_Instance.hideFlags = HideFlags.HideInHierarchy;
-                        //EditorUtility.SetDirty(s_Instance);
                     }
                     
                     AssetDatabase.SaveAssets();
@@ -96,7 +91,6 @@ namespace UnityEditor.Recorder
             UnityHelpers.Destroy(s_Instance, true);
             
             s_Instance = Instantiate(recorderListPreset.model);
-            //s_Instance.hideFlags = HideFlags.NotEditable | HideFlags.HideInHierarchy;
             AssetDatabase.CreateAsset(s_Instance, s_FilePath);
             
             foreach (var recorderSettings in recorderListPreset.model.recorders)
@@ -114,15 +108,5 @@ namespace UnityEditor.Recorder
         {
             s_Instance = null;
         }
-
-//        public static RecordersList recordersList
-//        {
-//            get { return instance.m_RecordersList; }
-//        }
-//        
-//        public static GlobalSettings globalSettings
-//        {
-//            get { return instance.m_GlobalSettings; }
-//        }
     }
 }

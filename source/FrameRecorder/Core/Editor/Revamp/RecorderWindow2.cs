@@ -123,7 +123,7 @@ namespace UnityEditor.Recorder
             m_RecordModeOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_RecorderViewPrefsEditor.RecordModeGUI())
-                    EditorUtility.SetDirty(m_RecorderViewPrefsEditor);
+                    EditorUtility.SetDirty(RecorderViewPrefs.instance);
             })
             {
                 style = { flex = 1.0f }
@@ -136,7 +136,7 @@ namespace UnityEditor.Recorder
             m_FrameRateOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_RecorderViewPrefsEditor.FrameRateGUI())
-                    EditorUtility.SetDirty(m_RecorderViewPrefsEditor);
+                    EditorUtility.SetDirty(RecorderViewPrefs.instance);
             })
             {
                 style = { flex = 1.0f }
@@ -283,6 +283,9 @@ namespace UnityEditor.Recorder
             {
                 SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
             }
+            
+            if (m_RecorderViewPrefsEditor != null)
+                DestroyImmediate(m_RecorderViewPrefsEditor);
             
             m_RecorderViewPrefsEditor = (RecorderViewPrefsEditor) Editor.CreateEditor(RecorderViewPrefs.instance);
             
@@ -496,6 +499,7 @@ namespace UnityEditor.Recorder
         void OnDestroy()
         {
             RecorderViewPrefs.Release();
+            DestroyImmediate(m_RecorderViewPrefsEditor);
         }
 
         void DuplicateRecording(RecorderSettings candidate)
