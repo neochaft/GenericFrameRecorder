@@ -48,7 +48,10 @@ namespace UnityEditor.Recorder
         }
 
         void OnEnable()
-        {          
+        {
+            if (target == null)
+                return;
+            
             m_RecordModeProperty = serializedObject.FindProperty("m_RecordMode");
             m_PlaybackProperty = serializedObject.FindProperty("m_FrameRatePlayback");
             m_FrameRateTypeProperty  = serializedObject.FindProperty("m_FrameRateType");
