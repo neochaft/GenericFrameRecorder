@@ -185,12 +185,12 @@ namespace UnityEngine.Recorder
                 recorder.settings = settings;
                 return recorder;
             }
-            else
-                throw new ArgumentException("No factory was registered for " + recorderType.Name);
+            
+            throw new ArgumentException("No factory was registered for " + recorderType.Name);
         }
 
 #if UNITY_EDITOR
-        public static RecorderSettings GenerateRecorderInitialSettings(UnityEngine.Object parent, Type recorderType)
+        public static RecorderSettings GenerateRecorderInitialSettings(Object parent, Type recorderType)
         {
             Init();
             var recorderinfo = GetRecorderInfo(recorderType);
@@ -200,11 +200,8 @@ namespace UnityEngine.Recorder
                 settings = (RecorderSettings)ScriptableObject.CreateInstance(recorderinfo.settingsClass);
                 settings.name = "Recorder Settings";
                 settings.recorderType = recorderType;
-
-                //settings.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(settings));
-                //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() ); // TODO Put back the GetDefaultInputSettings I guess...
                 
-                AssetDatabase.AddObjectToAsset(settings, parent);
+                AssetSettingsHelper.AddHiddenObjectToAsset(settings, parent);
 
                 return settings;
             }

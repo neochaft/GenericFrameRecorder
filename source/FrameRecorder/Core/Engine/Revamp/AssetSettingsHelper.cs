@@ -10,15 +10,17 @@ namespace UnityEngine.Recorder
         {
             var copy = Object.Instantiate(candidate);
                 
-            AssetDatabase.AddObjectToAsset(copy, parentObject);
+            AddHiddenObjectToAsset(copy, parentObject);
             
             copy.name = name;
      
-//
-//            AssetDatabase.SaveAssets();
-//            AssetDatabase.Refresh();
-//
             return copy;
+        }
+
+        public static void AddHiddenObjectToAsset(Object objectToAdd, Object assetObject)
+        {
+            objectToAdd.hideFlags |= HideFlags.HideInHierarchy;
+            AssetDatabase.AddObjectToAsset(objectToAdd, assetObject);
         }
         
         public static RecorderViewPrefs Duplicate(RecorderViewPrefs candidate, string name, Object parentObject)
@@ -26,7 +28,7 @@ namespace UnityEngine.Recorder
             var copy = Object.Instantiate(candidate);
             copy.name = name;
             
-            AssetDatabase.AddObjectToAsset(copy, parentObject);
+            AddHiddenObjectToAsset(copy, parentObject);
 
             foreach (var recorderSettings in candidate.recorders)
             {
@@ -34,9 +36,6 @@ namespace UnityEngine.Recorder
                     
                 copy.ReplaceRecorder(recorderSettings, copySettings);
             }
-
-            //AssetDatabase.SaveAssets();
-            //AssetDatabase.Refresh();
 
             return copy;
         }
