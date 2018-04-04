@@ -8,13 +8,13 @@ namespace UnityEngine.Recorder
     {
         public abstract Type inputType { get; }
         public abstract bool ValidityCheck(List<string> errors);
-        
-        public string id;
+
+        string m_ID;
 
         protected void OnEnable()
         {
-            if (string.IsNullOrEmpty(id))
-                id = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(m_ID))
+                m_ID = Guid.NewGuid().ToString();
         }
 
         public bool storeInScene

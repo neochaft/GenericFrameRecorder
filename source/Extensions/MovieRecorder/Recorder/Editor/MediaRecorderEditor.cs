@@ -8,8 +8,8 @@ namespace UnityEditor.Recorder
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_EncodingBitRateMode;
-        SerializedProperty m_VideoSelector;
-        SerializedProperty m_AudioSelector;       
+        //SerializedProperty m_VideoSelector;
+        //SerializedProperty m_AudioSelector;       
 
         [MenuItem("Window/Recorder/Video")]
         static void ShowRecorderWindow()
@@ -27,8 +27,8 @@ namespace UnityEditor.Recorder
             var pf = new PropertyFinder<MediaRecorderSettings>(serializedObject);
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
             m_EncodingBitRateMode = pf.Find(w => w.m_VideoBitRateMode);
-            m_VideoSelector = serializedObject.FindProperty("m_VideoSelector");
-            m_AudioSelector = serializedObject.FindProperty("m_AudioInputSettings");
+            //m_VideoSelector = serializedObject.FindProperty("m_VideoSelector");
+            //m_AudioSelector = serializedObject.FindProperty("m_AudioInputSettings");
         }
 
         protected override void OnEncodingGui()
@@ -55,10 +55,10 @@ namespace UnityEditor.Recorder
             return base.GetFieldDisplayState(property);
         }
 
-        protected override void ImageRenderOptionsGUI()
-        {
-            EditorGUILayout.PropertyField(m_VideoSelector, true);
-            EditorGUILayout.PropertyField(m_AudioSelector, true);
-        }
+//        protected override void ImageRenderOptionsGUI()
+//        {
+//            EditorGUILayout.PropertyField(m_VideoSelector, true);
+//            EditorGUILayout.PropertyField(m_AudioSelector, true);
+//        }
     }
 }

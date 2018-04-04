@@ -44,22 +44,25 @@ namespace UnityEditor.Recorder
 
         static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
     
-        public RecorderItem(RecordersList recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        public RecorderItem(RecorderViewPrefs recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {          
             var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
             savedSettings.name = recorderName;
             
-            recordersList.Add(savedSettings);
+            recordersList.AddRecorder(savedSettings);
     
             Init(savedSettings, iconName, onRecordMouseUp);
+            
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
         
-        public RecorderItem(UnityEngine.Recorder.RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        public RecorderItem(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {
             Init(savedSettings, iconName, onRecordMouseUp);
         }
         
-        void Init(UnityEngine.Recorder.RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {           
             settings = savedSettings;
     

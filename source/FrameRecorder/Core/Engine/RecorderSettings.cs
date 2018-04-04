@@ -71,42 +71,42 @@ namespace UnityEngine.Recorder
 
         public static FrameRatePlayback frameRatePlayback
         {
-            get { return RecorderViewPrefs.globalSettings.frameRatePlayback; }
+            get { return RecorderViewPrefs.instance.frameRatePlayback; }
         }
         
         public double frameRate
         {
-            get { return RecorderViewPrefs.globalSettings.frameRate; }
+            get { return RecorderViewPrefs.instance.frameRate; }
         }
         
         public int startFrame
         {
-            get { return RecorderViewPrefs.globalSettings.startFrame; }
+            get { return RecorderViewPrefs.instance.startFrame; }
         }
         
         public int endFrame
         {
-            get { return RecorderViewPrefs.globalSettings.endFrame; }
+            get { return RecorderViewPrefs.instance.endFrame; }
         }
         
         public float startTime
         {
-            get { return RecorderViewPrefs.globalSettings.startTime; }
+            get { return RecorderViewPrefs.instance.startTime; }
         }
         
         public float endTime
         {
-            get { return RecorderViewPrefs.globalSettings.endTime; }
+            get { return RecorderViewPrefs.instance.endTime; }
         }
         
         public RecordMode recordMode
         {
-            get { return RecorderViewPrefs.globalSettings.recordMode; }
+            get { return RecorderViewPrefs.instance.recordMode; }
         }
         
         public bool synchFrameRate
         {
-            get { return RecorderViewPrefs.globalSettings.synchFrameRate; }
+            get { return RecorderViewPrefs.instance.synchFrameRate; }
         }
 
 //        public InputSettingsList inputsSettings

@@ -3,8 +3,8 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    [CustomEditor(typeof(GlobalSettings))]
-    class GlobalSettingsEditor : Editor
+    [CustomEditor(typeof(RecorderViewPrefs))]
+    class RecorderViewPrefsEditor : Editor
     {
         SerializedProperty m_RecordModeProperty;
         
@@ -49,6 +49,12 @@ namespace UnityEditor.Recorder
             m_StartTimeProperty = serializedObject.FindProperty("m_StartTime");
             m_EndTimeProperty = serializedObject.FindProperty("m_EndTime");
             m_SynchFrameRateProperty = serializedObject.FindProperty("m_SynchFrameRate");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            RecordModeGUI();
+            FrameRateGUI();
         }
 
         public bool RecordModeGUI()

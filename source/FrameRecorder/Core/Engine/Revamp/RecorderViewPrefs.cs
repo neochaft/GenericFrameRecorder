@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security;
 using UnityEngine;
 using UnityEngine.Recorder;
@@ -8,9 +9,59 @@ namespace UnityEditor.Recorder
     public class RecorderViewPrefs : ScriptableObject
     {
         static readonly string s_FilePath = "Assets/recorderSettings.asset";
+       
+        [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
+        [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
+        [SerializeField] FrameRate m_FrameRateType = FrameRate.FR_30;
+        [SerializeField] [Range(1.0f, 120.0f)] float m_CustomFrameRateValue = 30.0f;
+        
+        [SerializeField] int m_StartFrame;
+        [SerializeField] int m_EndFrame;
+        
+        [SerializeField] float m_StartTime;
+        [SerializeField] float m_EndTime;
+        
+        [SerializeField] bool m_SynchFrameRate;
+        
+        public RecordMode recordMode { get { return m_RecordMode; } }
 
-        [SerializeField] GlobalSettings m_GlobalSettings;
-        [SerializeField] RecordersList m_RecordersList;
+        public FrameRatePlayback frameRatePlayback { get { return m_FrameRatePlayback; } }
+
+        public float frameRate
+        {
+            get { return FrameRateHelper.ToFloat(m_FrameRateType, m_CustomFrameRateValue); }
+        }
+
+        public int startFrame { get { return m_StartFrame; } }
+        public int endFrame { get { return m_EndFrame; } }
+        
+        public float startTime { get { return m_StartTime; } } 
+        public float endTime { get { return m_EndTime; } }
+
+        public bool synchFrameRate { get { return m_SynchFrameRate; } }
+        
+        [SerializeField] List<RecorderSettings> m_Recorders = new List<RecorderSettings>();
+        
+        public IEnumerable<RecorderSettings> recorders
+        {
+            get { return m_Recorders; }
+        }
+     
+        public void AddRecorder(RecorderSettings s)
+        {
+            m_Recorders.Add(s);
+        }
+
+        public void RemoveRecorder(RecorderSettings s)
+        {
+            m_Recorders.Remove(s);
+        }
+        
+        public void ReplaceRecorder(RecorderSettings s, RecorderSettings newSettings)
+        {
+            var i = m_Recorders.IndexOf(s);
+            m_Recorders[i] = newSettings;
+        }
 
         static RecorderViewPrefs s_Instance;
         
@@ -25,21 +76,11 @@ namespace UnityEditor.Recorder
                     if(s_Instance == null)
                     {
                         s_Instance = CreateInstance<RecorderViewPrefs>();
+                        
                         AssetDatabase.CreateAsset(s_Instance, s_FilePath);
-                    }
-
-                    if (s_Instance.m_GlobalSettings == null)
-                    {
-                        s_Instance.m_GlobalSettings = CreateInstance<GlobalSettings>();
-                        s_Instance.m_GlobalSettings.name = "globalSettings";
-                        AssetDatabase.AddObjectToAsset(s_Instance.m_GlobalSettings, s_Instance);
-                    }
-
-                    if (s_Instance.m_RecordersList == null)
-                    {
-                        s_Instance.m_RecordersList = CreateInstance<RecordersList>();
-                        s_Instance.m_RecordersList.name = "recordings";
-                        AssetDatabase.AddObjectToAsset(s_Instance.m_RecordersList, s_Instance);
+                        
+                        //s_Instance.hideFlags = HideFlags.HideInHierarchy;
+                        //EditorUtility.SetDirty(s_Instance);
                     }
                     
                     AssetDatabase.SaveAssets();
@@ -49,11 +90,24 @@ namespace UnityEditor.Recorder
                 return s_Instance;
             }
         }
-
+        
         public static void Load(RecorderListPreset recorderListPreset)
         {
-            UnityHelpers.Destroy(s_Instance.m_RecordersList, true);
-            s_Instance.m_RecordersList = AssetSettingsHelper.Duplicate(recorderListPreset.model, "recordings", s_Instance);
+            UnityHelpers.Destroy(s_Instance, true);
+            
+            s_Instance = Instantiate(recorderListPreset.model);
+            //s_Instance.hideFlags = HideFlags.NotEditable | HideFlags.HideInHierarchy;
+            AssetDatabase.CreateAsset(s_Instance, s_FilePath);
+            
+            foreach (var recorderSettings in recorderListPreset.model.recorders)
+            {
+                var copySettings = AssetSettingsHelper.Duplicate(recorderSettings, recorderSettings.name, s_Instance);
+                    
+                s_Instance.ReplaceRecorder(recorderSettings, copySettings);
+            }
+            
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         public static void Release()
@@ -61,14 +115,14 @@ namespace UnityEditor.Recorder
             s_Instance = null;
         }
 
-        public static RecordersList recordersList
-        {
-            get { return instance.m_RecordersList; }
-        }
-        
-        public static GlobalSettings globalSettings
-        {
-            get { return instance.m_GlobalSettings; }
-        }
+//        public static RecordersList recordersList
+//        {
+//            get { return instance.m_RecordersList; }
+//        }
+//        
+//        public static GlobalSettings globalSettings
+//        {
+//            get { return instance.m_GlobalSettings; }
+//        }
     }
 }

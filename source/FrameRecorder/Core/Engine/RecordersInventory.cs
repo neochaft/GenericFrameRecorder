@@ -205,8 +205,6 @@ namespace UnityEngine.Recorder
                 //settings.inputsSettings.AddRange( settings.GetDefaultInputSettings() ); // TODO Put back the GetDefaultInputSettings I guess...
                 
                 AssetDatabase.AddObjectToAsset(settings, parent);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
 
                 return settings;
             }

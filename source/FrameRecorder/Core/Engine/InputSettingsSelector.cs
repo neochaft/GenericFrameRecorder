@@ -8,7 +8,7 @@ using UnityEngine.Recorder;
 namespace UnityEditor.Recorder
 {
     [Serializable]
-    public class InputSettingsSelector
+    public abstract class InputSettingsSelector
     {
         [SerializeField] string m_Selected;
         

@@ -13,9 +13,9 @@ namespace UnityEditor.Recorder
         }
     }
     
-    public class RecorderListPreset : RecorderPreset<RecordersList>
+    public class RecorderListPreset : RecorderPreset<RecorderViewPrefs>
     {
-        public static void Save(RecordersList model, string path)
+        public static void Save(RecorderViewPrefs model, string path)
         {
             var preset = CreateInstance<RecorderListPreset>();
             AssetDatabase.CreateAsset(preset, path);

@@ -256,8 +256,8 @@ namespace UnityEditor.Recorder
                     
                     if (selectorInput != null)
                     {
-                        var sp = owner.FindProperty(info.Name);
-                        return sp.FindPropertyRelative(selectorInput.Name);
+                        return owner.FindProperty(info.Name);
+                        //return sp.FindPropertyRelative(selectorInput.Name);
                     }
                 }
             }

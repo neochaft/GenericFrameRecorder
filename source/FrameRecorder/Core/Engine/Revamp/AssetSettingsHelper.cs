@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 using UnityEditor;
-
+using UnityEditor.Recorder;
 
 namespace UnityEngine.Recorder
 {
@@ -12,25 +11,17 @@ namespace UnityEngine.Recorder
             var copy = Object.Instantiate(candidate);
                 
             AssetDatabase.AddObjectToAsset(copy, parentObject);
-
-            //copy.assetID = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(copy));
+            
             copy.name = name;
-                        
-//            for (int i = 0; i < copy.inputsSettings.Count; ++i)
-//            {
-//                var input = copy.inputsSettings[i];
-//                var inputCopy = Object.Instantiate(input);
-//                inputCopy.name = Guid.NewGuid().ToString();
-//                copy.inputsSettings.ReplaceAt(i, inputCopy, false);
-//            }         
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
+     
+//
+//            AssetDatabase.SaveAssets();
+//            AssetDatabase.Refresh();
+//
             return copy;
         }
         
-        public static RecordersList Duplicate(RecordersList candidate, string name, Object parentObject)
+        public static RecorderViewPrefs Duplicate(RecorderViewPrefs candidate, string name, Object parentObject)
         {
             var copy = Object.Instantiate(candidate);
             copy.name = name;
@@ -41,11 +32,11 @@ namespace UnityEngine.Recorder
             {
                 var copySettings = Duplicate(recorderSettings, recorderSettings.name, copy);
                     
-                copy.Replace(recorderSettings, copySettings);
+                copy.ReplaceRecorder(recorderSettings, copySettings);
             }
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            //AssetDatabase.SaveAssets();
+            //AssetDatabase.Refresh();
 
             return copy;
         }

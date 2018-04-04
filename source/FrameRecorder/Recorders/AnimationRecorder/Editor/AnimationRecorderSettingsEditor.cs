@@ -92,9 +92,9 @@ namespace UnityEditor.Experimental.FrameRecorder
             //aRecorderSettings.outputPath = EditorGUILayout.TextField("Output Path", aRecorderSettings.outputPath);
         }
 
-        protected override void ImageRenderOptionsGUI()
-        {
-        }
+//        protected override void ImageRenderOptionsGUI()
+//        {
+//        }
 
         protected override void ExtraOptionsGUI()
         {
