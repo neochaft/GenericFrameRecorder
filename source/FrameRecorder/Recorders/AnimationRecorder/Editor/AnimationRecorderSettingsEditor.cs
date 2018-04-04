@@ -61,7 +61,7 @@ namespace UnityEditor.Experimental.FrameRecorder
                    //EditorGUILayout.EndHorizontal();
                     //if (input.fold)
                     {
-                        OnInputGui(i);
+                        //OnInputGui(i);
 
                     }
                 }

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -169,11 +172,25 @@ namespace UnityEditor.Recorder
 //            }
         }
 
-        protected virtual void OnInputGui(int inputIndex)
-        {
-            //m_InputEditors[inputIndex].editor.OnInspectorGUI();
-            //m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
-        }
+//        protected virtual void OnInputGui(int inputIndex)
+//        {
+//            var recorder = (RecorderSettings) target;
+//           
+//            foreach (var inputsSetting in recorder.inputsSettings)
+//            {
+//                var pf = new PropertyFinder<RecorderEditor>(serializedObject);
+//                var m_OutputFormat = pf.Find(w => w.);                
+//            }
+//            
+//            
+//            
+//            
+//            
+//            
+//            //m_InputEditors[inputIndex].editor.OnInspectorGUI();
+//            //m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
+//        }
+
 
         protected virtual void NameAndPathGUI()
         {
@@ -189,13 +206,63 @@ namespace UnityEditor.Recorder
 
         protected virtual void ImageRenderOptionsGUI()
         {
-            var inputs = ((RecorderSettings) target).inputsSettings;
-
-            for (int i = 0; i < inputs.Count(); i++)
+            //OnInputGui(0);
+            var recorder = (RecorderSettings) target;
+           
+            foreach (var inputsSetting in recorder.inputsSettings)
             {
-                EditorGUILayout.Separator();
-                OnInputGui(i);
+                
+                //Debug.Log("N " + GetFieldName(recorder, inputsSetting));
+                var p = GetFieldName(serializedObject, inputsSetting);
+
+                EditorGUILayout.PropertyField(p, true);
+
+                //var pf = new PropertyFinder<RecorderEditor>(serializedObject);
+                //var m_OutputFormat = pf.Find(w => w.);                
             }
+//            var inputs = ((RecorderSettings) target).inputsSettings;
+//
+//            for (int i = 0; i < inputs.Count(); i++)
+//            {
+//                EditorGUILayout.Separator();
+//                OnInputGui(i);
+//            }
+        }
+        
+        static string GetFieldName(object owner, object fieldValue)
+        {
+            var type = owner.GetType();
+
+            return (from info in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic) where info.GetValue(owner) == fieldValue select info.Name).FirstOrDefault();
+        }
+        
+        SerializedProperty GetFieldName(SerializedObject owner, object fieldValue)
+        {
+            var targetObject = (object)owner.targetObject;
+            var type = targetObject.GetType();
+
+            foreach (var info in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                if (info.GetValue(targetObject) == fieldValue)
+                {
+                    return owner.FindProperty(info.Name);
+                }
+
+                if (typeof(InputSettingsSelector).IsAssignableFrom(info.FieldType))
+                {
+                    var selector = info.GetValue(targetObject);
+                    var fields = selector.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                    var selectorInput = fields.FirstOrDefault(i => i.GetValue(selector) == fieldValue);
+                    
+                    if (selectorInput != null)
+                    {
+                        var sp = owner.FindProperty(info.Name);
+                        return sp.FindPropertyRelative(selectorInput.Name);
+                    }
+                }
+            }
+            
+            return null;
         }
 
         protected virtual void ExtraOptionsGUI()
