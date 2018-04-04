@@ -6,7 +6,7 @@ namespace UTJ.FrameCapturer.Recorders
     {
         public fcAPI.fcGifConfig m_GifEncoderSettings = fcAPI.fcGifConfig.default_value;
 
-        GIFRecorderSettings()
+        public GIFRecorderSettings()
         {
             baseFileName.pattern = "image.<ext>";
         }

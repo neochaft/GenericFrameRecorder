@@ -11,7 +11,7 @@ namespace UnityEditor.Experimental.Recorder
     {
         [SerializeField] AnimationInputSettings m_AnimationInputSettings = new AnimationInputSettings();
 
-        AnimationRecorderSettings()
+        public AnimationRecorderSettings()
         {
             baseFileName.pattern = "animation_<0000>.anim";
         }

@@ -29,7 +29,7 @@ namespace UnityEngine.Recorder
 
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
 
-        ImageRecorderSettings()
+        public ImageRecorderSettings()
         {
             baseFileName.pattern = "image_<0000>.<ext>";
         }

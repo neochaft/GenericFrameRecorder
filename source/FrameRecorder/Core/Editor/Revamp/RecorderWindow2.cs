@@ -433,11 +433,10 @@ namespace UnityEditor.Recorder
         {
             if (m_RecorderEditor != null)
             {
-                var rec = (RecorderSettings)m_RecorderEditor.target;
 
-                OnRecorderSettingPresetGUI(rec);
-                
-                EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(rec.GetType().Name));
+                OnRecorderSettingPresetGUI();
+
+                EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(m_RecorderEditor.target.GetType().Name));
 
                 m_RecorderEditor.OnInspectorGUI();
 
@@ -486,13 +485,56 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void OnRecorderSettingPresetGUI(RecorderSettings recorderSettings)
+        class PresetReceiver : PresetSelectorReceiver
+        {
+            UnityEngine.Object m_Target;
+            Preset m_InitialValue;
+            EditorWindow m_Window;
+
+            internal void Init(UnityEngine.Object target, EditorWindow window)
+            {
+                m_Window = window;
+                m_Target = target;
+                m_InitialValue = new Preset(target);
+            }
+
+            public override void OnSelectionChanged(Preset selection)
+            {
+                if (selection != null)
+                {
+                    Undo.RecordObject(m_Target, "Apply Preset " + selection.name);
+                    
+                        selection.ApplyTo(m_Target);
+                }
+                else
+                {
+                    Undo.RecordObject(m_Target, "Cancel Preset");
+                        m_InitialValue.ApplyTo(m_Target);
+                }
+                
+                m_Window.Repaint();
+            }
+
+            public override void OnSelectionClosed(Preset selection)
+            {
+                OnSelectionChanged(selection);
+                DestroyImmediate(this);
+            }
+        }
+
+        void OnRecorderSettingPresetGUI()
         {
             if (m_RecorderEditor.target != null)
             {
                 var rect = EditorGUILayout.GetControlRect();
 
-                PresetSelector.DrawPresetButton(rect, new[] {m_RecorderEditor.target});
+                if (EditorGUI.DropdownButton(rect, EditorGUIUtility.IconContent("Preset.Context"), FocusType.Passive, new GUIStyle("IconButton")))
+                {
+                    var presetReceiver = CreateInstance<PresetReceiver>();
+                    presetReceiver.Init(m_RecorderEditor.target, this);
+                    
+                    PresetSelector.ShowSelector(m_RecorderEditor.target, null, true, presetReceiver);
+                }
             }
         }
 

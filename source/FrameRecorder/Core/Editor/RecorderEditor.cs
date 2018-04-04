@@ -73,14 +73,10 @@ namespace UnityEditor.Recorder
         void BuildInputEditors()
         {
             var rs = (RecorderSettings) target;
-//            if (!rs.inputsSettings.hasBrokenBindings && rs.inputsSettings.Count == m_InputEditors.Count)
-//                return;
-//
-//            if (rs.inputsSettings.hasBrokenBindings)
-//                rs.BindSceneInputSettings();
 
             foreach (var editor in m_InputEditors)
                 UnityHelpers.Destroy(editor.editor);
+            
             m_InputEditors.Clear();
 
             foreach (var input in rs.inputsSettings)
@@ -145,52 +141,9 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void ChangeInputSettings(int atIndex, RecorderInputSetting newSettings)
-        {
-            if (newSettings != null)
-            {
-//                var inputs = ((RecorderSettings) target).inputsSettings;
-//                inputs.ReplaceAt(atIndex, newSettings);
-//                m_InputEditors[atIndex].settingsObj = newSettings;
-            }
-            else if (m_InputEditors.Count == 0)
-            {
-                throw new Exception("Source removal not implemented");
-            }
-        }
-
         protected virtual void CaptureOptionsGUI()
         {
-//            var inputs = ((UnityEngine.Recorder.RecorderSettings) target).inputsSettings;
-//            for (int i = 0; i < inputs.Count; i++)
-//            {
-//                var input = inputs[i];
-//                if (m_InputSelector.OnInputGui(i, ref input))
-//                    ChangeInputSettings(i, input);
-//
-//                m_InputEditors[i].editor.CaptureOptionsGUI();
-//            }
         }
-
-//        protected virtual void OnInputGui(int inputIndex)
-//        {
-//            var recorder = (RecorderSettings) target;
-//           
-//            foreach (var inputsSetting in recorder.inputsSettings)
-//            {
-//                var pf = new PropertyFinder<RecorderEditor>(serializedObject);
-//                var m_OutputFormat = pf.Find(w => w.);                
-//            }
-//            
-//            
-//            
-//            
-//            
-//            
-//            //m_InputEditors[inputIndex].editor.OnInspectorGUI();
-//            //m_InputEditors[inputIndex].editor.OnValidateSettingsGUI();
-//        }
-
 
         protected virtual void NameAndPathGUI()
         {
@@ -206,37 +159,20 @@ namespace UnityEditor.Recorder
 
         protected virtual void ImageRenderOptionsGUI()
         {
-            //OnInputGui(0);
             var recorder = (RecorderSettings) target;
            
             foreach (var inputsSetting in recorder.inputsSettings)
             {
-                
-                //Debug.Log("N " + GetFieldName(recorder, inputsSetting));
-                var p = GetFieldName(serializedObject, inputsSetting);
-
-                EditorGUILayout.PropertyField(p, true);
-
-                //var pf = new PropertyFinder<RecorderEditor>(serializedObject);
-                //var m_OutputFormat = pf.Find(w => w.);                
+                var p = GetInputSerializedProperty(serializedObject, inputsSetting);
+                EditorGUILayout.PropertyField(p, true);                
             }
-//            var inputs = ((RecorderSettings) target).inputsSettings;
-//
-//            for (int i = 0; i < inputs.Count(); i++)
+//            foreach (var inputEditor in m_InputEditors)
 //            {
-//                EditorGUILayout.Separator();
-//                OnInputGui(i);
+//                inputEditor.editor.OnInspectorGUI();
 //            }
         }
         
-        static string GetFieldName(object owner, object fieldValue)
-        {
-            var type = owner.GetType();
-
-            return (from info in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic) where info.GetValue(owner) == fieldValue select info.Name).FirstOrDefault();
-        }
-        
-        SerializedProperty GetFieldName(SerializedObject owner, object fieldValue)
+        static SerializedProperty GetInputSerializedProperty(SerializedObject owner, object fieldValue)
         {
             var targetObject = (object)owner.targetObject;
             var type = targetObject.GetType();
@@ -257,7 +193,6 @@ namespace UnityEditor.Recorder
                     if (selectorInput != null)
                     {
                         return owner.FindProperty(info.Name);
-                        //return sp.FindPropertyRelative(selectorInput.Name);
                     }
                 }
             }

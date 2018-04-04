@@ -6,7 +6,7 @@ namespace UTJ.FrameCapturer.Recorders
     {
         public fcAPI.fcPngConfig m_PngEncoderSettings = fcAPI.fcPngConfig.default_value;
 
-        PNGRecorderSettings()
+        public PNGRecorderSettings()
         {
             baseFileName.pattern = "image_<0000>.<ext>";
         }

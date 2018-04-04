@@ -54,7 +54,7 @@ namespace UnityEditor.Recorder
         //InputSettingsList m_InputsSettings;
 
 
-        MediaRecorderSettings()
+        public MediaRecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
         }

@@ -10,7 +10,7 @@ namespace UTJ.FrameCapturer.Recorders
         public fcAPI.fcMP4Config m_MP4EncoderSettings = fcAPI.fcMP4Config.default_value;
         public bool m_AutoSelectBR;
 
-        MP4RecorderSettings()
+        public MP4RecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
             m_AutoSelectBR = true;

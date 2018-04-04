@@ -7,7 +7,7 @@ namespace UTJ.FrameCapturer.Recorders
         public fcAPI.fcWebMConfig m_WebmEncoderSettings = fcAPI.fcWebMConfig.default_value;
         public bool m_AutoSelectBR;
 
-        WEBMRecorderSettings()
+        public WEBMRecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
             m_AutoSelectBR = true;

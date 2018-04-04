@@ -109,21 +109,6 @@ namespace UnityEngine.Recorder
             get { return RecorderViewPrefs.instance.synchFrameRate; }
         }
 
-//        public InputSettingsList inputsSettings
-//        {
-//            get { return m_InputsSettings; }
-//        }
-        
-//        public string assetID
-//        {
-//            get { return m_AssetID; }
-//            set
-//            {
-//                m_AssetID = value;
-//                //m_InputsSettings.ownerRecorderSettingsAssetId = value;
-//            }
-//        }
-
         protected RecorderSettings()
         {
             destinationPath.root = OutputPath.ERoot.Current;
@@ -184,57 +169,7 @@ namespace UnityEngine.Recorder
             get { return true; }
         }
 
-        public virtual void OnEnable()
-        {
-            //m_InputsSettings.OnEnable(m_AssetID);
-            //BindSceneInputSettings();
-        }
-
-//        public void BindSceneInputSettings()
-//        {
-//            if (!m_InputsSettings.hasBrokenBindings)
-//                return;
-//
-//            m_InputsSettings.Rebuild();
-//
-//#if UNITY_EDITOR
-//            if (m_InputsSettings.hasBrokenBindings)
-//            {
-//                // only supported case is scene stored input settings are missing (for example: new scene loaded that does not contain the scene stored inputs.)
-//                m_InputsSettings.RepareMissingBindings();
-//            }
-//#endif
-//
-//            if (m_InputsSettings.hasBrokenBindings)
-//                Debug.LogError("Recorder: missing input settings");
-//        }
-
-        public virtual void OnDestroy()
-        {
-            //if (m_InputsSettings != null)
-            //    m_InputsSettings.OnDestroy();
-        }
-
-        //
-//        protected T NewInputSettingsObj<T>() where T : class
-//        {
-//            return NewInputSettingsObj(typeof(T)) as T;
-//        }
-        
-        //public abstract List<InputSettingsSelector> GetInputSelectors();
-
-//        public virtual RecorderInputSetting NewInputSettingsObj(Type type)
-//        {
-//            var obj = (RecorderInputSetting) CreateInstance(type);
-//            obj.name = Guid.NewGuid().ToString();
-//            return obj;
-//        }
-//
-        //public abstract InputGroups GetInputGroups();
-        //public abstract IEnumerable<InputSettingsSelector> GetInputSelectors();
-
         public abstract IEnumerable<RecorderInputSetting> inputsSettings { get; }
-//        {
 
         /// <summary>
         /// Allows for recorder specific settings logic to correct/adjust settings that might be missed by it's editor.

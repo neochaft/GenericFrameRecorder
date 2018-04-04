@@ -8,7 +8,7 @@ namespace UTJ.FrameCapturer.Recorders
         public fcAPI.fcExrConfig m_ExrEncoderSettings = fcAPI.fcExrConfig.default_value;
         
 
-        EXRRecorderSettings()
+        public EXRRecorderSettings()
         {
             baseFileName.pattern = "image_<0000>.<ext>";
         }
