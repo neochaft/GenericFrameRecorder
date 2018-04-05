@@ -89,19 +89,7 @@ namespace UnityEditor.Recorder
         public static void Load(RecorderListPreset recorderListPreset)
         {
             UnityHelpers.Destroy(s_Instance, true);
-            
-            s_Instance = Instantiate(recorderListPreset.model);
-            AssetDatabase.CreateAsset(s_Instance, s_FilePath);
-            
-            foreach (var recorderSettings in recorderListPreset.model.recorders)
-            {
-                var copySettings = AssetSettingsHelper.Duplicate(recorderSettings, recorderSettings.name, s_Instance);
-                    
-                s_Instance.ReplaceRecorder(recorderSettings, copySettings);
-            }
-            
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            s_Instance = recorderListPreset.LoadAtPath(s_FilePath);
         }
 
         public static void Release()

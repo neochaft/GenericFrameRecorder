@@ -479,7 +479,7 @@ namespace UnityEditor.Recorder
 
                     if (path.Length != 0)
                     {
-                        RecorderListPreset.Save(RecorderViewPrefs.instance, path);
+                        RecorderListPreset.SaveAtPath(RecorderViewPrefs.instance, path);
                     }
                 }
             }

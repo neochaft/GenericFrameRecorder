@@ -2,20 +2,17 @@ using UnityEngine;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
-{
-    public abstract class RecorderPreset<T> : ScriptableObject where T : ScriptableObject 
+{    
+    public class RecorderListPreset : ScriptableObject
     {
-        [SerializeField] protected T m_Model;
+        [SerializeField] protected RecorderViewPrefs m_Model;
         
-        public T model
+        public RecorderViewPrefs model
         {
             get { return m_Model; }
         }
-    }
-    
-    public class RecorderListPreset : RecorderPreset<RecorderViewPrefs>
-    {
-        public static void Save(RecorderViewPrefs model, string path)
+        
+        public static void SaveAtPath(RecorderViewPrefs model, string path)
         {
             var preset = CreateInstance<RecorderListPreset>();
             AssetDatabase.CreateAsset(preset, path);
@@ -24,6 +21,24 @@ namespace UnityEditor.Recorder
             
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+        
+        public RecorderViewPrefs LoadAtPath(string path)
+        {
+            var instance = Instantiate(m_Model);
+            AssetDatabase.CreateAsset(instance, path);
+            
+            foreach (var recorderSettings in m_Model.recorders)
+            {
+                var copySettings = AssetSettingsHelper.Duplicate(recorderSettings, recorderSettings.name, instance);
+                    
+                instance.ReplaceRecorder(recorderSettings, copySettings);
+            }
+            
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            return instance;
         }
     }
 }
