@@ -26,7 +26,7 @@ namespace UnityEditor.Recorder
             var data = CreateInstance<RecorderListPreset>();
             
             var copy = Instantiate(model);
-            copy.ClearRecorders();
+            copy.ClearRecorders(); // Make sure to not save recorders refs inside the presets
 
             var p = new Preset(copy) {name = model.name};
             data.m_Model = p;
