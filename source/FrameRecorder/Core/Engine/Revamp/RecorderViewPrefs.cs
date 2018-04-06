@@ -55,11 +55,10 @@ namespace UnityEditor.Recorder
         {
             m_Recorders.Remove(s);
         }
-        
-        public void ReplaceRecorder(RecorderSettings s, RecorderSettings newSettings)
+
+        public void ClearRecorders()
         {
-            var i = m_Recorders.IndexOf(s);
-            m_Recorders[i] = newSettings;
+            m_Recorders.Clear();
         }
 
         static RecorderViewPrefs s_Instance;
@@ -89,7 +88,7 @@ namespace UnityEditor.Recorder
         public static void Load(RecorderListPreset recorderListPreset)
         {
             UnityHelpers.Destroy(s_Instance, true);
-            s_Instance = recorderListPreset.LoadAtPath(s_FilePath);
+            s_Instance = RecorderListPreset.LoadAtPath(recorderListPreset, s_FilePath);
         }
 
         public static void Release()

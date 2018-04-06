@@ -22,22 +22,5 @@ namespace UnityEngine.Recorder
             objectToAdd.hideFlags |= HideFlags.HideInHierarchy;
             AssetDatabase.AddObjectToAsset(objectToAdd, assetObject);
         }
-        
-        public static RecorderViewPrefs Duplicate(RecorderViewPrefs candidate, string name, Object parentObject)
-        {
-            var copy = Object.Instantiate(candidate);
-            copy.name = name;
-            
-            AddHiddenObjectToAsset(copy, parentObject);
-
-            foreach (var recorderSettings in candidate.recorders)
-            {
-                var copySettings = Duplicate(recorderSettings, recorderSettings.name, copy);
-                    
-                copy.ReplaceRecorder(recorderSettings, copySettings);
-            }
-
-            return copy;
-        }
     }
 }

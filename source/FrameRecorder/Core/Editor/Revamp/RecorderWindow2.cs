@@ -448,14 +448,24 @@ namespace UnityEditor.Recorder
                 EditorGUILayout.LabelField("Nothing selected");
             }
         }
+
+        void ApplySettingPreset(RecorderListPreset candidate)
+        {
+                            
+                RecorderViewPrefs.Load(candidate);
+
+                m_SelectedRecorderItemIndex = 0;
+                ReloadRecordings();
+        }
         
+       
         void OnRecorderListSettingPresetGUI()
         {
             if (GUILayout.Button("Load Preset"))
             {
                 EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
             }
-            
+                       
             if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "ObjectSelectorClosed")
             {
                 var candidate = EditorGUIUtility.GetObjectPickerObject() as RecorderListPreset;
@@ -463,12 +473,9 @@ namespace UnityEditor.Recorder
                 if (candidate == null)
                     return;
                 
-                RecorderViewPrefs.Load(candidate);
+                ApplySettingPreset(candidate);
                 
                 Event.current.Use();
-
-                m_SelectedRecorderItemIndex = 0;
-                ReloadRecordings();
             }
 
             using (new EditorGUI.DisabledScope(RecorderViewPrefs.instance == null))
