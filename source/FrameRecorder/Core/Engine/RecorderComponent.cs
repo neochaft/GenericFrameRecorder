@@ -46,7 +46,7 @@ namespace UnityEngine.Recorder
                     }
                     case RecordMode.TimeInterval:
                     {
-                        if (RecorderSettings.frameRatePlayback == FrameRatePlayback.Variable)
+                        if (session.settings.frameRatePlayback == FrameRatePlayback.Variable)
                         {
                             if (session.m_CurrentFrameStartTS >= session.settings.endTime)
                                 enabled = false;

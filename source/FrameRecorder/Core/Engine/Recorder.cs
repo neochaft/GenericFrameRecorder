@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
 
             settings.SelfAdjustSettings(); // ignore return value.
 
-            var fixedRate = RecorderSettings.frameRatePlayback == FrameRatePlayback.Constant ? (int)settings.frameRate : 0;
+            var fixedRate = settings.frameRatePlayback == FrameRatePlayback.Constant ? (int)settings.frameRate : 0;
             if (fixedRate > 0)
             {
                 if (Time.captureFramerate != 0 && fixedRate != Time.captureFramerate )

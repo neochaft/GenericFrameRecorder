@@ -56,59 +56,81 @@ namespace UnityEngine.Recorder
         public FileNameGenerator baseFileName;
         public OutputPath destinationPath;
         public int captureEveryNthFrame = 1;
-        
-        //[SerializeField] string m_AssetID;
-        [SerializeField] bool m_IsEnabled = true; // TODO Move this to the Editor namespace?
 
-        //[SerializeField] InputSettingsList m_InputsSettings = new InputSettingsList();
         [SerializeField] string m_RecorderTypeName;
         
-        public bool enabled
-        {
-            get { return m_IsEnabled; }
-            set { m_IsEnabled = value; }
-        }
+        [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
+        [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
+        [SerializeField] FrameRateType m_FrameRateType = FrameRateType.FR_30;
+        [SerializeField] [Range(1.0f, 120.0f)] float m_CustomFrameRateValue = 30.0f;
+        
+        [SerializeField] int m_StartFrame;
+        [SerializeField] int m_EndFrame;
+        
+        [SerializeField] float m_StartTime;
+        [SerializeField] float m_EndTime;
+        
+        [SerializeField] bool m_SynchFrameRate;
 
-        public static FrameRatePlayback frameRatePlayback
-        {
-            get { return RecorderViewPrefs.instance.frameRatePlayback; }
-        }
-        
-        public double frameRate
-        {
-            get { return RecorderViewPrefs.instance.frameRate; }
-        }
-        
-        public int startFrame
-        {
-            get { return RecorderViewPrefs.instance.startFrame; }
-        }
-        
-        public int endFrame
-        {
-            get { return RecorderViewPrefs.instance.endFrame; }
-        }
-        
-        public float startTime
-        {
-            get { return RecorderViewPrefs.instance.startTime; }
-        }
-        
-        public float endTime
-        {
-            get { return RecorderViewPrefs.instance.endTime; }
-        }
-        
         public RecordMode recordMode
         {
-            get { return RecorderViewPrefs.instance.recordMode; }
-        }
-        
-        public bool synchFrameRate
-        {
-            get { return RecorderViewPrefs.instance.synchFrameRate; }
+            get { return m_RecordMode; }
+            set { m_RecordMode = value; }
         }
 
+        public FrameRatePlayback frameRatePlayback
+        {
+            get { return m_FrameRatePlayback; }
+            set { m_FrameRatePlayback = value; }
+        }
+
+        public float frameRate
+        {
+            get { return FrameRateHelper.ToFloat(m_FrameRateType, m_CustomFrameRateValue); }
+        }
+
+        public FrameRateType frameRateType
+        {
+            get { return m_FrameRateType; }
+            set { m_FrameRateType = value; }
+        }
+
+        public float customFrameRateValue
+        {
+            get { return m_CustomFrameRateValue; }
+            set { m_CustomFrameRateValue = value; }
+        }
+
+        public int startFrame
+        {
+            get { return m_StartFrame; }
+            set { m_StartFrame = value; }
+        }
+
+        public int endFrame
+        {
+            get { return m_EndFrame; }
+            set { m_EndFrame = value; }
+        }
+
+        public float startTime
+        {
+            get { return m_StartTime; }
+            set { m_StartTime = value; }
+        }
+
+        public float endTime
+        {
+            get { return m_EndTime; }
+            set { m_EndTime = value; }
+        }
+
+        public bool synchFrameRate
+        {
+            get { return m_SynchFrameRate; }
+            set { m_SynchFrameRate = value; }
+        }
+        
         protected RecorderSettings()
         {
             destinationPath.root = OutputPath.ERoot.Current;

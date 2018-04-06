@@ -7,17 +7,20 @@ namespace UnityEditor.Recorder
     public class RecorderListPresetEditor : Editor
     {
         Editor m_Editor;
-        List<Editor> m_RecordersEditors;
+        readonly List<Editor> m_RecordersEditors = new List<Editor>();
         
         public override void OnInspectorGUI()
         {
+            if (target == null)
+                return;
+            
             var preset = (RecorderListPreset) target;
  
             if (m_Editor == null)
             {
                 m_Editor = CreateEditor(preset.model);
 
-                m_RecordersEditors  = new List<Editor>();
+                m_RecordersEditors.Clear();
                 
                 foreach (var p in preset.recorderPresets)
                     m_RecordersEditors.Add(CreateEditor(p));
@@ -34,7 +37,8 @@ namespace UnityEditor.Recorder
 
         void OnDestroy()
         {
-            DestroyImmediate(m_Editor);
+            if (m_Editor != null)
+                DestroyImmediate(m_Editor);
             
             foreach (var editor in m_RecordersEditors)
                 DestroyImmediate(editor);

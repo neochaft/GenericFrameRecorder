@@ -4,8 +4,8 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    [CustomEditor(typeof(RecorderViewPrefs))]
-    class RecorderViewPrefsEditor : Editor
+    [CustomEditor(typeof(RecorderSettingsPrefs))]
+    class RecorderSettingsPrefsEditor : Editor
     {
         SerializedProperty m_RecordModeProperty;
         
@@ -74,28 +74,6 @@ namespace UnityEditor.Recorder
             RecordModeGUI();
             EditorGUILayout.Separator();
             FrameRateGUI();
-            EditorGUILayout.Separator();
-
-            var viewPrefs = (RecorderViewPrefs) target;
-
-            foreach (var inputSettings in viewPrefs.recorders)
-            {
-                EditorState editorInfo;
-
-                if (!m_InputEditorCache.TryGetValue(inputSettings, out editorInfo))
-                {
-                    editorInfo = new EditorState {editor = (RecorderEditor) CreateEditor(inputSettings)};
-                    m_InputEditorCache[inputSettings] = editorInfo;
-                }
-                
-                editorInfo.visible = EditorGUILayout.Foldout(editorInfo.visible, inputSettings.name);
-                if (editorInfo.visible)
-                {
-                    ++EditorGUI.indentLevel;
-                    editorInfo.editor.OnInspectorGUI();
-                    --EditorGUI.indentLevel;
-                }
-            }
         }
 
         public bool RecordModeGUI()
@@ -158,7 +136,7 @@ namespace UnityEditor.Recorder
             
             EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.SMaxFPSLabel : Styles.STargetFPSLabel);
 
-            if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRate.FR_CUSTOM)
+            if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRateType.FR_CUSTOM)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.SValueLabel);
@@ -174,6 +152,32 @@ namespace UnityEditor.Recorder
             
             serializedObject.ApplyModifiedProperties();
 
+            return GUI.changed;
+        }
+
+        public bool RecordersGUI()
+        {
+            var viewPrefs = (RecorderSettingsPrefs) target;
+
+            foreach (var inputSettings in viewPrefs.recorders)
+            {
+                EditorState editorInfo;
+
+                if (!m_InputEditorCache.TryGetValue(inputSettings, out editorInfo))
+                {
+                    editorInfo = new EditorState {editor = (RecorderEditor) CreateEditor(inputSettings)};
+                    m_InputEditorCache[inputSettings] = editorInfo;
+                }
+                
+                editorInfo.visible = EditorGUILayout.Foldout(editorInfo.visible, inputSettings.name);
+                if (editorInfo.visible)
+                {
+                    ++EditorGUI.indentLevel;
+                    editorInfo.editor.OnInspectorGUI();
+                    --EditorGUI.indentLevel;
+                }
+            }
+            
             return GUI.changed;
         }
     }

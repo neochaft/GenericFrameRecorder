@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
@@ -9,7 +10,7 @@ namespace UnityEditor.Recorder
 {
     class RecorderItem : VisualElement
     {
-        public UnityEngine.Recorder.RecorderSettings settings { get; private set; }
+        public RecorderSettings settings { get; private set; }
         public RecorderEditor editor { get; private set; }
     
         EditableLabel m_EditableLabel;
@@ -32,9 +33,9 @@ namespace UnityEditor.Recorder
                 RemoveFromClassList("selected");
         }
 
-        void SetItemEnabled(bool value)
+        void SetItemEnabled(RecorderSettingsPrefs prefs, bool value)
         {
-            settings.enabled = value;
+            prefs.SetRecorderEnabled(settings, value);
             m_EditableLabel.SetLabelEnabled(value);
             if (value)
                 RemoveFromClassList("disabled");
@@ -43,39 +44,21 @@ namespace UnityEditor.Recorder
         }
 
         static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
-    
-        public RecorderItem(RecorderViewPrefs recordersList, Type recorderType, string recorderName, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
-        {          
-            var savedSettings = RecordersInventory.GenerateRecorderInitialSettings(recordersList, recorderType);
-            savedSettings.name = recorderName;
-            
-            recordersList.AddRecorder(savedSettings);
-    
-            Init(savedSettings, iconName, onRecordMouseUp);
-            
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
         
-        public RecorderItem(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
-        {
-            Init(savedSettings, iconName, onRecordMouseUp);
-        }
-        
-        void Init(RecorderSettings savedSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        public RecorderItem(RecorderSettingsPrefs prefs, RecorderSettings recorderSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {           
-            settings = savedSettings;
+            settings = recorderSettings;
     
             editor = (RecorderEditor)Editor.CreateEditor(settings);
     
             style.flex = 1.0f;
             style.flexDirection = FlexDirection.Row;
-    
-            var toggle = new Toggle(null) { on = settings.enabled };
+
+            var toggle = new Toggle(null);
             
             toggle.OnToggle(() =>
             {
-                SetItemEnabled(toggle.on);
+                SetItemEnabled(prefs, toggle.on);
             });
             
             Add(toggle);
@@ -102,18 +85,19 @@ namespace UnityEditor.Recorder
             
             Add(m_Icon);
             
-            m_EditableLabel = new EditableLabel { text = settings.name };
+            m_EditableLabel = new EditableLabel { text = prefs.GetRecorderDisplayName(settings) };
             m_EditableLabel.OnValueChanged(newValue =>
             {
-                settings.name = newValue;
-                AssetDatabase.SaveAssets();
+                prefs.SetRecorderDisplayName(settings, newValue);
             });
             Add(m_EditableLabel);
             
             RegisterCallback<MouseUpEvent>(InternalMouseUp);
             RegisterCallback(onRecordMouseUp);
-            
-            SetItemEnabled(settings.enabled);
+
+            var recorderEnabled = prefs.IsRecorderEnabled(settings);
+            toggle.on = recorderEnabled;
+            SetItemEnabled(prefs, recorderEnabled);
         }
     
         void InternalMouseUp(MouseUpEvent evt)

@@ -190,7 +190,7 @@ namespace UnityEngine.Recorder
         }
 
 #if UNITY_EDITOR
-        public static RecorderSettings GenerateRecorderInitialSettings(Object parent, Type recorderType)
+        public static RecorderSettings GenerateRecorderInitialSettings(Type recorderType)
         {
             Init();
             var recorderinfo = GetRecorderInfo(recorderType);
@@ -198,10 +198,7 @@ namespace UnityEngine.Recorder
             {
                 RecorderSettings settings = null;
                 settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsClass);
-                settings.name = "Recorder Settings";
                 settings.recorderType = recorderType;
-                
-                AssetSettingsHelper.AddHiddenObjectToAsset(settings, parent);
 
                 return settings;
             }

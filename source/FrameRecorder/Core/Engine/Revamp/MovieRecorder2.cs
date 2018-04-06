@@ -3,7 +3,7 @@ namespace UnityEngine.Recorder
     public class MovieRecorder2 : Recorder2Settings //Reco
     {
         public int movieStuff;
-        public FrameRate rate;
+        public FrameRateType rate;
 
 
         public enum Format

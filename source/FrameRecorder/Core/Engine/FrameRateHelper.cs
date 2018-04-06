@@ -11,7 +11,7 @@ namespace UnityEngine.Recorder
     ///               of the components further down the line.
     /// </summary>
     //[Flags]
-    public enum FrameRate
+    public enum FrameRateType
     {
         FR_23, // 24 * 1000 / 1001
         FR_24,
@@ -31,54 +31,54 @@ namespace UnityEngine.Recorder
     /// </summary>    
     public static class FrameRateHelper
     {
-        public static float ToFloat(FrameRate frameRate, float customValue)
+        public static float ToFloat(FrameRateType frameRateType, float customValue)
         {
-            switch (frameRate)
+            switch (frameRateType)
             {
-                case FrameRate.FR_CUSTOM:
+                case FrameRateType.FR_CUSTOM:
                     return customValue;
-                case FrameRate.FR_23:
+                case FrameRateType.FR_23:
                     return 24 * 1000 / 1001f;
-                case FrameRate.FR_24:
+                case FrameRateType.FR_24:
                     return 24;
-                case FrameRate.FR_25:
+                case FrameRateType.FR_25:
                     return 25;
-                case FrameRate.FR_29:
+                case FrameRateType.FR_29:
                     return 30 * 1000 / 1001f;
-                case FrameRate.FR_30:
+                case FrameRateType.FR_30:
                     return 30;
-                case FrameRate.FR_50:
+                case FrameRateType.FR_50:
                     return 50;
-                case FrameRate.FR_59:
+                case FrameRateType.FR_59:
                     return 60 * 1000 / 1001f;
-                case FrameRate.FR_60:
+                case FrameRateType.FR_60:
                     return 60;
                 default:
-                    throw new ArgumentOutOfRangeException("frameRate", frameRate, null);
+                    throw new ArgumentOutOfRangeException("frameRateType", frameRateType, null);
             }
         }
 
-        public static string ToLable(FrameRate frameRate)
+        public static string ToLable(FrameRateType frameRateType)
         {
-            switch (frameRate)
+            switch (frameRateType)
             {
-                case FrameRate.FR_23:
+                case FrameRateType.FR_23:
                     return "23.97";
-                case FrameRate.FR_24:
+                case FrameRateType.FR_24:
                     return "Film (24)";
-                case FrameRate.FR_25:
+                case FrameRateType.FR_25:
                     return "PAL (25)";
-                case FrameRate.FR_29:
+                case FrameRateType.FR_29:
                     return "NTSC (29.97)";
-                case FrameRate.FR_30:
+                case FrameRateType.FR_30:
                     return "30";
-                case FrameRate.FR_50:
+                case FrameRateType.FR_50:
                     return "50";
-                case FrameRate.FR_59:
+                case FrameRateType.FR_59:
                     return "59.94" ;
-                case FrameRate.FR_60:
+                case FrameRateType.FR_60:
                     return "60";
-                case FrameRate.FR_CUSTOM:
+                case FrameRateType.FR_CUSTOM:
                 default:
                     return "Custom";
             }

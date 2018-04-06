@@ -141,8 +141,8 @@ namespace UnityEngine.Recorder
             }
 
             // Note: This is not great when multiple recorders are simultaneously active...
-            if (RecorderSettings.frameRatePlayback == FrameRatePlayback.Variable ||
-                (RecorderSettings.frameRatePlayback == FrameRatePlayback.Constant && m_Recorder.settings.synchFrameRate))
+            if (settings.frameRatePlayback == FrameRatePlayback.Variable ||
+                settings.frameRatePlayback == FrameRatePlayback.Constant && m_Recorder.settings.synchFrameRate)
             {
                 var frameCount = Time.renderedFrameCount - m_InitialFrame;
                 var frameLen = 1.0f / m_Recorder.settings.frameRate;

@@ -6,7 +6,7 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderListPreset : ScriptableObject
+    class RecorderListPreset : ScriptableObject
     {
         [SerializeField] Preset m_Model;
         [SerializeField] List<Preset> m_RecorderPresets = new List<Preset>();
@@ -21,12 +21,13 @@ namespace UnityEditor.Recorder
             get { return m_RecorderPresets; }
         }
 
-        public static void SaveAtPath(RecorderViewPrefs model, string path)
+        public static void SaveAtPath(RecorderSettingsPrefs model, string path)
         {
             var data = CreateInstance<RecorderListPreset>();
             
             var copy = Instantiate(model);
-            copy.ClearRecorders(); // Make sure to not save recorders refs inside the presets
+            copy.name = model.name;
+            copy.ClearRecorderSettings();
 
             var p = new Preset(copy) {name = model.name};
             data.m_Model = p;
@@ -44,31 +45,28 @@ namespace UnityEditor.Recorder
             AssetDatabase.CreateAsset(preset, path); //AssetDatabase.CreateAsset(preset, "Assets/test.preset");
             
             foreach (var rp in data.m_RecorderPresets)
-                AssetSettingsHelper.AddHiddenObjectToAsset(rp, preset);
+                AddHiddenObjectToAsset(rp, preset);
             
-            AssetSettingsHelper.AddHiddenObjectToAsset(p, preset);
+            AddHiddenObjectToAsset(p, preset);
             
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
-        
-        public static RecorderViewPrefs LoadAtPath(RecorderListPreset preset, string path)
+                
+        public void AppyTo(RecorderSettingsPrefs prefs)
         {
-            var instance = (RecorderViewPrefs)CreateFromPreset(preset.m_Model);
-            AssetDatabase.CreateAsset(instance, path);
-
-            foreach (var rp in preset.m_RecorderPresets)
+            prefs.Release();
+            
+            m_Model.ApplyTo(prefs);
+            
+            foreach (var rp in m_RecorderPresets)
             {
                 var r = (RecorderSettings) CreateFromPreset(rp);
-                
-                instance.AddRecorder(r);
-                AssetSettingsHelper.AddHiddenObjectToAsset(r, instance);
+                prefs.AddRecorder(r, r.name);
             }
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
-            return instance;
+            
+            prefs.Reload();
+            prefs.Save();
         }
 
         static ScriptableObject CreateFromPreset(Preset preset)
@@ -77,6 +75,12 @@ namespace UnityEditor.Recorder
             preset.ApplyTo(instance);
             
             return instance;
+        }
+        
+        static void AddHiddenObjectToAsset(UnityEngine.Object objectToAdd, UnityEngine.Object assetObject)
+        {
+            objectToAdd.hideFlags |= HideFlags.HideInHierarchy;
+            AssetDatabase.AddObjectToAsset(objectToAdd, assetObject);
         }
     }
 }
