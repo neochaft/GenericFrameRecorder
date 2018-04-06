@@ -7,7 +7,7 @@ using UnityEngine;
 namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(InputSettingsSelector), true)]
-    class InputSettingsSelectorDrawer : PropertyDrawer
+    class InputSettingsSelectorDrawer : NestablePropertyDrawer
     {
         bool m_Initialized;
         
@@ -52,14 +52,16 @@ namespace UnityEditor.Recorder
             EditorGUILayout.PropertyField(sp, true);
         }
 
-        void Initialize(SerializedProperty property)
-        {          
+        protected override void Initialize(SerializedProperty property)
+        {
+            base.Initialize(property);
+                
             m_NameToIndex = new Dictionary<string, int>();
             m_IndexToProperty = new Dictionary<int, SerializedProperty>();
             
             var displayNames = new List<GUIContent>();
             
-            var selector = (InputSettingsSelector)fieldInfo.GetValue(property.serializedObject.targetObject);
+            var selector = (InputSettingsSelector)target;
             
             int i = 0;
             foreach (var field in selector.InputSettingFields())

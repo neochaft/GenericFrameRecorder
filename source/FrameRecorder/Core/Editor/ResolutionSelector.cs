@@ -8,7 +8,7 @@ namespace UnityEditor.Recorder
         string[] m_MaskedNames;
         EImageDimension m_MaxRes = EImageDimension.Window;
 
-        public void OnInspectorGUI(EImageDimension max, SerializedProperty size )
+        public void OnGUI(EImageDimension max, SerializedProperty size)
         {
             if (m_MaskedNames == null || max != m_MaxRes)
             {
