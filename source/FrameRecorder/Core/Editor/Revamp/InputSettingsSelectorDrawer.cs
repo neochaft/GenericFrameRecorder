@@ -7,7 +7,7 @@ using UnityEngine;
 namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(InputSettingsSelector), true)]
-    class InputSettingsSelectorDrawer : NestablePropertyDrawer
+    class InputSettingsSelectorDrawer : TargetedPropertyDrawer<InputSettingsSelector>
     {
         bool m_Initialized;
         
@@ -61,10 +61,8 @@ namespace UnityEditor.Recorder
             
             var displayNames = new List<GUIContent>();
             
-            var selector = (InputSettingsSelector)target;
-            
             int i = 0;
-            foreach (var field in selector.InputSettingFields())
+            foreach (var field in target.InputSettingFields())
             {
                 var sp = property.FindPropertyRelative(field.Name);
                 

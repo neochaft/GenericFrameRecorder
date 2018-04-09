@@ -8,7 +8,7 @@ namespace UnityEditor.Recorder.Input
     // https://gist.github.com/v01pe/79db7566e2feff7ffab87676e220fd20?ts=4#file-nestablepropertydrawer-cs
 
     [CustomPropertyDrawer(typeof(CBRenderTextureInputSettings))]
-    public class CBRenderTextureInputSettingsPropertyDrawer : NestablePropertyDrawer
+    public class CBRenderTextureInputSettingsPropertyDrawer : TargetedPropertyDrawer<ImageInputSettings>
     {
         static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.ActiveCameras | EImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
@@ -76,7 +76,7 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != EImageSource.RenderTexture)
             {
-                m_ResSelector.OnGUI(((ImageInputSettings)target).maxSupportedSize, m_RenderSize);
+                m_ResSelector.OnGUI(target.maxSupportedSize, m_RenderSize);
 
                 if (m_RenderSize.intValue > (int)EImageDimension.Window)
                 {
@@ -101,20 +101,6 @@ namespace UnityEditor.Recorder.Input
 
             //serializedObject.ApplyModifiedProperties();
         }
-        
-        protected virtual void InitializeTarget(SerializedProperty prop)
-        {
-            if (target == null)
-            {
-                string[] path = prop.propertyPath.Split('.');
-                target = prop.serializedObject.targetObject;
-                foreach (string pathNode in path)
-                {
-                    target = target.GetType().GetField(pathNode).GetValue(target);
-                }
-            }
-        }
-        
 
         public /*override*/ void CaptureOptionsGUI() // TODO How to?
         {

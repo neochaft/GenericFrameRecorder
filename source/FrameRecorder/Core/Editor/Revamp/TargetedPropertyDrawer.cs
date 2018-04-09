@@ -2,20 +2,21 @@
 
 namespace UnityEditor.Recorder
 {
-    public class NestablePropertyDrawer : PropertyDrawer
+    public class TargetedPropertyDrawer<T> : PropertyDrawer where T : class
     {
-        protected object target;
+        protected T target;
 
         protected virtual void Initialize(SerializedProperty prop)
         {
             if (target == null)
             {
-                string[] path = prop.propertyPath.Split('.');
-                target = prop.serializedObject.targetObject;
-                foreach (string pathNode in path)
-                {
-                    target = GetSerializedField(target, pathNode).GetValue(target);
-                }
+                var path = prop.propertyPath.Split('.');
+                object obj = prop.serializedObject.targetObject;
+                
+                foreach (var pathNode in path)
+                    obj = GetSerializedField(obj, pathNode).GetValue(obj);
+
+                target = obj as T;
             }
         }
 
