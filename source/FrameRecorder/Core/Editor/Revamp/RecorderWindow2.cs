@@ -590,6 +590,8 @@ namespace UnityEditor.Recorder
             m_Prefs.AddRecorder(recorderSettings, recorderName);
             
             m_Recordings.Add(new RecorderItem(m_Prefs, recorderSettings, info.iconName, OnRecordMouseUp));
+            
+            SelectRecorder(m_Recordings.Last());
         }
 
         string GetUniqueRecorderName(string desiredName)
