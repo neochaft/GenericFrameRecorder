@@ -63,8 +63,8 @@ namespace UnityEditor.Recorder
     }
 #endif
 
-    [Recorder(typeof(MediaRecorderSettings), "Video", "Unity/Movie", "movie_recorder")]
-    public class MediaRecorder : GenericRecorder<MediaRecorderSettings>
+    [Recorder(typeof(VideoRecorderSettings), "Video", "Unity/Movie", "movie_recorder")]
+    public class VideoRecorder : GenericRecorder<VideoRecorderSettings>
     {
         private MediaEncoder m_Encoder;
 #if RECORD_AUDIO_MIXERS

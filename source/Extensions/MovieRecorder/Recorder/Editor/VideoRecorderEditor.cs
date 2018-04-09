@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder
 {
-    [CustomEditor(typeof(MediaRecorderSettings))]
-    public class MediaRecorderEditor : RecorderEditor
+    [CustomEditor(typeof(VideoRecorderSettings))]
+    public class VideoRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_EncodingBitRateMode;
@@ -24,7 +24,7 @@ namespace UnityEditor.Recorder
             if (target == null)
                 return;
 
-            var pf = new PropertyFinder<MediaRecorderSettings>(serializedObject);
+            var pf = new PropertyFinder<VideoRecorderSettings>(serializedObject);
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
             m_EncodingBitRateMode = pf.Find(w => w.m_VideoBitRateMode);
             //m_VideoSelector = serializedObject.FindProperty("m_VideoSelector");
@@ -50,7 +50,7 @@ namespace UnityEditor.Recorder
                 return EFieldDisplayState.Disabled;
 
             if (property.name == "allowTransparency")
-                return ((MediaRecorderSettings) target).m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EFieldDisplayState.Disabled : EFieldDisplayState.Enabled;
+                return ((VideoRecorderSettings) target).m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EFieldDisplayState.Disabled : EFieldDisplayState.Enabled;
 
             return base.GetFieldDisplayState(property);
         }

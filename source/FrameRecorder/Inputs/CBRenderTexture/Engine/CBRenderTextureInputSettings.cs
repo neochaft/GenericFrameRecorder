@@ -11,6 +11,7 @@ namespace UnityEngine.Recorder.Input
         public EImageSource source = EImageSource.ActiveCameras;
         public string cameraTag;
         public bool flipFinalOutput;
+        public bool supportTransparency { get; set; }
         public bool allowTransparency;
         public bool captureUI;
 

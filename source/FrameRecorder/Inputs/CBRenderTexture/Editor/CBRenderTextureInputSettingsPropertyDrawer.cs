@@ -82,7 +82,8 @@ namespace UnityEditor.Recorder.Input
                 }
             }
 
-            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha")));
+            using (new EditorGUI.DisabledScope(!target.supportTransparency))
+                EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"));
 
             if (Verbose.enabled)
             {

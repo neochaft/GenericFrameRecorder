@@ -23,11 +23,12 @@ namespace UnityEditor.Recorder
         [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
 
         public VideoSelector()
-        {               
-            m_ScreenCaptureInputSettings.forceEvenSize = true;
-                
+        {                              
             m_CbRenderTextureInputSettings.forceEvenSize = true;
             m_CbRenderTextureInputSettings.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
+            m_CbRenderTextureInputSettings.supportTransparency = true;
+            
+            m_ScreenCaptureInputSettings.forceEvenSize = true;
                 
             m_Camera360InputSettings.forceEvenSize = true;
                 
@@ -37,24 +38,15 @@ namespace UnityEditor.Recorder
         }
     }
 
-    public class MediaRecorderSettings : RecorderSettings // TODO Rename
+    public class VideoRecorderSettings : RecorderSettings // TODO Rename
     {
         public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;
         public VideoBitrateMode m_VideoBitRateMode = VideoBitrateMode.High;
-        public bool m_AppendSuffix = false;
 
-//        [SerializeField] ScreenCaptureInputSettings m_ScreenCaptureInputSettings = new ScreenCaptureInputSettings();
-//        [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
-//        [SerializeField] Camera360InputSettings m_Camera360InputSettings = new Camera360InputSettings();
-//        [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
-//        [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
-//
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
         [SerializeField] AudioInputSettings m_AudioInputSettings;
-        //InputSettingsList m_InputsSettings;
-
-
-        public MediaRecorderSettings()
+        
+        public VideoRecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
         }
@@ -76,25 +68,6 @@ namespace UnityEditor.Recorder
 
             return ok;
         }
-
-//        public override RecorderInputSetting NewInputSettingsObj(Type type)
-//        {
-//            var obj = base.NewInputSettingsObj(type);
-//
-//            var imageInput = obj as ImageInputSettings;
-//            if (imageInput != null)
-//            {
-//                imageInput.forceEvenSize = true;
-//            }
-//            
-//            var cbRenderTexture = obj as CBRenderTextureInputSettings;
-//            if (cbRenderTexture != null)
-//            {
-//                cbRenderTexture.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
-//            }
-//
-//            return obj ;
-//        }
 
         public override IEnumerable<RecorderInputSetting> inputsSettings
         {
