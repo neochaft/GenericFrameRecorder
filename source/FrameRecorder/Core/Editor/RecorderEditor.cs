@@ -18,37 +18,6 @@ namespace UnityEditor.Recorder
 
     public abstract class RecorderEditor : Editor
     {
-
-        protected class InputEditorState
-        {
-            readonly InputEditor.IsFieldAvailableDelegate m_Validator;
-            public InputEditor editor { get; private set; }
-
-            RecorderInputSetting m_SettingsObj;
-
-            public RecorderInputSetting settingsObj
-            {
-                get { return m_SettingsObj; }
-                set
-                {
-                    m_SettingsObj = value;
-                    if (editor != null)
-                        UnityHelpers.Destroy(editor);
-
-                    //editor = CreateEditor(m_SettingsObj) as InputEditor;
-                    if (editor != null)
-                        editor.isFieldAvailableForHost = m_Validator;
-                }
-            }
-
-            public InputEditorState(InputEditor.IsFieldAvailableDelegate validator, RecorderInputSetting settings)
-            {
-                m_Validator = validator;
-                settingsObj = settings;
-            }
-        }
-
-        protected List<InputEditorState> m_InputEditors;
         readonly List<string> m_SettingsErrors = new List<string>();
 
         SerializedProperty m_CaptureEveryNthFrame;
@@ -58,29 +27,12 @@ namespace UnityEditor.Recorder
         protected virtual void OnEnable()
         {
             if (target != null)
-            {
-                m_InputEditors = new List<InputEditorState>();
-                
+            {               
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
                 m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
                 m_DestinationPath = pf.Find(w => w.destinationPath);
                 m_BaseFileName = pf.Find(w => w.baseFileName);
-
-                BuildInputEditors();
             }
-        }
-
-        void BuildInputEditors()
-        {
-            var rs = (RecorderSettings) target;
-
-            foreach (var editor in m_InputEditors)
-                UnityHelpers.Destroy(editor.editor);
-            
-            m_InputEditors.Clear();
-
-            foreach (var input in rs.inputsSettings)
-                m_InputEditors.Add(new InputEditorState(GetFieldDisplayState, input));
         }
 
         public bool ValidityCheck(List<string> errors)
@@ -99,8 +51,6 @@ namespace UnityEditor.Recorder
         {
             if (target == null)
                 return;
-            
-            BuildInputEditors();
 
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
@@ -113,6 +63,8 @@ namespace UnityEditor.Recorder
             NameAndPathGUI();
 
             ImageRenderOptionsGUI();
+            
+            EditorGUILayout.Separator();
             
             ExtraOptionsGUI();
             
@@ -164,12 +116,10 @@ namespace UnityEditor.Recorder
             foreach (var inputsSetting in recorder.inputsSettings)
             {
                 var p = GetInputSerializedProperty(serializedObject, inputsSetting);
-                EditorGUILayout.PropertyField(p, true);                
+                
+                EditorGUILayout.Separator();
+                EditorGUILayout.PropertyField(p, true);
             }
-//            foreach (var inputEditor in m_InputEditors)
-//            {
-//                inputEditor.editor.OnInspectorGUI();
-//            }
         }
         
         static SerializedProperty GetInputSerializedProperty(SerializedObject owner, object fieldValue)

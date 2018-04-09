@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    public abstract class InputEditor : Editor
+    public abstract class InputPropertyDrawer<T> : TargetedPropertyDrawer<T> where T : class
     {
         protected List<string> m_SettingsErrors = new List<string>();
 
@@ -41,6 +42,11 @@ namespace UnityEditor.Recorder
 //                    EditorGUILayout.HelpBox(m_SettingsErrors[i], MessageType.Warning);
 //                }
 //            }
+        }
+        
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return 0.0f;
         }
 
         public virtual void CaptureOptionsGUI()

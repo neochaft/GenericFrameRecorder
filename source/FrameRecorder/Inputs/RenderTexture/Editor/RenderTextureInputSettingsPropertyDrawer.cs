@@ -5,22 +5,23 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder.Input
 {
-    [CustomEditor(typeof(RenderTextureInputSettings))]
-    public class RenderTextureInputSettingsEditor : InputEditor
+    [CustomPropertyDrawer(typeof(RenderTextureInputSettings))]
+    public class RenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<RenderTextureInputSettings>
     {
         SerializedProperty m_SourceRTxtr;
 
-        protected void OnEnable()
+        protected override void Initialize(SerializedProperty property)
         {
-            if (target == null)
-                return;
+            base.Initialize(property);
 
-            var pf = new PropertyFinder<RenderTextureInputSettings>(serializedObject);
-            m_SourceRTxtr = pf.Find(w => w.sourceRTxtr);
+            if (m_SourceRTxtr == null)
+                m_SourceRTxtr = property.FindPropertyRelative("sourceRTxtr");
         }
 
-        public override void OnInspectorGUI()
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            Initialize(property);
+            
             EditorGUILayout.PropertyField(m_SourceRTxtr, new GUIContent("Source"));
             using (new EditorGUI.DisabledScope(true))
             {
@@ -32,8 +33,6 @@ namespace UnityEditor.Recorder.Input
                 }
                 EditorGUILayout.TextField("Resolution", res);
             }
-
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

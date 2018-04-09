@@ -4,8 +4,8 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder.Input
 {
-    [CustomEditor(typeof(Camera360InputSettings))]
-    public class Camera360InputEditor : InputEditor
+    [CustomPropertyDrawer(typeof(Camera360InputSettings))]
+    public class Camera360InputPropertyDrawer : InputPropertyDrawer<Camera360InputSettings>
     {
         static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
@@ -19,25 +19,25 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_OutputHeight;
         SerializedProperty m_RenderStereo;
 
-        protected void OnEnable()
+        protected override void Initialize(SerializedProperty property)
         {
-            if (target == null)
-                return;
+            base.Initialize(property);
+            
+            m_Source = property.FindPropertyRelative("source");
+            m_CameraTag = property.FindPropertyRelative("cameraTag");
 
-            var pf = new PropertyFinder<Camera360InputSettings>(serializedObject);
-            m_Source = pf.Find(w => w.source);
-            m_CameraTag = pf.Find(w => w.cameraTag);
-
-            m_StereoSeparation = pf.Find(w => w.stereoSeparation);
-            m_FlipFinalOutput = pf.Find( w => w.flipFinalOutput );
-            m_CubeMapSz = pf.Find( w => w.mapSize );
-            m_OutputWidth = pf.Find(w => w.outputWidth);
-            m_OutputHeight = pf.Find(w => w.outputHeight);
-            m_RenderStereo = pf.Find(w => w.renderStereo);
+            m_StereoSeparation = property.FindPropertyRelative("stereoSeparation");
+            m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
+            m_CubeMapSz = property.FindPropertyRelative("mapSize");
+            m_OutputWidth = property.FindPropertyRelative("outputWidth");
+            m_OutputHeight = property.FindPropertyRelative("outputHeight");
+            m_RenderStereo = property.FindPropertyRelative("renderStereo");
         }
 
-        public override void OnInspectorGUI()
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            Initialize(property);
+            
             AddProperty(m_Source, () =>
             {
                 using (var check = new EditorGUI.ChangeCheckScope())
@@ -97,8 +97,6 @@ namespace UnityEditor.Recorder.Input
                     EditorGUILayout.PropertyField(m_FlipFinalOutput, new GUIContent("Flip output"));
                 }
             }
-
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

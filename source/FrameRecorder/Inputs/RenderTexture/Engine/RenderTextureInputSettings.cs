@@ -9,6 +9,7 @@ namespace UnityEngine.Recorder.Input
     public class RenderTextureInputSettings : ImageInputSettings
     {
         public RenderTexture sourceRTxtr;
+        
 
         public override Type inputType
         {

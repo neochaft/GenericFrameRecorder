@@ -1,4 +1,3 @@
-#if UNITY_2017_3_OR_NEWER
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Recorder;
@@ -7,8 +6,8 @@ using UnityEngine.UI;
 
 namespace UnityEditor.Recorder.Input
 {
-    [CustomEditor(typeof(AudioInputSettings))]
-    public class AudioInputSettingsEditor : InputEditor
+    [CustomPropertyDrawer(typeof(AudioInputSettings))]
+    public class AudioInputSettingsPropertyDrawer : InputPropertyDrawer<AudioInputSettings>
     {
         SerializedProperty m_PreserveAudio;
 #if RECORD_AUDIO_MIXERS
@@ -16,13 +15,9 @@ namespace UnityEditor.Recorder.Input
         ReorderableList    m_AudioMixerGroupsList;
 #endif
 
-        protected void OnEnable()
+	    protected override void Initialize(SerializedProperty property)
         {
-            if (target == null)
-                return;
-
-            var pf = new PropertyFinder<AudioInputSettings>(serializedObject);
-            m_PreserveAudio = pf.Find(w => w.preserveAudio);
+            m_PreserveAudio = property.FindPropertyRelative("preserveAudio");
 
 #if RECORD_AUDIO_MIXERS
 	    m_AudioMixerGroups = serializedObject.FindProperty<AudioInputSettings>(x => x.m_AudioMixerGroups);
@@ -50,21 +45,18 @@ namespace UnityEditor.Recorder.Input
 #endif
         }
 
-        public override void OnInspectorGUI()
-        {
+	    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+	    {
+		    Initialize(property);
+		    
             EditorGUILayout.PropertyField(m_PreserveAudio, new GUIContent("Capture audio"));
 
 #if RECORD_AUDIO_MIXERS
             if (m_AudioMixerGroups != null)
             {
-                serializedObject.Update();
                 m_AudioMixerGroupsList.DoLayoutList();
             }
 #endif
- 
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }
-
-#endif

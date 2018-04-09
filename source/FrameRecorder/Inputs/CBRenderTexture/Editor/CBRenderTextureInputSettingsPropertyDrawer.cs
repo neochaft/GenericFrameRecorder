@@ -5,10 +5,8 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder.Input
 {
-    // https://gist.github.com/v01pe/79db7566e2feff7ffab87676e220fd20?ts=4#file-nestablepropertydrawer-cs
-
     [CustomPropertyDrawer(typeof(CBRenderTextureInputSettings))]
-    public class CBRenderTextureInputSettingsPropertyDrawer : TargetedPropertyDrawer<ImageInputSettings>
+    public class CBRenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<CBRenderTextureInputSettings>
     {
         static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.ActiveCameras | EImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
@@ -45,11 +43,6 @@ namespace UnityEditor.Recorder.Input
             m_Initialized = true;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return 0.0f;
-        }
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Initialize(property);
@@ -83,13 +76,13 @@ namespace UnityEditor.Recorder.Input
                     EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio"));
                 }
 
-//                if(inputType == EImageSource.ActiveCameras)
-//                {
-//                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
-//                }
+                if(inputType == EImageSource.ActiveCameras)
+                {
+                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
+                }
             }
 
-            //AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"))); // TODO Do same this as wih Include UI
+            AddProperty(m_Transparency, () => EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha")));
 
             if (Verbose.enabled)
             {
