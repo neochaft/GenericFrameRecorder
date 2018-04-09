@@ -104,7 +104,13 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public void Release()
+        public static void Release(RecorderSettingsPrefs prefs)
+        {
+            prefs.ReleaseRecorderSettings();
+            File.Delete(GetRelativePath(s_Name));
+        }
+
+        public void ReleaseRecorderSettings()
         {
             foreach (var info in m_RecorderInfos)
             {               

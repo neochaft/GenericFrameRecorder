@@ -38,10 +38,15 @@ namespace UnityEditor.Recorder
         void OnDestroy()
         {
             if (m_Editor != null)
+            {
                 DestroyImmediate(m_Editor);
-            
+                m_Editor = null;
+            }
+
             foreach (var editor in m_RecordersEditors)
                 DestroyImmediate(editor);
+            
+            m_RecordersEditors.Clear();
         }
     }
 }

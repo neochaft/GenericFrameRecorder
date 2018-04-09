@@ -55,7 +55,7 @@ namespace UnityEditor.Recorder
                 
         public void AppyTo(RecorderSettingsPrefs prefs)
         {
-            prefs.Release();
+            prefs.ReleaseRecorderSettings();
             
             m_Model.ApplyTo(prefs);
             

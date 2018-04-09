@@ -470,6 +470,15 @@ namespace UnityEditor.Recorder
        
         void OnRecorderListSettingPresetGUI()
         {
+            if (GUILayout.Button("Reset"))
+            {
+                RecorderSettingsPrefs.Release(m_Prefs);
+                m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
+                DestroyImmediate(m_RecorderSettingsPrefsEditor);
+                m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
+                ReloadRecordings();
+            }
+            
             if (GUILayout.Button("Load Preset"))
             {
                 EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
