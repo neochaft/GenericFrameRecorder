@@ -25,7 +25,7 @@ namespace UnityEditor.Recorder
         VisualElement m_SettingsPanel;
         VisualElement m_RecordingsPanel;
         
-        RecorderEditor m_RecorderEditor;
+        Editor m_RecorderEditor;
         VisualElement m_RecorderSettingPanel;
         Button m_RecordButton;
         PanelSplitter m_PanelSplitter;
@@ -441,6 +441,9 @@ namespace UnityEditor.Recorder
                 OnRecorderSettingPresetGUI();
 
                 EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(m_RecorderEditor.target.GetType().Name));
+                
+                if (!(m_RecorderEditor is RecorderEditor))
+                    EditorGUILayout.LabelField(string.Empty, GUI.skin.horizontalSlider);
 
                 m_RecorderEditor.OnInspectorGUI();
 

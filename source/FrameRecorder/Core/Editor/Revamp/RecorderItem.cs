@@ -11,7 +11,7 @@ namespace UnityEditor.Recorder
     class RecorderItem : VisualElement
     {
         public RecorderSettings settings { get; private set; }
-        public RecorderEditor editor { get; private set; }
+        public Editor editor { get; private set; }
     
         EditableLabel m_EditableLabel;
         Image m_Icon;
@@ -49,7 +49,7 @@ namespace UnityEditor.Recorder
         {           
             settings = recorderSettings;
     
-            editor = (RecorderEditor)Editor.CreateEditor(settings);
+            editor = Editor.CreateEditor(settings);
     
             style.flex = 1.0f;
             style.flexDirection = FlexDirection.Row;

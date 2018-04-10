@@ -118,7 +118,7 @@ namespace UnityEngine.Recorder
             var parentRoot = ctrl.transform.Find(assetId);
             if (parentRoot == null)
             {
-                parentRoot = (new GameObject()).transform;
+                parentRoot = new GameObject().transform;
                 parentRoot.name = assetId;
                 parentRoot.parent = ctrl.transform;
             }
