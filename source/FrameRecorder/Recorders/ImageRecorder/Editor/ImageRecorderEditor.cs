@@ -36,15 +36,5 @@ namespace UnityEditor.Recorder
         {           
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
         }
-        
-        protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
-        {
-            if (property.name == "allowTransparency")
-            {
-                return (target as ImageRecorderSettings).m_OutputFormat == ImageRecorderOutputFormat.JPEG ? EFieldDisplayState.Hidden : EFieldDisplayState.Enabled;
-            }
-
-            return base.GetFieldDisplayState(property);
-        }
     }
 }

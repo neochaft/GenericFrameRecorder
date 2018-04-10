@@ -35,20 +35,11 @@ namespace UTJ.FrameCapturer.Recorders
             EditorGUILayout.PropertyField( m_VideoEncoder, new GUIContent("Encoder"), true);            
             EditorGUILayout.PropertyField( m_VideoBitRateMode, new GUIContent("Bitrate mode"), true);   
             EditorGUILayout.PropertyField( m_AutoSelectBR, new GUIContent("Autoselect bitrate"), true);
-                using (new EditorGUI.DisabledScope(m_AutoSelectBR.boolValue))                        
-            EditorGUILayout.PropertyField( m_VideoBitRate, new GUIContent("Bitrate (bps)"), true);            
+            
+            using (new EditorGUI.DisabledScope(m_AutoSelectBR.boolValue))                        
+                EditorGUILayout.PropertyField( m_VideoBitRate, new GUIContent("Bitrate (bps)"), true);
+            
             EditorGUILayout.PropertyField( m_VideoMaxTasks, new GUIContent("Max tasks"), true);    
-        }
-
-        protected override EFieldDisplayState GetFieldDisplayState( SerializedProperty property)
-        {
-            if( property.name == "captureEveryNthFrame" )
-                return EFieldDisplayState.Hidden;
-
-            if (property.name == "allowTransparency"  )
-                return EFieldDisplayState.Hidden;
-
-            return base.GetFieldDisplayState(property);
         }
     }
 }

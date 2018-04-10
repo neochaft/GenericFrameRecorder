@@ -12,14 +12,5 @@ namespace UTJ.FrameCapturer.Recorders
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_GifEncoderSettings"), new GUIContent("Encoding"), true);
         }
-
-        protected override EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
-        {
-            if (property.name == "allowTransparency"  )
-                return EFieldDisplayState.Hidden;
-
-            return base.GetFieldDisplayState(property);
-        }
-
     }
 }

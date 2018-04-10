@@ -75,8 +75,9 @@ namespace UnityEditor.Recorder
             serializedObject.ApplyModifiedProperties();
 
             EditorGUI.EndChangeCheck();
-
-            ((RecorderSettings) target).SelfAdjustSettings();
+            
+            if (GUI.changed)
+                ((RecorderSettings) target).SelfAdjustSettings();
 
             OnValidateSettingsGUI();
         }
@@ -152,7 +153,8 @@ namespace UnityEditor.Recorder
 
         protected virtual void ExtraOptionsGUI()
         {
-            AddProperty(m_CaptureEveryNthFrame, () => EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Render Step Frame")));
+            if (((RecorderSettings)target).frameRatePlayback == FrameRatePlayback.Variable) // TODO Fix condition. Video does not support variable frameRate
+                EditorGUILayout.PropertyField(m_CaptureEveryNthFrame, new GUIContent("Render Step Frame"));
         }
 
         protected virtual void FileTypeAndFormatGUI()
@@ -173,23 +175,6 @@ namespace UnityEditor.Recorder
                 --EditorGUI.indentLevel;
             }
         }
-
-        protected virtual EFieldDisplayState GetFieldDisplayState(SerializedProperty property)
-        {
-            return EFieldDisplayState.Enabled;
-        }
-
-        protected void AddProperty(SerializedProperty prop, Action action)
-        {
-            var state = GetFieldDisplayState(prop);
-            if (state != EFieldDisplayState.Hidden)
-            {
-                using (new EditorGUI.DisabledScope(state == EFieldDisplayState.Disabled))
-                    action();
-            }
-        }
-
-
     }
 }
 

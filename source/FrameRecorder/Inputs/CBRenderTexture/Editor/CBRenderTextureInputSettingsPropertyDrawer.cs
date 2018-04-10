@@ -69,7 +69,7 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != EImageSource.RenderTexture)
             {
-                m_ResSelector.OnGUI(target.maxSupportedSize, m_RenderSize);
+                m_RenderSize.intValue = m_ResSelector.OnGUI("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
                 if (m_RenderSize.intValue > (int)EImageDimension.Window)
                 {
@@ -78,41 +78,12 @@ namespace UnityEditor.Recorder.Input
 
                 if(inputType == EImageSource.ActiveCameras)
                 {
-                    AddProperty(m_IncludeUI, () => EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI")));
+                    EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI"));
                 }
             }
-
-            using (new EditorGUI.DisabledScope(!target.supportTransparency))
-                EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Capture alpha"));
 
             if (Verbose.enabled)
-            {
-                using (new EditorGUI.DisabledScope(true))
-                {
-                    EditorGUILayout.PropertyField(m_FlipFinalOutput, new GUIContent("Flip output"));
-                }
-            }
-
-            //serializedObject.ApplyModifiedProperties();
-        }
-
-        public /*override*/ void CaptureOptionsGUI() // TODO How to?
-        {
-            //serializedObject.Update();
-            
-            ++EditorGUI.indentLevel;
-            
-            var inputType = (EImageSource)m_Source.intValue;
-            if (inputType == EImageSource.ActiveCameras)
-            {
-                EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI"));
-            }
-            
-            EditorGUILayout.PropertyField(m_Transparency, new GUIContent("Include alpha"));
-            
-            --EditorGUI.indentLevel;
-            
-            //serializedObject.ApplyModifiedProperties();
+                EditorGUILayout.LabelField("Flip output", m_FlipFinalOutput.boolValue.ToString());
         }
     }
 }

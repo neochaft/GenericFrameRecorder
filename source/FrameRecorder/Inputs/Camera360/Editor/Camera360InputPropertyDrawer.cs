@@ -38,65 +38,41 @@ namespace UnityEditor.Recorder.Input
         {
             Initialize(property);
             
-            AddProperty(m_Source, () =>
+            using (var check = new EditorGUI.ChangeCheckScope())
             {
-                using (var check = new EditorGUI.ChangeCheckScope())
-                {
-                    if (m_MaskedSourceNames == null)
-                        m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<EImageSource>((int)m_SupportedSources);
-                    var index = EnumHelper.GetMaskedIndexFromEnumValue<EImageSource>(m_Source.intValue, (int)m_SupportedSources);
-                    index = EditorGUILayout.Popup("Source", index, m_MaskedSourceNames);
+                if (m_MaskedSourceNames == null)
+                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<EImageSource>((int)m_SupportedSources);
+                var index = EnumHelper.GetMaskedIndexFromEnumValue<EImageSource>(m_Source.intValue, (int)m_SupportedSources);
+                index = EditorGUILayout.Popup("Source", index, m_MaskedSourceNames);
 
-                    if (check.changed)
-                        m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EImageSource>(index, (int)m_SupportedSources);
-                }
-            });
+                if (check.changed)
+                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EImageSource>(index, (int)m_SupportedSources);
+            }
 
             var inputType = (EImageSource)m_Source.intValue;
             if ((EImageSource)m_Source.intValue == EImageSource.TaggedCamera )
             {
                 ++EditorGUI.indentLevel;
-                AddProperty(m_CameraTag, () => EditorGUILayout.PropertyField(m_CameraTag, new GUIContent("Tag")));
+                EditorGUILayout.PropertyField(m_CameraTag, new GUIContent("Tag"));
                 --EditorGUI.indentLevel;
             }
 
-            AddProperty(m_OutputWidth, () =>
-            {
-                AddProperty(m_OutputWidth, () => EditorGUILayout.PropertyField(m_OutputWidth, new GUIContent("Output width")));
-            });
+            EditorGUILayout.PropertyField(m_OutputWidth, new GUIContent("Output width"));EditorGUILayout.PropertyField(m_OutputHeight, new GUIContent("Output height"));
+            
 
-            AddProperty(m_OutputHeight, () =>
-            {
-                AddProperty(m_OutputWidth, () => EditorGUILayout.PropertyField(m_OutputHeight, new GUIContent("Output height")));
-            });
+            EditorGUILayout.PropertyField(m_CubeMapSz, new GUIContent("Cube map width"));
+            
+            EditorGUILayout.PropertyField(m_RenderStereo, new GUIContent("Render in Stereo"));
 
-            AddProperty(m_CubeMapSz, () =>
+            ++EditorGUI.indentLevel;
+            using (new EditorGUI.DisabledScope(!m_RenderStereo.boolValue))
             {
-                AddProperty(m_CubeMapSz, () => EditorGUILayout.PropertyField(m_CubeMapSz, new GUIContent("Cube map width")));
-            });
-
-            AddProperty(m_RenderStereo, () =>
-            {
-                AddProperty(m_RenderStereo, () => EditorGUILayout.PropertyField(m_RenderStereo, new GUIContent("Render in Stereo")));
-            });
-
-            AddProperty(m_StereoSeparation, () =>
-            {
-                ++EditorGUI.indentLevel;
-                using (new EditorGUI.DisabledScope(!m_RenderStereo.boolValue))
-                {
-                    AddProperty(m_StereoSeparation, () => EditorGUILayout.PropertyField(m_StereoSeparation, new GUIContent("Stereo Separation")));
-                }
-                --EditorGUI.indentLevel;
-            });
+                EditorGUILayout.PropertyField(m_StereoSeparation, new GUIContent("Stereo Separation"));
+            }
+            --EditorGUI.indentLevel;
 
             if (Verbose.enabled)
-            {
-                using (new EditorGUI.DisabledScope(true))
-                {
-                    EditorGUILayout.PropertyField(m_FlipFinalOutput, new GUIContent("Flip output"));
-                }
-            }
+                EditorGUILayout.LabelField("Flip output", m_FlipFinalOutput.boolValue.ToString());
         }
     }
 }

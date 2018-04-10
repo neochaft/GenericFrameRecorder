@@ -8,7 +8,7 @@ namespace UnityEditor.Recorder
         string[] m_MaskedNames;
         EImageDimension m_MaxRes = EImageDimension.Window;
 
-        public void OnGUI(EImageDimension max, SerializedProperty size)
+        public int OnGUI(string label, EImageDimension max, int intValue)
         {
             if (m_MaskedNames == null || max != m_MaxRes)
             {
@@ -18,15 +18,17 @@ namespace UnityEditor.Recorder
 
             using (var check = new EditorGUI.ChangeCheckScope())
             {
-                var index = EnumHelper.GetClippedIndexFromEnumValue<EImageDimension>(size.intValue, (int)EImageDimension.Window, (int)m_MaxRes);
-                index = EditorGUILayout.Popup("Output Resolution", index, m_MaskedNames);
+                var index = EnumHelper.GetClippedIndexFromEnumValue<EImageDimension>(intValue, (int)EImageDimension.Window, (int)m_MaxRes);
+                index = EditorGUILayout.Popup(label, index, m_MaskedNames);
 
                 if (check.changed)
-                    size.intValue = EnumHelper.GetEnumValueFromClippedIndex<EImageDimension>(index, (int)EImageDimension.Window, (int)m_MaxRes);
+                    intValue = EnumHelper.GetEnumValueFromClippedIndex<EImageDimension>(index, (int)EImageDimension.Window, (int)m_MaxRes);
 
-                if (size.intValue > (int)m_MaxRes)
-                    size.intValue = (int)m_MaxRes;
+                if (intValue > (int)m_MaxRes)
+                    intValue = (int)m_MaxRes;
             }
+
+            return intValue;
         }
 
         static string ToLabel(EImageDimension value)

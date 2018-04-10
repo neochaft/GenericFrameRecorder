@@ -26,7 +26,6 @@ namespace UnityEditor.Recorder
         {                              
             m_CbRenderTextureInputSettings.forceEvenSize = true;
             m_CbRenderTextureInputSettings.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
-            m_CbRenderTextureInputSettings.supportTransparency = true;
             
             m_ScreenCaptureInputSettings.forceEvenSize = true;
                 
@@ -42,6 +41,7 @@ namespace UnityEditor.Recorder
     {
         public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;
         public VideoBitrateMode m_VideoBitRateMode = VideoBitrateMode.High;
+        public bool m_CaptureAlpha;
 
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
         [SerializeField] AudioInputSettings m_AudioInputSettings;
@@ -89,6 +89,12 @@ namespace UnityEditor.Recorder
             {
                 var maxRes = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
                 iis.maxSupportedSize = maxRes;
+            }
+
+            var cbis = selectedInput as CBRenderTextureInputSettings;
+            if (cbis != null)
+            {
+                cbis.allowTransparency = m_OutputFormat == MediaRecorderOutputFormat.WEBM && m_CaptureAlpha;
             }
         }
        
