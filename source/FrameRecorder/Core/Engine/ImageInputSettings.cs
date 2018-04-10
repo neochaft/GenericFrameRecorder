@@ -11,6 +11,11 @@ namespace UnityEngine.Recorder.Input
         public EImageAspect aspectRatio = EImageAspect.x16_9;
         public bool forceEvenSize;
 
+        protected ImageInputSettings()
+        {
+            maxSupportedSize = EImageDimension.x4320p_8K;
+        }
+        
         public override bool ValidityCheck( List<string> errors )
         {
             var ok = true;

@@ -1,31 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
     public class ResolutionSelector
     {
-        string[] m_MaskedNames;
-        EImageDimension m_MaxRes = EImageDimension.Window;
+        static readonly string[] s_MaskedNames;
+        static readonly Dictionary<EImageDimension, int> s_ImageDimensionToIndex = new Dictionary<EImageDimension, int>();
 
-        public int OnGUI(string label, EImageDimension max, int intValue)
+        static ResolutionSelector()
         {
-            if (m_MaskedNames == null || max != m_MaxRes)
-            {
-                m_MaskedNames = EnumHelper.ClipOutEnumNames<EImageDimension>((int)EImageDimension.Window, (int)max, ToLabel);
-                m_MaxRes = max;
-            }
+            s_MaskedNames = EnumHelper.ClipOutEnumNames<EImageDimension>((int)EImageDimension.Window, (int)EImageDimension.x4320p_8K, ToLabel);
 
+            var values = Enum.GetValues(typeof(EImageDimension));
+            for (int i = 0; i < values.Length; ++i)
+                s_ImageDimensionToIndex[(EImageDimension)values.GetValue(i)] = i;
+            
+        }
+
+        public static int Popup(string label, EImageDimension max, int intValue)
+        {              
             using (var check = new EditorGUI.ChangeCheckScope())
             {
-                var index = EnumHelper.GetClippedIndexFromEnumValue<EImageDimension>(intValue, (int)EImageDimension.Window, (int)m_MaxRes);
-                index = EditorGUILayout.Popup(label, index, m_MaskedNames);
+                var index = EnumHelper.GetClippedIndexFromEnumValue<EImageDimension>(intValue, (int)EImageDimension.Window, (int)max);
+                index = EditorGUILayout.Popup(label, index, s_MaskedNames.Take(s_ImageDimensionToIndex[max] + 1).ToArray());
 
                 if (check.changed)
-                    intValue = EnumHelper.GetEnumValueFromClippedIndex<EImageDimension>(index, (int)EImageDimension.Window, (int)m_MaxRes);
+                    intValue = EnumHelper.GetEnumValueFromClippedIndex<EImageDimension>(index, (int)EImageDimension.Window, (int)max);
 
-                if (intValue > (int)m_MaxRes)
-                    intValue = (int)m_MaxRes;
+                if (intValue > (int)max)
+                    intValue = (int)max;
             }
 
             return intValue;

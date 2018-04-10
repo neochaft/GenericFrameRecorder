@@ -19,6 +19,13 @@ namespace UTJ.FrameCapturer.Recorders
             m_CbRenderTextureInputSettings.flipFinalOutput = true;
             m_RenderTextureSamplerSettings.flipFinalOutput = true;
         }
+
+        public void SetMaxResolution(EImageDimension maxSupportedSize)
+        {
+            m_CbRenderTextureInputSettings.maxSupportedSize = maxSupportedSize;
+            m_RenderTextureSamplerSettings.maxSupportedSize = maxSupportedSize;
+            m_RenderTextureInputSettings.maxSupportedSize = maxSupportedSize;
+        }
     }
     
     public abstract class BaseFCRecorderSettings : RecorderSettings
@@ -53,36 +60,6 @@ namespace UTJ.FrameCapturer.Recorders
                        Application.platform == RuntimePlatform.OSXPlayer ||
                        Application.platform == RuntimePlatform.LinuxEditor ||
                        Application.platform == RuntimePlatform.LinuxPlayer;
-            }
-        }
-
-//        public override RecorderInputSetting NewInputSettingsObj(Type type)
-//        {
-//            var obj = base.NewInputSettingsObj(type);
-//            if (type == typeof(CBRenderTextureInputSettings))
-//            {
-//                var settings = (CBRenderTextureInputSettings)obj;
-//                settings.flipFinalOutput = true;
-//            }
-//            else if (type == typeof(RenderTextureSamplerSettings))
-//            {
-//                var settings = (RenderTextureSamplerSettings)obj;
-//                settings.flipFinalOutput = true;
-//            }
-//
-//            return obj ;
-//        }
-
-        public override void SelfAdjustSettings()
-        {
-            var selectedInput = m_VideoSelector.selected;
-            if (selectedInput == null)
-                return;
-
-            var iis = selectedInput as ImageInputSettings;
-            if (iis != null)
-            {
-                iis.maxSupportedSize = EImageDimension.x4320p_8K;
             }
         }
 

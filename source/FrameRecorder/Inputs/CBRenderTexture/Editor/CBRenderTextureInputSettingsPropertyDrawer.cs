@@ -10,7 +10,6 @@ namespace UnityEditor.Recorder.Input
     {
         static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.ActiveCameras | EImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
-        ResolutionSelector m_ResSelector;
 
         SerializedProperty m_Source;
         SerializedProperty m_CameraTag;
@@ -37,8 +36,6 @@ namespace UnityEditor.Recorder.Input
             m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
             m_Transparency = property.FindPropertyRelative("allowTransparency");
             m_IncludeUI = property.FindPropertyRelative("captureUI");
-
-            m_ResSelector = new ResolutionSelector();
 
             m_Initialized = true;
         }
@@ -69,7 +66,7 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != EImageSource.RenderTexture)
             {
-                m_RenderSize.intValue = m_ResSelector.OnGUI("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
+                m_RenderSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
                 if (m_RenderSize.intValue > (int)EImageDimension.Window)
                 {

@@ -25,7 +25,6 @@ namespace UnityEngine.Recorder
     public class ImageRecorderSettings : RecorderSettings
     {
         public ImageRecorderOutputFormat m_OutputFormat = ImageRecorderOutputFormat.JPEG;
-        public bool m_IncludeAlpha;
 
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
 
@@ -69,12 +68,6 @@ namespace UnityEngine.Recorder
             {
                 var colorSpace = m_OutputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
                 renderTextureSamplerSettings.colorSpace = colorSpace;
-            }
-
-            var imageInputSettings = input as ImageInputSettings;
-            if (imageInputSettings != null)
-            {
-                imageInputSettings.maxSupportedSize = EImageDimension.x4320p_8K;
             }
         }
     }

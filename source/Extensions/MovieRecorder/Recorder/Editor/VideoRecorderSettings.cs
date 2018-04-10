@@ -37,9 +37,9 @@ namespace UnityEditor.Recorder
         }
     }
 
-    public class VideoRecorderSettings : RecorderSettings // TODO Rename
+    public class VideoRecorderSettings : RecorderSettings
     {
-        public MediaRecorderOutputFormat m_OutputFormat = MediaRecorderOutputFormat.MP4;
+        public MediaRecorderOutputFormat m_OutputFormat;
         public VideoBitrateMode m_VideoBitRateMode = VideoBitrateMode.High;
         public bool m_CaptureAlpha;
 
@@ -49,6 +49,10 @@ namespace UnityEditor.Recorder
         public VideoRecorderSettings()
         {
             baseFileName.pattern = "movie.<ext>";
+            m_OutputFormat = MediaRecorderOutputFormat.MP4;
+            m_VideoBitRateMode = VideoBitrateMode.High;
+            m_CaptureAlpha = false;
+            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = EImageDimension.x2160p_4K;
         }
 
         public override bool ValidityCheck( List<string> errors )
@@ -84,12 +88,7 @@ namespace UnityEditor.Recorder
             if (selectedInput == null)
                 return;
 
-            var iis = selectedInput as ImageInputSettings;
-            if (iis != null)
-            {
-                var maxRes = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
-                iis.maxSupportedSize = maxRes;
-            }
+            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
 
             var cbis = selectedInput as CBRenderTextureInputSettings;
             if (cbis != null)

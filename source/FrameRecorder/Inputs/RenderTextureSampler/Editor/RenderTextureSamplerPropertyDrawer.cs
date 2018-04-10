@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Recorder;
 using UnityEngine.Recorder.Input;
 
@@ -17,8 +16,6 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_SuperSampling;
         SerializedProperty m_CameraTag;
         SerializedProperty m_FlipFinalOutput;
-        ResolutionSelector m_ResSelector;
-        ResolutionSelector m_RenderResSelector;
 
         protected override void Initialize(SerializedProperty property)
         {
@@ -31,8 +28,6 @@ namespace UnityEditor.Recorder.Input
             m_FinalSize = property.FindPropertyRelative("outputSize");
             m_CameraTag = property.FindPropertyRelative("cameraTag");
             m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
-            m_ResSelector = new ResolutionSelector();
-            m_RenderResSelector = new ResolutionSelector();
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -66,14 +61,14 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != EImageSource.RenderTexture)
             {
-                m_RenderSize.intValue = m_RenderResSelector.OnGUI("Rendering resolution", EImageDimension.x4320p_8K,
+                m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", EImageDimension.x4320p_8K,
                     m_RenderSize.intValue);
                 
                 if (m_FinalSize.intValue > renderSize.intValue)
                     m_FinalSize.intValue = renderSize.intValue;
             }
 
-            m_FinalSize.intValue = m_ResSelector.OnGUI("Output Resolution", target.maxSupportedSize, m_FinalSize.intValue);
+            m_FinalSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_FinalSize.intValue);
             
             if (m_FinalSize.intValue == (int)EImageDimension.Window)
                 m_FinalSize.intValue = (int)EImageDimension.x720p_HD;

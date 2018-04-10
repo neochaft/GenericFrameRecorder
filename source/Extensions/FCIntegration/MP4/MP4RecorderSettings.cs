@@ -14,6 +14,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             baseFileName.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
+            m_VideoSelector.SetMaxResolution(EImageDimension.x2160p_4K);
         }
 
         public override bool isPlatformSupported
@@ -23,19 +24,5 @@ namespace UTJ.FrameCapturer.Recorders
                 return Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer;
             }
         }
-
-        public override void SelfAdjustSettings()
-        {
-            var selectedInput = m_VideoSelector.selected;
-            if (selectedInput == null)
-                return;
-
-            var iis = selectedInput as ImageInputSettings;
-            if (iis != null)
-            {
-                iis.maxSupportedSize = EImageDimension.x2160p_4K;
-            }
-        }
-
     }
 }
