@@ -35,7 +35,7 @@ namespace UnityEditor.Experimental.Recorder
         {
             var ok = base.ValidityCheck(errors);
             
-            if (!m_AnimationInputSettings.enabled || m_AnimationInputSettings.gameObject == null)
+            if (m_AnimationInputSettings.gameObject.Resolve(SceneHook.GetRecorderBindings()) == null)
             {
                 ok = false;
                 errors.Add("No input object set/enabled.");

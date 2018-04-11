@@ -13,6 +13,7 @@ namespace UnityEngine.Recorder
     {
         public Recorder m_Recorder;
         public GameObject m_RecorderGO;
+        public RecorderBindings m_RecorderBindings;
 
         public double m_CurrentFrameStartTS;
         public double m_RecordingStartTS;

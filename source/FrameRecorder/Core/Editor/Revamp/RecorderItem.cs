@@ -48,8 +48,8 @@ namespace UnityEditor.Recorder
         public RecorderItem(RecorderSettingsPrefs prefs, RecorderSettings recorderSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
         {           
             settings = recorderSettings;
-    
-            editor = Editor.CreateEditor(settings);
+            
+            editor = Editor.CreateEditorWithContext(new[] { settings }, SceneHook.GetRecorderBindings(), null);
     
             style.flex = 1.0f;
             style.flexDirection = FlexDirection.Row;

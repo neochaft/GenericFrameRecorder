@@ -57,9 +57,7 @@ namespace UnityEditor.Recorder
         }
         
         [Serializable]
-        class RecorderInfos : SerializedDictionary<RecorderSettings, RecorderInfo>
-        {
-        }
+        class RecorderInfos : SerializedDictionary<RecorderSettings, RecorderInfo> { }
         
         [SerializeField] RecorderInfos m_RecorderInfos = new RecorderInfos();
 

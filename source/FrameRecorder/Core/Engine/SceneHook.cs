@@ -31,23 +31,14 @@ namespace UnityEngine.Recorder
             return go;
         }
 
-        static GameObject GetSettingsRoot(bool createIfAbsent)
+        public static RecorderBindings GetRecorderBindings()
         {
-            var root = GetRecorderHost(createIfAbsent);
-            if (root == null)
-                return null;
+            var go = GetRecorderHost(true);
+            var rb = go.GetComponent<RecorderBindings>();
+            if (rb == null)
+                rb = go.AddComponent<RecorderBindings>();
 
-            var settingsTr = root.transform.Find("Settings");
-            GameObject settingsGO;
-            if (settingsTr == null)
-            {
-                settingsGO = new GameObject("Settings");
-                settingsGO.transform.parent = root.transform;
-            }
-            else
-                settingsGO = settingsTr.gameObject;
-
-            return settingsGO;
+            return rb;
         }
 
         public static IEnumerable<RecordingSession> GetCurrentRecordingSessions()
@@ -91,46 +82,6 @@ namespace UnityEngine.Recorder
                 component = host.AddComponent<RecorderComponent>();
 
             return component;
-        }
-
-        public static void RegisterInputSettingObj(string assetId, RecorderInputSetting input)
-        {
-            var settingsRoot = GetInputsComponent(assetId);
-            settingsRoot.m_Settings.Add(input);
-#if UNITY_EDITOR
-            EditorSceneManager.MarkSceneDirty( settingsRoot.gameObject.scene );
-#endif
-        }
-
-        public static void UnregisterInputSettingObj(string assetId, RecorderInputSetting input)
-        {
-            var settingsRoot = GetInputsComponent(assetId);
-            settingsRoot.m_Settings.Remove(input);
-            //UnityHelpers.Destroy(input);
-#if UNITY_EDITOR
-            EditorSceneManager.MarkSceneDirty( settingsRoot.gameObject.scene );
-#endif
-        }
-
-        public static InputSettingsComponent GetInputsComponent(string assetId)
-        {
-            var ctrl = GetSettingsRoot(true);
-            var parentRoot = ctrl.transform.Find(assetId);
-            if (parentRoot == null)
-            {
-                parentRoot = new GameObject().transform;
-                parentRoot.name = assetId;
-                parentRoot.parent = ctrl.transform;
-            }
-            var settings = parentRoot.GetComponent<InputSettingsComponent>();
-
-            if (settings == null)
-            {
-                settings = parentRoot.gameObject.AddComponent<InputSettingsComponent>();
-                settings.m_Settings = new List<RecorderInputSetting>();
-            }
-
-            return settings;
         }
     }
 }

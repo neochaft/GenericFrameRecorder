@@ -65,7 +65,6 @@ namespace UnityEditor.Recorder
                 prefs.AddRecorder(r, r.name);
             }
             
-            prefs.SyncRecorderInfos();
             prefs.Save();
         }
 

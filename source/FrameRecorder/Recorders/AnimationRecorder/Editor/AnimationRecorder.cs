@@ -20,21 +20,17 @@ namespace UnityEditor.Experimental.Recorder
         {
             var ars = session.settings as AnimationRecorderSettings;
 
-            for (int i = 0; i < m_Inputs.Count; ++i)
+            foreach (var input in m_Inputs)
             {
-                var set = (AnimationInputSettings)settings.inputsSettings.ElementAt(i);
-                if (set.enabled)
-                {
-                    var aInput = m_Inputs[i] as AnimationInput;
-                    AnimationClip clip = new AnimationClip();
-                    var clipName = ars.baseFileName.BuildFileName(session, recordedFramesCount, 0, 0, "anim");
-                    
-                    ars.destinationPath.CreateDirectory();
-                    clipName = "Assets/" + ars.destinationPath.leaf + "/" + AssetDatabase.GenerateUniqueAssetPath(clipName);
-                    AssetDatabase.CreateAsset(clip, clipName);
-                    aInput.m_gameObjectRecorder.SaveToClip(clip);
-                    aInput.m_gameObjectRecorder.ResetRecording();
-                }
+                var aInput = input as AnimationInput;
+                AnimationClip clip = new AnimationClip();
+                var clipName = ars.baseFileName.BuildFileName(session, recordedFramesCount, 0, 0, "anim");
+                
+                ars.destinationPath.CreateDirectory();
+                clipName = "Assets/" + ars.destinationPath.leaf + "/" + AssetDatabase.GenerateUniqueAssetPath(clipName);
+                AssetDatabase.CreateAsset(clip, clipName);
+                aInput.m_gameObjectRecorder.SaveToClip(clip);
+                aInput.m_gameObjectRecorder.ResetRecording();
             }
 
             base.EndRecording(session);

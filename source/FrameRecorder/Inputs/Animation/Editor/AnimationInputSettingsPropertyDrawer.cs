@@ -9,30 +9,58 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
     [CustomPropertyDrawer(typeof(AnimationInputSettings))]
     public class AnimationInputSettingsPropertyDrawer : InputPropertyDrawer<AnimationInputSettings>
     {
+        SerializedProperty m_GameObjectExposedProperty;
+        SerializedProperty m_Recursive;
+
+        IExposedPropertyTable m_Resolver;
+
+        string m_Id;
+        
+        protected override void Initialize(SerializedProperty prop)
+        {
+            base.Initialize(prop);
+
+            m_GameObjectExposedProperty = prop.FindPropertyRelative("gameObject");
+            m_Recursive = prop.FindPropertyRelative("recursive");
+
+            var exposedName = m_GameObjectExposedProperty.FindPropertyRelative("exposedName");
+            m_Id = exposedName.stringValue;
+            
+            if (PropertyName.IsNullOrEmpty(m_Id))
+            {
+                m_Id = GUID.Generate().ToString();
+                exposedName.stringValue = m_Id;
+            }
+            
+            m_Resolver = prop.serializedObject.context as IExposedPropertyTable;
+        }
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Initialize(property);
                               
             EditorGUI.BeginChangeCheck();
-            target.gameObject = EditorGUILayout.ObjectField("Game Object", target.gameObject, typeof(GameObject), true) as GameObject;
+            
+            EditorGUILayout.PropertyField(m_GameObjectExposedProperty);
+            
+            var gameObject = m_GameObjectExposedProperty.exposedReferenceValue as GameObject;
+            
             if (EditorGUI.EndChangeCheck())
             {
-                target.enabled = target.gameObject != null;
-
-                if (target.gameObject != null)
+                if (m_Resolver != null)
                 {
-                    target.bindingTypeName.Add(target.gameObject.GetComponent<Component>().GetType().AssemblyQualifiedName);
+                    m_Resolver.SetReferenceValue(m_Id, gameObject);
                 }
-            }
-
-            if (target.gameObject != null)
+            }                     
+            
+            if (gameObject != null)
             {
-                var compos = target.gameObject.GetComponents<Component>()
+                var compos = gameObject.GetComponents<Component>()
                     .Where(x => x != null)
                     .Select(x => x.GetType());
                 if (target.recursive)
                 {
-                    compos = compos.Union(target.gameObject.GetComponentsInChildren<Component>()
+                    compos = compos.Union(gameObject.GetComponentsInChildren<Component>()
                         .Where(x => x != null)
                         .Select(x => x.GetType()));
                 }
@@ -49,12 +77,15 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
                     if (found != -1)
                         flags |= 1 << found;
                 }
+                
                 EditorGUI.BeginChangeCheck();
+                
                 flags = EditorGUILayout.MaskField("Recorded Target(s)", flags, compos.Select(x => x.Name).ToArray());
+                
                 if (EditorGUI.EndChangeCheck())
                 {
                     target.bindingTypeName = new List<string>();
-                    for (int i=0;i<compoNames.Count;++i)                               
+                    for (int i=0; i<compoNames.Count; ++i)                               
                     {
                         if ((flags & (1 << i )) == 1 << i )
                         {
@@ -64,7 +95,7 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
                 }
             }
 
-            target.recursive = EditorGUILayout.Toggle("Recursive", target.recursive);   
+            EditorGUILayout.PropertyField(m_Recursive);   
         }
     }
 }

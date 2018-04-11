@@ -11,13 +11,12 @@ namespace UnityEditor.Experimental.Recorder.Input
     [DisplayName("Animation")]
     public class AnimationInputSettings : RecorderInputSetting
     {
-        public GameObject gameObject;
-        public bool enabled;
+        public ExposedReference<GameObject> gameObject;
         public bool recursive = true;
                    
         [HideInInspector]
         public List<string> bindingTypeName = new List<string>();
-
+        
         public List<Type> bindingType
         {
             get
@@ -25,7 +24,7 @@ namespace UnityEditor.Experimental.Recorder.Input
                 var ret = new List<Type>(bindingTypeName.Count);
                 foreach (var t in bindingTypeName)
                 {
-                    ret.Add( Type.GetType(t));
+                    ret.Add(Type.GetType(t));
                 }
                 return ret;
             }
@@ -36,20 +35,16 @@ namespace UnityEditor.Experimental.Recorder.Input
             get { return typeof(AnimationInput); }
         }
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors )
         {
             var ok = true;
-            if (enabled)
-            {
 
-                if (gameObject != null
-                    && bindingType.Count > 0
-                    && bindingType.Any(x => typeof(MonoBehaviour).IsAssignableFrom(x) || typeof(ScriptableObject).IsAssignableFrom(x))
-                )
-                {
-                    ok = false;
-                    errors.Add("MonoBehaviours and ScriptableObjects are not supported inputs.");
-                }
+            if (PropertyName.IsNullOrEmpty(gameObject.exposedName) && bindingType.Count > 0
+                && bindingType.Any(x => typeof(MonoBehaviour).IsAssignableFrom(x) || typeof(ScriptableObject).IsAssignableFrom(x))
+            )
+            {
+                ok = false;
+                errors.Add("MonoBehaviours and ScriptableObjects are not supported inputs.");
             }
 
             return ok;
