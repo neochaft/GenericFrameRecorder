@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -48,6 +49,31 @@ namespace UnityEditor.Experimental.Recorder.Input
             }
 
             return ok;
+        }
+
+        public void DuplicateExposedReference()
+        {
+            if (PropertyName.IsNullOrEmpty(gameObject.exposedName))
+                return;
+
+            var src = gameObject.exposedName;
+            var dst = GUID.Generate().ToString();
+
+            gameObject.exposedName = dst;
+            
+            var rb = SceneHook.GetRecorderBindings();
+            if (rb != null)
+                rb.Duplicate(src, dst);
+        }
+
+        public void ClearExposedReference()
+        {
+            if (PropertyName.IsNullOrEmpty(gameObject.exposedName))
+                return;
+            
+            var rb = SceneHook.GetRecorderBindings();
+            if (rb != null)
+                rb.ClearReferenceValue(gameObject.exposedName);
         }
     }
 }

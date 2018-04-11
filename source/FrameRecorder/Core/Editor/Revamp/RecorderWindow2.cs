@@ -588,6 +588,7 @@ namespace UnityEditor.Recorder
         void DuplicateRecording(RecorderSettings candidate)
         {
             var copy = Instantiate(candidate);
+            copy.OnAfterDuplicate();
             AddLastAndSelect(copy, candidate.name);
         }
 

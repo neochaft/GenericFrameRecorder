@@ -43,5 +43,15 @@ namespace UnityEditor.Experimental.Recorder
 
             return ok; 
         }
+        
+        public override void OnAfterDuplicate()
+        {
+            m_AnimationInputSettings.DuplicateExposedReference();
+        }
+        
+        void OnDestroy()
+        {
+            m_AnimationInputSettings.ClearExposedReference();
+        }
     }
 }

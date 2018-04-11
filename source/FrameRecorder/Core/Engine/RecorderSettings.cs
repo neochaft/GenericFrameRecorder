@@ -201,5 +201,8 @@ namespace UnityEngine.Recorder
         {
         }
 
+        public virtual void OnAfterDuplicate()
+        {
+        }
     }
 }

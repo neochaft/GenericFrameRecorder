@@ -33,5 +33,10 @@ namespace UnityEngine.Recorder
                 m_References.dictionary.Remove(id);
         }
 
+        public void Duplicate(PropertyName src, PropertyName dst)
+        {
+            if (m_References.dictionary.ContainsKey(src))
+                m_References.dictionary[dst] = m_References.dictionary[src];
+        }
     }
 }
