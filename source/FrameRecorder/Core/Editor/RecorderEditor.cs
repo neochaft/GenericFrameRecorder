@@ -56,7 +56,6 @@ namespace UnityEditor.Recorder
             serializedObject.Update();
             
             FileTypeAndFormatGUI();
-            CaptureOptionsGUI();
             
             EditorGUILayout.LabelField(string.Empty, GUI.skin.horizontalSlider);
             
@@ -92,10 +91,6 @@ namespace UnityEditor.Recorder
                     EditorGUILayout.HelpBox(error, MessageType.Warning);
                 }
             }
-        }
-
-        protected virtual void CaptureOptionsGUI()
-        {
         }
 
         protected virtual void NameAndPathGUI()

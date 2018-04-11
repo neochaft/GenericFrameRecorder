@@ -72,10 +72,17 @@ namespace UnityEditor.Recorder
         public static RecorderSettingsPrefs LoadOrCreate()
         {
             var prefPath = GetRelativePath(s_Name);
-
-            var objs = InternalEditorUtility.LoadSerializedFileAndForget(prefPath);
-
-            var prefs = objs.FirstOrDefault(p => p is RecorderSettingsPrefs) as RecorderSettingsPrefs;
+            RecorderSettingsPrefs prefs;
+            try
+            {
+                var objs = InternalEditorUtility.LoadSerializedFileAndForget(prefPath);
+                prefs = objs.FirstOrDefault(p => p is RecorderSettingsPrefs) as RecorderSettingsPrefs;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Unhandled exception while loading Recorder preferences: " + e);
+                prefs = null;
+            }
 
             if (prefs == null)
             {
@@ -149,19 +156,26 @@ namespace UnityEditor.Recorder
         
         public void Save()
         {
-            var fullPath = GetAbsolutePath(s_Folder);
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
+            try
+            {
+                var fullPath = GetAbsolutePath(s_Folder);
+                if (!Directory.Exists(fullPath))
+                    Directory.CreateDirectory(fullPath);
 
-            var recordersCopy = recorders.ToArray();
+                var recordersCopy = recorders.ToArray();
 
-            var objs = new UnityObject[recordersCopy.Length + 1];           
-            objs[0] = this;
-            
-            for(int i = 0; i < recordersCopy.Length; ++i)
-                objs[i+1] = recordersCopy[i];
-            
-            InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
+                var objs = new UnityObject[recordersCopy.Length + 1];
+                objs[0] = this;
+
+                for (int i = 0; i < recordersCopy.Length; ++i)
+                    objs[i + 1] = recordersCopy[i];
+
+                InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Unhandled exception while saving Recorder preferences: " + e);
+            }
         }
 
         public void ApplyGlobalSetting(RecorderSettings recorder)
