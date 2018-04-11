@@ -56,18 +56,16 @@ namespace UnityEditor.Recorder
             }
         }
         
-        [SerializeField] List<RecorderInfo> m_RecorderInfos = new List<RecorderInfo>();
-
-        readonly Dictionary<RecorderSettings, RecorderInfo> m_RecorderInfosLookup = new Dictionary<RecorderSettings, RecorderInfo>();
+        [Serializable]
+        class RecorderInfos : SerializedDictionary<RecorderSettings, RecorderInfo>
+        {
+        }
+        
+        [SerializeField] RecorderInfos m_RecorderInfos = new RecorderInfos();
 
         static readonly string s_Folder = "Library/Recorder";
         static readonly string s_Name = "recorder";
         static readonly string s_Extension = ".pref";
-       
-        void OnEnable()
-        {
-            SyncRecorderInfos();
-        }
         
         public static RecorderSettingsPrefs LoadOrCreate()
         {
@@ -94,16 +92,6 @@ namespace UnityEditor.Recorder
             
             return prefs;
         }
-        
-        public void SyncRecorderInfos()
-        {
-            m_RecorderInfosLookup.Clear();
-
-            foreach (var info in m_RecorderInfos.ToArray())
-            {
-                AddRecorderInternal(info);
-            }
-        }
 
         public void Release()
         {
@@ -113,7 +101,7 @@ namespace UnityEditor.Recorder
 
         public void ReleaseRecorderSettings()
         {
-            foreach (var recorder in m_RecorderInfosLookup.Keys)
+            foreach (var recorder in m_RecorderInfos.dictionary.Keys)
             {
                 DestroyImmediate(recorder);
             }
@@ -123,20 +111,18 @@ namespace UnityEditor.Recorder
         
         public void ClearRecorderSettings()
         {           
-            m_RecorderInfos.Clear();
-            m_RecorderInfosLookup.Clear();
+            m_RecorderInfos.dictionary.Clear();
         }
         
         public IEnumerable<RecorderSettings> recorders
         {
-            get { return m_RecorderInfosLookup.Keys; }
+            get { return m_RecorderInfos.dictionary.Keys; }
         }
      
         public void AddRecorder(RecorderSettings recorder, string displayName)
         {
             var info = new RecorderInfo(recorder, displayName);
             
-            m_RecorderInfos.Add(info);
             AddRecorderInternal(info);
             
             Save();
@@ -145,10 +131,9 @@ namespace UnityEditor.Recorder
         public void RemoveRecorder(RecorderSettings recorder)
         {
             RecorderInfo info;
-            if (m_RecorderInfosLookup.TryGetValue(recorder, out info))
+            if (m_RecorderInfos.dictionary.TryGetValue(recorder, out info))
             {
-                m_RecorderInfosLookup.Remove(recorder);
-                m_RecorderInfos.Remove(info);
+                m_RecorderInfos.dictionary.Remove(recorder);
                 
                 Save();
             }
@@ -195,13 +180,13 @@ namespace UnityEditor.Recorder
         public bool IsRecorderEnabled(RecorderSettings recorder)
         {
             RecorderInfo info;
-            return m_RecorderInfosLookup.TryGetValue(recorder, out info) && info.enabled;
+            return m_RecorderInfos.dictionary.TryGetValue(recorder, out info) && info.enabled;
         }
         
         public void SetRecorderEnabled(RecorderSettings recorder, bool enabled)
         {
             RecorderInfo info;
-            if (m_RecorderInfosLookup.TryGetValue(recorder, out info))
+            if (m_RecorderInfos.dictionary.TryGetValue(recorder, out info))
             {
                 info.enabled = enabled;
                 Save();
@@ -211,13 +196,13 @@ namespace UnityEditor.Recorder
         public string GetRecorderDisplayName(RecorderSettings recorder)
         {
             RecorderInfo info;
-            return m_RecorderInfosLookup.TryGetValue(recorder, out info) ? info.displayName : string.Empty;
+            return m_RecorderInfos.dictionary.TryGetValue(recorder, out info) ? info.displayName : string.Empty;
         }
         
         public void SetRecorderDisplayName(RecorderSettings recorder, string displayName)
         {
             RecorderInfo info;
-            if (m_RecorderInfosLookup.TryGetValue(recorder, out info))
+            if (m_RecorderInfos.dictionary.TryGetValue(recorder, out info))
             {
                 info.displayName = recorder.name = displayName;
                 Save();
@@ -227,7 +212,7 @@ namespace UnityEditor.Recorder
         void AddRecorderInternal(RecorderInfo info)
         {
             ApplyGlobalSetting(info.recorder);
-            m_RecorderInfosLookup[info.recorder] = info;
+            m_RecorderInfos.dictionary[info.recorder] = info;
         }
 
         static string GetAbsolutePath(string relativePath)
