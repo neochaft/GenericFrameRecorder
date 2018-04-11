@@ -8,7 +8,7 @@ namespace UTJ.FrameCapturer.Recorders
     [CustomEditor(typeof(EXRRecorderSettings))]
     public class EXRRecorderSettingsEditor : RecorderEditorBase
     {
-        protected override void OnEncodingGroupGui()
+        protected override void OnEncodingGui()
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ExrEncoderSettings"), new GUIContent("Encoding"), true);
         }

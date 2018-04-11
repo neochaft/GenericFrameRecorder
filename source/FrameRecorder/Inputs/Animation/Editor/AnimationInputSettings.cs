@@ -7,9 +7,8 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Experimental.Recorder.Input
 {
-    [DisplayName("Animation")]
     [Serializable]
-    [StoreInScene]
+    [DisplayName("Animation")]
     public class AnimationInputSettings : RecorderInputSetting
     {
         public GameObject gameObject;
@@ -49,7 +48,7 @@ namespace UnityEditor.Experimental.Recorder.Input
                 )
                 {
                     ok = false;
-                    errors.Add("Monobehaviours and ScriptableObjects are not supported inputs.");
+                    errors.Add("MonoBehaviours and ScriptableObjects are not supported inputs.");
                 }
             }
 

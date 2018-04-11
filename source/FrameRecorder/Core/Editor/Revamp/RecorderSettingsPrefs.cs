@@ -27,12 +27,15 @@ namespace UnityEditor.Recorder
         [Serializable]
         class RecorderInfo
         {
-            [SerializeField] string m_Path;
+            [SerializeField] RecorderSettings m_Recorder;
             [SerializeField] bool m_Enabled;
             [SerializeField] string m_DisplayName;
-            
-            public string path { get { return m_Path; } }
 
+            public RecorderSettings recorder
+            {
+                get { return m_Recorder; }
+            }
+            
             public bool enabled
             {
                 get { return m_Enabled; }
@@ -45,9 +48,9 @@ namespace UnityEditor.Recorder
                 set { m_DisplayName = value; }
             }
 
-            public RecorderInfo(string path, string displayName, bool enabled = true)
+            public RecorderInfo(RecorderSettings recorder, string displayName, bool enabled = true)
             {
-                m_Path = path;
+                m_Recorder = recorder;
                 m_Enabled = enabled;
                 m_DisplayName = displayName;
             }
@@ -63,60 +66,46 @@ namespace UnityEditor.Recorder
        
         void OnEnable()
         {
-            Reload();
+            SyncRecorderInfos();
         }
         
         public static RecorderSettingsPrefs LoadOrCreate()
         {
             var prefPath = GetRelativePath(s_Name);
 
-            var prefs = InternalEditorUtility.LoadSerializedFileAndForget(prefPath).FirstOrDefault() as RecorderSettingsPrefs;
+            var objs = InternalEditorUtility.LoadSerializedFileAndForget(prefPath);
+
+            var prefs = objs.FirstOrDefault(p => p is RecorderSettingsPrefs) as RecorderSettingsPrefs;
 
             if (prefs == null)
             {
                 prefs = CreateInstance<RecorderSettingsPrefs>();
+                prefs.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 prefs.name = "Global Settings";
                 prefs.Save();
             }
-
+            
             return prefs;
         }
         
-        public void Reload()
+        public void SyncRecorderInfos()
         {
             m_RecorderInfosLookup.Clear();
-            
+
             foreach (var info in m_RecorderInfos.ToArray())
             {
-                var path = info.path;
-                var recorder = InternalEditorUtility.LoadSerializedFileAndForget(path).FirstOrDefault() as RecorderSettings;
-                if (recorder != null)
-                {
-                    AddRecorderInternal(recorder, info);
-                }
-                else
-                {
-                    Debug.LogWarning("Cannot load recorder pref '" + path + "' for the recorder. Deleting file...");
-                    
-                    File.Delete(GetAbsolutePath(path));
-                    m_RecorderInfos.Remove(info);
-                }
+                AddRecorderInternal(info);
             }
         }
 
-        public static void Release(RecorderSettingsPrefs prefs)
+        public void Release()
         {
-            prefs.ReleaseRecorderSettings();
+            ReleaseRecorderSettings();
             File.Delete(GetRelativePath(s_Name));
         }
 
         public void ReleaseRecorderSettings()
         {
-            foreach (var info in m_RecorderInfos)
-            {               
-                File.Delete(GetAbsolutePath(info.path));   
-            }
-
             foreach (var recorder in m_RecorderInfosLookup.Keys)
             {
                 DestroyImmediate(recorder);
@@ -136,16 +125,12 @@ namespace UnityEditor.Recorder
             get { return m_RecorderInfosLookup.Keys; }
         }
      
-        public void AddRecorder(RecorderSettings s, string displayName)
+        public void AddRecorder(RecorderSettings recorder, string displayName)
         {
-            var path = GetRelativePath(Guid.NewGuid().ToString());
-
-            var info = new RecorderInfo(path, displayName);
-            m_RecorderInfos.Add(info);
-
-            AddRecorderInternal(s, info);
+            var info = new RecorderInfo(recorder, displayName);
             
-            InternalEditorUtility.SaveToSerializedFileAndForget(new UnityObject[] { s }, path, true);
+            m_RecorderInfos.Add(info);
+            AddRecorderInternal(info);
             
             Save();
         }
@@ -155,8 +140,6 @@ namespace UnityEditor.Recorder
             RecorderInfo info;
             if (m_RecorderInfosLookup.TryGetValue(recorder, out info))
             {
-                File.Delete(GetAbsolutePath(info.path));
-
                 m_RecorderInfosLookup.Remove(recorder);
                 m_RecorderInfos.Remove(info);
                 
@@ -170,7 +153,15 @@ namespace UnityEditor.Recorder
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
 
-            InternalEditorUtility.SaveToSerializedFileAndForget(new UnityObject[] { this }, GetRelativePath(s_Name), true);
+            var recordersCopy = recorders.ToArray();
+
+            var objs = new UnityObject[recordersCopy.Length + 1];           
+            objs[0] = this;
+            
+            for(int i = 0; i < recordersCopy.Length; ++i)
+                objs[i+1] = recordersCopy[i];
+            
+            InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
         }
 
         public void ApplyGlobalSetting(RecorderSettings recorder)
@@ -183,7 +174,8 @@ namespace UnityEditor.Recorder
             recorder.endFrame = m_EndFrame;
             recorder.startTime = m_StartTime;
             recorder.endTime = m_EndTime;
-            recorder.synchFrameRate = m_SynchFrameRate;  
+            recorder.synchFrameRate = m_SynchFrameRate;
+            recorder.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
         }
 
         public bool IsRecorderEnabled(RecorderSettings recorder)
@@ -218,10 +210,10 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void AddRecorderInternal(RecorderSettings recorder, RecorderInfo info)
+        void AddRecorderInternal(RecorderInfo info)
         {
-            ApplyGlobalSetting(recorder);
-            m_RecorderInfosLookup[recorder] = info;
+            ApplyGlobalSetting(info.recorder);
+            m_RecorderInfosLookup[info.recorder] = info;
         }
 
         static string GetAbsolutePath(string relativePath)

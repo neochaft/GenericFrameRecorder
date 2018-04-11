@@ -70,7 +70,7 @@ namespace UnityEditor.Recorder
             
             EditorGUILayout.Separator();
             
-            OnEncodingGroupGui();
+            OnEncodingGui();
 
             serializedObject.ApplyModifiedProperties();
 
@@ -163,17 +163,6 @@ namespace UnityEditor.Recorder
 
         protected virtual void OnEncodingGui()
         {
-        }
-        
-        protected virtual void OnEncodingGroupGui()
-        {
-            m_FoldoutEncoder = EditorGUILayout.Foldout(m_FoldoutEncoder, "Encoding");
-            if (m_FoldoutEncoder)
-            {
-                ++EditorGUI.indentLevel;
-                OnEncodingGui();
-                --EditorGUI.indentLevel;
-            }
         }
     }
 }

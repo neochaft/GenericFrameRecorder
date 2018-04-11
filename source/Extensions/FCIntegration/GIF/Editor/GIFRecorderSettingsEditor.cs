@@ -8,7 +8,7 @@ namespace UTJ.FrameCapturer.Recorders
     [CustomEditor(typeof(GIFRecorderSettings))]
     public class GIFRecorderSettingsEditor : RecorderEditorBase
     {
-        protected override void OnEncodingGroupGui()
+        protected override void OnEncodingGui()
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_GifEncoderSettings"), new GUIContent("Encoding"), true);
         }

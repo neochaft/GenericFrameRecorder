@@ -190,14 +190,13 @@ namespace UnityEngine.Recorder
         }
 
 #if UNITY_EDITOR
-        public static RecorderSettings GenerateRecorderInitialSettings(Type recorderType)
+        public static RecorderSettings CreateDefaultRecorder(Type recorderType)
         {
             Init();
             var recorderinfo = GetRecorderInfo(recorderType);
             if (recorderinfo != null)
             {
-                RecorderSettings settings = null;
-                settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsClass);
+                var settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsClass);
                 settings.recorderType = recorderType;
 
                 return settings;

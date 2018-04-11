@@ -34,16 +34,8 @@ namespace UnityEditor.Experimental.Recorder
         public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
-
-            var selectedInput = m_AnimationInputSettings;
-            if (selectedInput == null)
-            {
-                ok = false;
-                errors.Add("Invalid state!");
-            }
             
-            // TODO Split error messages
-            if (selectedInput != m_AnimationInputSettings || !m_AnimationInputSettings.enabled || m_AnimationInputSettings.gameObject == null) // TODO Remove enabled
+            if (!m_AnimationInputSettings.enabled || m_AnimationInputSettings.gameObject == null)
             {
                 ok = false;
                 errors.Add("No input object set/enabled.");

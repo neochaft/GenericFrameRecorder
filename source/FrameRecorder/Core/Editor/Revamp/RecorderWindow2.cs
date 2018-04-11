@@ -162,7 +162,6 @@ namespace UnityEditor.Recorder
                     flex = 1.0f,
                     alignSelf = Align.Stretch,
                     flexDirection = FlexDirection.Row,
-
                 }
             };
             
@@ -270,6 +269,7 @@ namespace UnityEditor.Recorder
             m_SettingsPanel.Add(parametersControl);
 
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
+            m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
             ReloadRecordings();
         }
@@ -289,11 +289,7 @@ namespace UnityEditor.Recorder
                 SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
             }
             
-            if (m_RecorderSettingsPrefsEditor != null)
-                DestroyImmediate(m_RecorderSettingsPrefsEditor);
-            
-            m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
-            
+            m_RecorderSettingPanel.Dirty(ChangeType.Layout);
             Repaint();
         }
 
@@ -437,7 +433,6 @@ namespace UnityEditor.Recorder
         {
             if (m_RecorderEditor != null)
             {
-
                 OnRecorderSettingPresetGUI();
 
                 EditorGUILayout.LabelField("Recording Type", ObjectNames.NicifyVariableName(m_RecorderEditor.target.GetType().Name));
@@ -448,7 +443,10 @@ namespace UnityEditor.Recorder
                 m_RecorderEditor.OnInspectorGUI();
 
                 if (GUI.changed)
+                {
+                    m_Prefs.Save(); // TODO Might be too much to save everychange but how then?
                     m_RecorderSettingPanel.Dirty(ChangeType.Layout);
+                }
             }
             else
             {
@@ -458,13 +456,7 @@ namespace UnityEditor.Recorder
 
         void ApplySettingPreset(RecorderListPreset candidate)
         {
-            //var newSettings = CreateInstance<RecorderSettingsPrefs>();
             candidate.AppyTo(m_Prefs);
-
-//            m_Prefs.DestroyRecorderSettings();
-//            m_Prefs = newSettings;
-//            m_Prefs.Reload();
-//            m_Prefs.Save();
             
             m_SelectedRecorderItemIndex = 0;
             ReloadRecordings();
@@ -475,10 +467,12 @@ namespace UnityEditor.Recorder
         {
             if (GUILayout.Button("Reset"))
             {
-                RecorderSettingsPrefs.Release(m_Prefs);
+                m_Prefs.Release();
                 m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
-                DestroyImmediate(m_RecorderSettingsPrefsEditor);
-                m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
+                DestroyImmediate(m_RecorderEditor);
+                m_RecorderEditor = null;
+                m_SelectedRecorderItemIndex = 0;
+                m_RecorderSettingPanel.Dirty(ChangeType.Layout);
                 ReloadRecordings();
             }
             
@@ -581,29 +575,28 @@ namespace UnityEditor.Recorder
                 DestroyImmediate(m_RecorderEditor);
         }
 
-        void DuplicateRecording(RecorderSettings candidate)
+        void AddLastAndSelect(RecorderSettings recorder, string desiredName)
         {
-            var copy = Instantiate(candidate);
-            
-            m_Prefs.AddRecorder(copy, GetUniqueRecorderName(candidate.name));
+            recorder.name = GetUniqueRecorderName(desiredName);
+            m_Prefs.AddRecorder(recorder, recorder.name);
 
+            // TODO Fix Reload VS Selection
             ReloadRecordings();
-            
             SelectRecorder(m_Recordings.Last());
         }
 
-        void OnAddNewRecorder(RecorderInfo info)
+        void DuplicateRecording(RecorderSettings candidate)
         {
-            var recorderName = GetUniqueRecorderName(ObjectNames.NicifyVariableName(info.displayName));
+            var copy = Instantiate(candidate);
+            AddLastAndSelect(copy, candidate.name);
+        }
+
+        void OnAddNewRecorder(RecorderInfo info)
+        {           
+            var recorder = RecordersInventory.CreateDefaultRecorder(info.recorderType);  
+            AddLastAndSelect(recorder, ObjectNames.NicifyVariableName(info.displayName));
             
-            var recorderSettings = RecordersInventory.GenerateRecorderInitialSettings(info.recorderType);
-            recorderSettings.name = recorderName;
-    
-            m_Prefs.AddRecorder(recorderSettings, recorderName);
-            
-            m_Recordings.Add(new RecorderItem(m_Prefs, recorderSettings, info.iconName, OnRecordMouseUp));
-            
-            SelectRecorder(m_Recordings.Last());
+            m_RecorderSettingPanel.Dirty(ChangeType.All);
         }
 
         string GetUniqueRecorderName(string desiredName)
@@ -640,8 +633,6 @@ namespace UnityEditor.Recorder
                         {
                             var item = (RecorderItem) data;
                             DuplicateRecording(item.settings);
-
-                            SelectRecorder(m_Recordings.Last());
 
                         }, recorder);
                     

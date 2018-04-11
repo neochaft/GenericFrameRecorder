@@ -27,11 +27,6 @@ namespace UnityEditor.Recorder
             m_OutputFormat = pf.Find(w => w.m_OutputFormat);
         }
 
-        protected override void OnEncodingGroupGui()
-        {
-            // hiding this group by not calling parent class's implementation.  
-        }
-
         protected override void FileTypeAndFormatGUI()
         {           
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));

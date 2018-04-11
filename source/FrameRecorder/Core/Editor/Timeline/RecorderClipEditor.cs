@@ -103,7 +103,7 @@ namespace UnityEditor.Recorder.Timeline
             }
 
             if(clip.m_Settings == null)
-                clip.m_Settings = RecordersInventory.GenerateRecorderInitialSettings(m_recorderSelector.selectedRecorder);
+                clip.m_Settings = RecordersInventory.CreateDefaultRecorder(m_recorderSelector.selectedRecorder);
             m_Editor = CreateEditor(clip.m_Settings) as RecorderEditor;
             AssetDatabase.Refresh();
         }
