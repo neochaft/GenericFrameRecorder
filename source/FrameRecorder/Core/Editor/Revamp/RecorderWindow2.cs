@@ -509,11 +509,11 @@ namespace UnityEditor.Recorder
 
         class PresetReceiver : PresetSelectorReceiver
         {
-            UnityEngine.Object m_Target;
+            RecorderSettings m_Target;
             Preset m_InitialValue;
             EditorWindow m_Window;
 
-            internal void Init(UnityEngine.Object target, EditorWindow window)
+            internal void Init(RecorderSettings target, EditorWindow window)
             {
                 m_Window = window;
                 m_Target = target;
@@ -525,13 +525,12 @@ namespace UnityEditor.Recorder
                 if (selection != null)
                 {
                     Undo.RecordObject(m_Target, "Apply Preset " + selection.name);
-                    
-                        selection.ApplyTo(m_Target);
+                    selection.ApplyTo(m_Target);
                 }
                 else
                 {
                     Undo.RecordObject(m_Target, "Cancel Preset");
-                        m_InitialValue.ApplyTo(m_Target);
+                    m_InitialValue.ApplyTo(m_Target);
                 }
                 
                 m_Window.Repaint();
@@ -540,6 +539,9 @@ namespace UnityEditor.Recorder
             public override void OnSelectionClosed(Preset selection)
             {
                 OnSelectionChanged(selection);
+                
+                m_Target.OnAfterDuplicate();
+                
                 DestroyImmediate(this);
             }
         }
@@ -553,7 +555,7 @@ namespace UnityEditor.Recorder
                 if (EditorGUI.DropdownButton(rect, EditorGUIUtility.IconContent("Preset.Context"), FocusType.Passive, new GUIStyle("IconButton")))
                 {
                     var presetReceiver = CreateInstance<PresetReceiver>();
-                    presetReceiver.Init(m_RecorderEditor.target, this);
+                    presetReceiver.Init((RecorderSettings)m_RecorderEditor.target, this);
                     
                     PresetSelector.ShowSelector(m_RecorderEditor.target, null, true, presetReceiver);
                 }

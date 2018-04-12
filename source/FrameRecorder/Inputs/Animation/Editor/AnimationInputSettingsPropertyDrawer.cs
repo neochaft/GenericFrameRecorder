@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEditor.Experimental.Recorder.Input;
 using UnityEditor.Recorder;
 using UnityEngine;
+using UnityEngine.Recorder;
 
 namespace UnityEditor.Experimental.FrameRecorder.Input
 {
@@ -12,7 +13,7 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
         SerializedProperty m_GameObjectExposedProperty;
         SerializedProperty m_Recursive;
 
-        IExposedPropertyTable m_Resolver;
+        RecorderBindings m_Resolver;
 
         string m_Id;
         
@@ -31,8 +32,14 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
                 m_Id = GUID.Generate().ToString();
                 exposedName.stringValue = m_Id;
             }
-            
-            m_Resolver = prop.serializedObject.context as IExposedPropertyTable;
+
+            if (m_Resolver == null)
+            {
+                m_Resolver = prop.serializedObject.context as RecorderBindings;
+
+                if (m_Resolver != null && !m_Resolver.HasReferenceValue(m_Id))
+                    m_Resolver.SetReferenceValue(m_Id, null);
+            }
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

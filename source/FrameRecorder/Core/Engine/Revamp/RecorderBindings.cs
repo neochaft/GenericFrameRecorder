@@ -13,7 +13,7 @@ namespace UnityEngine.Recorder
         {
             m_References.dictionary[id] = value;
         }
-
+        
         public Object GetReferenceValue(PropertyName id, out bool idValid)
         {
             Object value = null;
@@ -25,6 +25,11 @@ namespace UnityEngine.Recorder
 
             idValid = false;
             return null;
+        }
+        
+        public bool HasReferenceValue(PropertyName id)
+        {
+            return m_References.dictionary.ContainsKey(id);
         }
 
         public void ClearReferenceValue(PropertyName id)

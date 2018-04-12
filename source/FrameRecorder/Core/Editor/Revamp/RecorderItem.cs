@@ -12,9 +12,9 @@ namespace UnityEditor.Recorder
     {
         public RecorderSettings settings { get; private set; }
         public Editor editor { get; private set; }
-    
-        EditableLabel m_EditableLabel;
-        Image m_Icon;
+
+        readonly EditableLabel m_EditableLabel;
+        readonly Image m_Icon;
 
         bool m_Selected;
         
