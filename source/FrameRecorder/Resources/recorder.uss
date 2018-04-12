@@ -10,13 +10,17 @@
     margin-left : 0;
     margin-right : 0;
     padding-left : 15;
+    padding-right : 5;
     padding-top : 6;
     padding-bottom : 6;
-    font-size: 12;
     border-left-width:0;
     border-top-width:0;
     border-right-width:0;
     border-bottom-width:1;
+}
+
+#addRecordingsButton > Label {
+    font-size: 12;    
 }
 
 .StandardPanel {
