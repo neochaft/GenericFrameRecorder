@@ -248,7 +248,6 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            // TODO UIElements
             m_RecorderSettingPanel = new IMGUIContainer(OnRecorderSettingsGUI)
             {
                 name = "recorderSettings",
@@ -259,7 +258,7 @@ namespace UnityEditor.Recorder
             {
                 name = "statusBar"
             };
-            // TODO UIElements
+
             statusBar.Add(new IMGUIContainer(UpdateRecordingProgressGUI));
             
             root.Add(statusBar);
@@ -577,10 +576,10 @@ namespace UnityEditor.Recorder
                 DestroyImmediate(m_RecorderEditor);
         }
 
-        void AddLastAndSelect(RecorderSettings recorder, string desiredName)
+        void AddLastAndSelect(RecorderSettings recorder, string desiredName, bool enabled)
         {
             recorder.name = GetUniqueRecorderName(desiredName);
-            m_Prefs.AddRecorder(recorder, recorder.name);
+            m_Prefs.AddRecorder(recorder, recorder.name, enabled);
 
             // TODO Fix Reload VS Selection
             ReloadRecordings();
@@ -591,13 +590,13 @@ namespace UnityEditor.Recorder
         {
             var copy = Instantiate(candidate);
             copy.OnAfterDuplicate();
-            AddLastAndSelect(copy, candidate.name);
+            AddLastAndSelect(copy, m_Prefs.GetRecorderDisplayName(candidate), m_Prefs.IsRecorderEnabled(candidate));
         }
 
         void OnAddNewRecorder(RecorderInfo info)
         {           
             var recorder = RecordersInventory.CreateDefaultRecorder(info.recorderType);  
-            AddLastAndSelect(recorder, ObjectNames.NicifyVariableName(info.displayName));
+            AddLastAndSelect(recorder, ObjectNames.NicifyVariableName(info.displayName), true);
             
             m_RecorderSettingPanel.Dirty(ChangeType.All);
         }

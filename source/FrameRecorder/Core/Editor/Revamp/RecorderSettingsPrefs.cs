@@ -117,9 +117,9 @@ namespace UnityEditor.Recorder
             get { return m_RecorderInfos.dictionary.Keys; }
         }
      
-        public void AddRecorder(RecorderSettings recorder, string displayName)
+        public void AddRecorder(RecorderSettings recorder, string displayName, bool enabled)
         {
-            var info = new RecorderInfo(recorder, displayName);
+            var info = new RecorderInfo(recorder, displayName, enabled);
             
             AddRecorderInternal(info);
             
@@ -202,7 +202,7 @@ namespace UnityEditor.Recorder
             RecorderInfo info;
             if (m_RecorderInfos.dictionary.TryGetValue(recorder, out info))
             {
-                info.displayName = recorder.name = displayName;
+                info.displayName = displayName;
                 Save();
             }
         }

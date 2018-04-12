@@ -197,6 +197,7 @@ namespace UnityEngine.Recorder
             if (recorderinfo != null)
             {
                 var settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsClass);
+                settings.name = recorderType.Name;
                 settings.recorderType = recorderType;
 
                 return settings;
