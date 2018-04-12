@@ -9,7 +9,7 @@
     margin-top : 0;
     margin-left : 0;
     margin-right : 0;
-    padding-left : 15;
+    padding-left : 5;
     padding-right : 5;
     padding-top : 6;
     padding-bottom : 6;
@@ -21,6 +21,12 @@
 
 #addRecordingsButton > Label {
     font-size: 12;    
+}
+
+#presetButton {
+    width: 15;
+    height: 14;
+    margin-right: 10;
 }
 
 .StandardPanel {
@@ -84,6 +90,6 @@ PanelSplitter {
 
 #recorderSettings {
     margin-left: 20;
-    margin-right: 20;
+    margin-right: 30;
 }
 

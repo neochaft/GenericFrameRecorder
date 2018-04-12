@@ -7,6 +7,10 @@
     background-color: #4C4C4C;
 }
 
+#presetButton:hover {
+    background-color: #4C4C4C;
+}
+
 .StandardPanel {
     border-color: #292929;
 }
