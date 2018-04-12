@@ -24,6 +24,10 @@ namespace UnityEditor.Recorder
         SerializedProperty m_DestinationPath;
         SerializedProperty m_BaseFileName;
 
+        static Texture2D s_SeparatorTexture;
+        static Color s_SeparatorColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+        
+
         protected virtual void OnEnable()
         {
             if (target != null)
@@ -32,7 +36,27 @@ namespace UnityEditor.Recorder
                 m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
                 m_DestinationPath = pf.Find(w => w.destinationPath);
                 m_BaseFileName = pf.Find(w => w.baseFileName);
+                
+                s_SeparatorTexture = Resources.Load<Texture2D>("vertical_gradient");
             }
+        }
+
+        protected static void DrawSeparator()
+        {
+            EditorGUILayout.Separator();
+            
+            var r = EditorGUILayout.GetControlRect();
+            r.xMin -= 10.0f;
+            r.xMax += 10.0f;
+            r.yMin += 5.0f;
+            r.height = 10;
+            
+            var orgColor = GUI.color;
+            GUI.color = s_SeparatorColor;
+            GUI.DrawTexture(r, s_SeparatorTexture);
+            GUI.color = orgColor;
+            
+            EditorGUILayout.Separator();
         }
 
         public bool ValidityCheck(List<string> errors)
@@ -57,7 +81,7 @@ namespace UnityEditor.Recorder
             
             FileTypeAndFormatGUI();
             
-            EditorGUILayout.LabelField(string.Empty, GUI.skin.horizontalSlider);
+            DrawSeparator();
             
             NameAndPathGUI();
 
