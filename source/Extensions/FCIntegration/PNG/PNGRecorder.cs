@@ -15,7 +15,7 @@ namespace UTJ.FrameCapturer.Recorders
     public class PNGRecorder : GenericRecorder<PNGRecorderSettings>
     {
         fcAPI.fcPngContext m_ctx;
-
+        
         public override bool BeginRecording(RecordingSession session)
         {
             if (!base.BeginRecording(session)) { return false; }
@@ -39,7 +39,7 @@ namespace UTJ.FrameCapturer.Recorders
 
             var input = (BaseRenderTextureInput)m_Inputs[0];
             var frame = input.outputRT;
-            var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, frame.width, frame.height, "png");
+            var path = m_Settings.fileNameGenerator.BuildFullPath(session);
 
             fcAPI.fcLock(frame, (data, fmt) =>
             {

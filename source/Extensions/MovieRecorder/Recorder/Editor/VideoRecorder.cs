@@ -184,7 +184,7 @@ namespace UnityEditor.Recorder
 
             try
             {
-                var fileName = m_Settings.fileNameGenerator.BuildFileName( session, recordedFramesCount, width, height, m_Settings.m_OutputFormat.ToString().ToLower());
+                var fileName = m_Settings.fileNameGenerator.BuildFileName(session);
                 var path =  m_Settings.fileNameGenerator.path.GetFullPath() + "/" + fileName;
 
                 m_Encoder = new MediaEncoder( path, videoAttrs, audioAttrsList.ToArray() );

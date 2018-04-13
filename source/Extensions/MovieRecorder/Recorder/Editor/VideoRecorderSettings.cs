@@ -82,6 +82,24 @@ namespace UnityEditor.Recorder
             }
         }
 
+        public override string extension
+        {
+            get { return m_OutputFormat.ToString().ToLower(); }
+        }
+
+        public override Vector2 resolution
+        {
+            get
+            {
+                var inputSettings = (ImageInputSettings)m_VideoSelector.selected; // TODO Refactor commun code
+                
+                var h = (int)inputSettings.outputSize;
+                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+
+                return new Vector2(w, h);
+            }
+        }
+
         public override void SelfAdjustSettings()
         {
             var selectedInput = m_VideoSelector.selected;

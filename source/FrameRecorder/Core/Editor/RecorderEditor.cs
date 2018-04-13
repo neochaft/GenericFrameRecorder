@@ -35,7 +35,7 @@ namespace UnityEditor.Recorder
                 s_SeparatorTexture = Resources.Load<Texture2D>("vertical_gradient");
             }
         }
-
+        
         protected static void DrawSeparator()
         {
             EditorGUILayout.Separator();

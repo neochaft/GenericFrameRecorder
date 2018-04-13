@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UnityEngine;
 using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
@@ -33,16 +34,17 @@ namespace UTJ.FrameCapturer.Recorders
 
         public override void RecordFrame(RecordingSession session)
         {
+            
             if (m_Inputs.Count != 1)
                 throw new Exception("Unsupported number of sources");
+            
+            var path = m_Settings.fileNameGenerator.BuildFullPath(session);
 
             var input = (BaseRenderTextureInput)m_Inputs[0];
             var frame = input.outputRT;
-            var path = m_Settings.fileNameGenerator.BuildFullPath( session, recordedFramesCount, frame.width, frame.height, "exr");
-
             fcAPI.fcLock(frame, (data, fmt) =>
             {
-                fcAPI.fcExrBeginImage(m_ctx, path, frame.width, frame.height);
+                fcAPI.fcExrBeginImage(m_ctx, path, frame.width, frame.height); // TODO Use resolution instead of frame
                 int channels = (int)fmt & 7;
                 for (int i = 0; i < channels; ++i)
                 {

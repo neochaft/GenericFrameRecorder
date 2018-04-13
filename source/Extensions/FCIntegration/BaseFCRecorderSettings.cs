@@ -49,6 +49,19 @@ namespace UTJ.FrameCapturer.Recorders
 
             return ok;
         }
+        
+        public override Vector2 resolution
+        {
+            get
+            {
+                var inputSettings = (ImageInputSettings)m_VideoSelector.selected; // TODO Refactor commun code
+                
+                var h = (int)inputSettings.outputSize;
+                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+
+                return new Vector2(w, h);
+            }
+        }
 
         public override bool isPlatformSupported
         {

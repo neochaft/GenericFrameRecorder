@@ -14,6 +14,7 @@ namespace UnityEditor.Experimental.Recorder
         public AnimationRecorderSettings()
         {
             fileNameGenerator.pattern = "animation_<0000>.anim";
+            //fileNameGenerator.filters = FileNameGenerator.ETags.All;
         }
 
         public override bool isPlatformSupported
@@ -29,6 +30,16 @@ namespace UnityEditor.Experimental.Recorder
         public override IEnumerable<RecorderInputSetting> inputsSettings
         {
             get { yield return m_AnimationInputSettings; }
+        }
+
+        public override string extension
+        {
+            get { return "anim"; }
+        }
+
+        public override Vector2 resolution
+        {
+            get { return Vector2.zero; }
         }
 
         public override bool ValidityCheck(List<string> errors)

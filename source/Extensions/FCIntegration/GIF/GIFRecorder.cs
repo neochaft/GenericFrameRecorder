@@ -10,7 +10,7 @@ namespace UTJ.FrameCapturer.Recorders
     {
         fcAPI.fcGifContext m_ctx;
         fcAPI.fcStream m_stream;
-
+        
         public override bool BeginRecording(RecordingSession session)
         {
             if (!base.BeginRecording(session)) { return false; }
@@ -36,11 +36,11 @@ namespace UTJ.FrameCapturer.Recorders
 
             if(!m_ctx)
             {
-                var settings = m_Settings.m_GifEncoderSettings;
-                settings.width = frame.width;
-                settings.height = frame.height;
-                m_ctx = fcAPI.fcGifCreateContext(ref settings);
-                var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, frame.width, frame.height, "gif");
+                var gifSettings = m_Settings.m_GifEncoderSettings;
+                gifSettings.width = frame.width;
+                gifSettings.height = frame.height;
+                m_ctx = fcAPI.fcGifCreateContext(ref gifSettings);
+                var path = m_Settings.fileNameGenerator.BuildFullPath(session);
                 m_stream = fcAPI.fcCreateFileStream(path);
                 fcAPI.fcGifAddOutputStream(m_ctx, m_stream);
             }

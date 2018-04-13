@@ -12,5 +12,10 @@ namespace UTJ.FrameCapturer.Recorders
             fileNameGenerator.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
         }
+
+        public override string extension
+        {
+            get { return "webm"; }
+        }
     }
 }

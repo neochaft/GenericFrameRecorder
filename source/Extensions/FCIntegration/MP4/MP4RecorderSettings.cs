@@ -24,5 +24,10 @@ namespace UTJ.FrameCapturer.Recorders
                 return Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer;
             }
         }
+        
+        public override string extension
+        {
+            get { return "mp4"; }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace UTJ.FrameCapturer.Recorders
     public class MP4Recorder : GenericRecorder<MP4RecorderSettings>
     {
         fcAPI.fcMP4Context m_ctx;
-
+        
         public override bool BeginRecording(RecordingSession session)
         {
             if (!base.BeginRecording(session)) { return false; }
@@ -56,7 +56,7 @@ namespace UTJ.FrameCapturer.Recorders
                 {
                     s.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (s.videoTargetFramerate / 48.0 + 0.5) * 1000000);
                 }
-                var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, frame.width, frame.height, "mp4");
+                var path = m_Settings.fileNameGenerator.BuildFullPath(session);
                 m_ctx = fcAPI.fcMP4OSCreateContext(ref s, path);
             }
 

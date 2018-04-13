@@ -15,7 +15,7 @@ namespace UTJ.FrameCapturer.Recorders
     {
         fcAPI.fcWebMContext m_ctx;
         fcAPI.fcStream m_stream;
-
+        
         public override bool BeginRecording(RecordingSession session)
         {
             if (!base.BeginRecording(session)) { return false; }
@@ -42,19 +42,19 @@ namespace UTJ.FrameCapturer.Recorders
 
             if (!m_ctx)
             {
-                var settings = m_Settings.m_WebmEncoderSettings;
-                settings.video = true;
-                settings.audio = false;
-                settings.videoWidth = frame.width;
-                settings.videoHeight = frame.height;
+                var webmSettings = m_Settings.m_WebmEncoderSettings;
+                webmSettings.video = true;
+                webmSettings.audio = false;
+                webmSettings.videoWidth = frame.width;
+                webmSettings.videoHeight = frame.height;
                 if (m_Settings.m_AutoSelectBR)
                 {
-                    settings.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (settings.videoTargetFramerate / 48.0 + 0.5) * 1000000);
+                    webmSettings.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (webmSettings.videoTargetFramerate / 48.0 + 0.5) * 1000000);
                 }
 
-                settings.videoTargetFramerate = (int)Math.Ceiling(m_Settings.frameRate);
-                m_ctx = fcAPI.fcWebMCreateContext(ref settings);
-                var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, settings.videoWidth, settings.videoHeight, "webm");
+                webmSettings.videoTargetFramerate = (int)Math.Ceiling(m_Settings.frameRate);
+                m_ctx = fcAPI.fcWebMCreateContext(ref webmSettings);
+                var path = m_Settings.fileNameGenerator.BuildFullPath(session);
                 m_stream = fcAPI.fcCreateFileStream(path);
                 fcAPI.fcWebMAddOutputStream(m_ctx, m_stream);
             }

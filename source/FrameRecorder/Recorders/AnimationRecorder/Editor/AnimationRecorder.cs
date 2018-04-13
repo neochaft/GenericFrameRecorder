@@ -24,7 +24,7 @@ namespace UnityEditor.Experimental.Recorder
             {
                 var aInput = input as AnimationInput;
                 AnimationClip clip = new AnimationClip();
-                var clipName = ars.fileNameGenerator.BuildFileName(session, recordedFramesCount, 0, 0, "anim");
+                var clipName = ars.fileNameGenerator.BuildFileName(session);
                 
                 ars.fileNameGenerator.path.CreateDirectory();
                 clipName = "Assets/" + ars.fileNameGenerator.path.leaf + "/" + AssetDatabase.GenerateUniqueAssetPath(clipName);

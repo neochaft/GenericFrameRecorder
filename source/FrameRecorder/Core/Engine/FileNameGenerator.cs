@@ -14,47 +14,33 @@ namespace UnityEngine.Recorder
         {
             readonly string m_Pattern;
             readonly string m_Label;
-            readonly Func<string> m_Resolver;
+            readonly Func<RecordingSession, string> m_Resolver;
 
             public string pattern { get { return m_Pattern; } }
             public string label { get { return m_Label; } }
 
-            public Wildcard(string pattern, string label, Func<string> resolver)
+            public Wildcard(string pattern, Func<RecordingSession, string> resolver, string info = null)
             {
                 m_Pattern = pattern;
-                m_Label = label; // + " pattern + " - " + label;
+                m_Label = pattern;
+                
+                if (info != null)
+                    m_Label += " " + info;
+                
                 m_Resolver = resolver;
             }
 
-            public string Resolve()
+            public string Resolve(RecordingSession session)
             {
-                return m_Resolver == null ? string.Empty : m_Resolver();
+                return m_Resolver == null ? string.Empty : m_Resolver(session);
             }
-            
-//            public override string ToString()
-//            {
-//                return m_Label;
-//            }
         }
         
-        
-        //public static string[] tagLabels { get; private set; }
-        //public static string[] tags { get; private set; }
         static string s_ProjectName;
-        
-//        public string[] tagLabels
-//        {
-//            get { return wildcards.Values.Select(w => w.label).ToArray(); }
-//        }
 
-        public Dictionary<ETags, Wildcard> wildcards; // = new Dictionary<ETags, Wildcard>();
+        public readonly Dictionary<ETags, Wildcard> wildcards; // = new Dictionary<ETags, Wildcard>();
 
         public OutputPath path;
-        
-//        public OutputPath destinationPath
-//        {
-//            get { return m_Path; }
-//        }
         
 //        [Flags]
 //        public enum ETags
@@ -95,90 +81,73 @@ namespace UnityEngine.Recorder
             get { return m_Pattern;}
             set { m_Pattern = value;  }
         }
+
+        readonly RecorderSettings m_RecorderSettings;
         
-        public FileNameGenerator()
+        public FileNameGenerator(RecorderSettings recorderSettings)
         {
+            m_RecorderSettings = recorderSettings;
+            
             wildcards = new Dictionary<ETags, Wildcard>
             {
-                { ETags.Time, new Wildcard("<ts>", "Time", TimeResolver) },
-                { ETags.Date, new Wildcard("<dt>", "Date", DateResolver) },
-                { ETags.Project, new Wildcard("<prj>", "Project name", ProjectNameResolver) },
-                { ETags.Product, new Wildcard("<prd>", "Product name (editor only)", ProductNameResolver) },
-                { ETags.Scene, new Wildcard("<scn>", "Scene name", SceneResolver) },
-                { ETags.Resolution, new Wildcard("<res>", "Resolution", ResolutionResolver) },
-                { ETags.Frame, new Wildcard("<000>", "Frame number", FrameResolver) },
-                { ETags.Extension, new Wildcard("<ext>", "Default extension", ExtensionResolver) }
+                { ETags.Time, new Wildcard("$Time", TimeResolver) },
+                { ETags.Date, new Wildcard("$Date", DateResolver) },
+                { ETags.Project, new Wildcard("$Project", ProjectNameResolver) },
+                { ETags.Product, new Wildcard("$Product", ProductNameResolver, "(editor only)") },
+                { ETags.Scene, new Wildcard("$Scene", SceneResolver) },
+                { ETags.Resolution, new Wildcard("$Resolution", ResolutionResolver) }, // TODO Oh My GOD!
+                { ETags.Frame, new Wildcard("$Frame", FrameResolver) },
+                { ETags.Extension, new Wildcard("$Extension", ExtensionResolver) }
             };
-
-
-//            tags = new[]
-//            {
-//                "<ts>",  
-//                "<dt>",
-//                "<prj>",
-//                "<prd>",
-//                "<scn>",
-//                "<res>",
-//                "<00000>",
-//                "<ext>"
-//            };
-//
-//            tagLabels = new[]
-//            {
-//                "<ts>  - Time",  
-//                "<dt>  - Date",
-//                "<prj> - Project name",
-//                "<prd> - Product name (editor only)",
-//                "<scn> - Scene name",
-//                "<res> - Resolution",
-//                "<000> - Frame number",
-//                "<ext> - Default extension"
-//            };
-            //m_Pattern = ;
-            //m_FramePattern = ;
-            //m_FramePatternDst = ;
         }
 
-        public string TimeResolver()
+        public string TimeResolver(RecordingSession session)
         {
-            //RecordingSession session
-            //return string.Format("{0:HH}h{1:mm}m", session.m_SessionStartTS, session.m_SessionStartTS);
-            return "1137";
+            if (session != null)
+                return string.Format("{0:HH}h{1:mm}m", session.m_SessionStartTS, session.m_SessionStartTS);
+
+            //return DateTime.Now.ToStringhortDateString().Replace('/', '-');
+            return string.Format("{0:HH}h{1:mm}m", DateTime.Now, DateTime.Now);
+            //return "HH:mm";
         }
         
-        public string DateResolver()
+        public string DateResolver(RecordingSession session)
         {
-            //RecordingSession session
-            //return session.m_SessionStartTS.ToShortDateString().Replace('/', '-');
-            return "42";
+            if (session != null)
+                return session.m_SessionStartTS.ToShortDateString().Replace('/', '-');
+            
+            return DateTime.Now.ToShortDateString().Replace('/', '-');
         }
 
-        public string ExtensionResolver()
+        public string ExtensionResolver(RecordingSession session)
         {
-            return "yolo";
+            return m_RecorderSettings.extension;
         }
 
-        public string ResolutionResolver()
+        public string ResolutionResolver(RecordingSession session)
         {
-            return string.Format("{0}x{1}", 0, 0); //width, height)
+            return string.Format("{0}x{1}", m_RecorderSettings.resolution.x, m_RecorderSettings.resolution.y); // TODO Ignore if recorder does not support res
         }
         
-        public string SceneResolver()
+        public string SceneResolver(RecordingSession session)
         {
             return SceneManager.GetActiveScene().name;
         }
         
-        public string FrameResolver()
+        public string FrameResolver(RecordingSession session)
         {
-            return "FrameThat!";
+            if (session != null)
+                return session.frameIndex.ToString();
+
+            return "001";
         }
         
-        public string ProjectNameResolver()
+        public string ProjectNameResolver(RecordingSession session)
         {
             return s_ProjectName;
         }
         
-        public string ProductNameResolver()
+        public string ProductNameResolver(RecordingSession session)
         {
 #if UNITY_EDITOR
             return UnityEditor.PlayerSettings.productName;
@@ -187,41 +156,16 @@ namespace UnityEngine.Recorder
 #endif
         }
 
-        public static string AddTag(string pattern, ETags t)
+        public string BuildFullPath(RecordingSession session)
         {
-            if (!string.IsNullOrEmpty(pattern))
-            {
-                switch (t)
-                {
-                    case ETags.Frame:
-                    case ETags.Extension:
-                    {
-                        pattern += ".";
-                        break;
-                    }
-                    default:
-                    {
-                        pattern += "-";
-                        break;
-                    }
-                }
-            }
-
-            //pattern += tags[(int)t]; // TODO
-
-            return pattern;
-        }
-
-        public string BuildFullPath(RecordingSession session, int frame, int width, int height, string ext)
-        {
-            var fileName = BuildFileName(session, frame, width, height, ext);
+            var fileName = BuildFileName(session);
             
             fileName = Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
             
-            return path.GetFullPath() + "/" + fileName;
+            return path.GetFullPath() + "/" + fileName; // TODO Sanitize the \ per platform
         }
 
-        public string BuildFileName (RecordingSession session, int frame, int width, int height, string ext)
+        public string BuildFileName (RecordingSession session)
         {
             if (string.IsNullOrEmpty(s_ProjectName))
             {
@@ -232,7 +176,6 @@ namespace UnityEngine.Recorder
                 s_projectName = "N/A";
 #endif
             }
-
 //            var regEx = new Regex("(<0*>)");
 //            var match = regEx.Match(pattern);
 //            if (match.Success)
@@ -249,9 +192,9 @@ namespace UnityEngine.Recorder
             var fileName = pattern;
 
             foreach (var wildcard in wildcards.Values)
-                fileName = fileName.Replace(wildcard.pattern, wildcard.Resolve());
+                fileName = fileName.Replace(wildcard.pattern, wildcard.Resolve(session));
 
-            fileName += "." + ExtensionResolver();
+            fileName += "." + ExtensionResolver(session);
             
             return fileName;
         }

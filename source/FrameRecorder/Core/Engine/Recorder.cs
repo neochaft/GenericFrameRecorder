@@ -13,11 +13,6 @@ namespace UnityEngine.Recorder
         SessionCreated
     }
 
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
     public abstract class Recorder : ScriptableObject
     {
         static int sm_CaptureFrameRateCount;

@@ -33,6 +33,37 @@ namespace UnityEngine.Recorder
             fileNameGenerator.pattern = "image_<0000>.<ext>";
         }
         
+        public override string extension
+        {
+            get
+            {
+                switch (m_OutputFormat)
+                {
+                    case ImageRecorderOutputFormat.PNG:                        
+                        return "png";
+                    case ImageRecorderOutputFormat.JPEG:                        
+                        return "jpg";
+                    case ImageRecorderOutputFormat.EXR:                        
+                        return "exr";
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+        
+        public override Vector2 resolution
+        {
+            get
+            {
+                var inputSettings = (ImageInputSettings)m_VideoSelector.selected;
+                
+                var h = (int)inputSettings.outputSize;
+                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+
+                return new Vector2(w, h);
+            }
+        }
+        
         public override bool ValidityCheck( List<string> errors )
         {
             var ok = base.ValidityCheck(errors);

@@ -10,5 +10,10 @@ namespace UTJ.FrameCapturer.Recorders
         {
             fileNameGenerator.pattern = "image_<0000>.<ext>";
         }
+        
+        public override string extension
+        {
+            get { return "png"; }
+        }
     }
 }

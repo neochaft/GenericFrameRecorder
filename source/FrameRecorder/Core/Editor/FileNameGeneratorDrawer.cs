@@ -57,7 +57,7 @@ namespace UnityEditor.Recorder
                 }
             }
 
-            if (EditorGUI.DropdownButton(tagRect, new GUIContent("+ wildcards"), FocusType.Passive))
+            if (EditorGUI.DropdownButton(tagRect, new GUIContent("+ Wildcards"), FocusType.Passive))
             {
                 var menu = new GenericMenu();
 
@@ -78,7 +78,7 @@ namespace UnityEditor.Recorder
 
             ++EditorGUI.indentLevel;
             
-            EditorGUILayout.LabelField(" ", target.BuildFullPath(null, 0, 0, 0, "mmm"));
+            EditorGUILayout.LabelField(" ", target.BuildFullPath(null));
             
             --EditorGUI.indentLevel;
             
@@ -91,9 +91,6 @@ namespace UnityEditor.Recorder
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(editor.SelectedText))
-                        return text.Insert(editor.cursorIndex, w.pattern);
-
                     editor.ReplaceSelection(w.pattern);
                     return editor.text;
                 }

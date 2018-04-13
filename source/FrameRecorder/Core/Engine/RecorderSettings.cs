@@ -39,7 +39,7 @@ namespace UnityEngine.Recorder
     /// </summary>
     public abstract class RecorderSettings : ScriptableObject
     {
-        public FileNameGenerator fileNameGenerator = new FileNameGenerator();
+        public FileNameGenerator fileNameGenerator;
         //public OutputPath destinationPath;
         
         public int captureEveryNthFrame = 1;
@@ -120,8 +120,14 @@ namespace UnityEngine.Recorder
         
         protected RecorderSettings()
         {
-            fileNameGenerator.path.root = OutputPath.ERoot.Current;
-            fileNameGenerator.path.leaf = "Recordings";
+            fileNameGenerator = new FileNameGenerator(this)
+            {
+                path =
+                {
+                    root = OutputPath.ERoot.Absolute,
+                    leaf = "Recordings"
+                }
+            };
         }
 
         public Type recorderType
@@ -179,6 +185,8 @@ namespace UnityEngine.Recorder
         }
 
         public abstract IEnumerable<RecorderInputSetting> inputsSettings { get; }
+        public abstract string extension { get; }
+        public abstract Vector2 resolution { get; }
 
         /// <summary>
         /// Allows for recorder specific settings logic to correct/adjust settings that might be missed by it's editor.

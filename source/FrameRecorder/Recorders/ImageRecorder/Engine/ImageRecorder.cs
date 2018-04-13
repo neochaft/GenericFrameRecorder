@@ -23,7 +23,6 @@ namespace UnityEngine.Recorder
                 throw new Exception("Unsupported number of sources");
 
             Texture2D tex = null;
-#if UNITY_2017_3_OR_NEWER
             if (m_Inputs[0] is ScreenCaptureInput)
             {
                 tex = ((ScreenCaptureInput)m_Inputs[0]).image;
@@ -41,7 +40,6 @@ namespace UnityEngine.Recorder
                 }
             }
             else
-#endif
             {
                 var input = (BaseRenderTextureInput)m_Inputs[0];
                 var width = input.outputRT.width;
@@ -55,20 +53,16 @@ namespace UnityEngine.Recorder
             }
 
             byte[] bytes;
-            string ext;
             switch (m_Settings.m_OutputFormat)
             {
                 case ImageRecorderOutputFormat.PNG:
                     bytes = tex.EncodeToPNG();
-                    ext = "png";
                     break;
                 case ImageRecorderOutputFormat.JPEG:
                     bytes = tex.EncodeToJPG();
-                    ext = "jpg";
                     break;
                 case ImageRecorderOutputFormat.EXR:
                     bytes = tex.EncodeToEXR();
-                    ext = "exr";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -77,7 +71,7 @@ namespace UnityEngine.Recorder
             if(m_Inputs[0] is BaseRenderTextureInput || m_Settings.m_OutputFormat != ImageRecorderOutputFormat.JPEG)
                 UnityHelpers.Destroy(tex);
 
-            var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, tex.width, tex.height, ext);
+            var path = m_Settings.fileNameGenerator.BuildFullPath(session);
 
             File.WriteAllBytes( path, bytes);
         }
