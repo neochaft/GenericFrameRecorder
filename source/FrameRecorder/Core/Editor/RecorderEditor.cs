@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using Cinemachine;
 using UnityEngine;
 using UnityEngine.Recorder;
 
@@ -25,8 +23,7 @@ namespace UnityEditor.Recorder
         SerializedProperty m_BaseFileName;
 
         static Texture2D s_SeparatorTexture;
-        static Color s_SeparatorColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-        
+        static readonly Color s_SeparatorColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
 
         protected virtual void OnEnable()
         {
