@@ -48,7 +48,7 @@ namespace UnityEditor.Recorder
         
         public VideoRecorderSettings()
         {
-            baseFileName.pattern = "movie.<ext>";
+            fileNameGenerator.pattern = "movie.<ext>";
             m_OutputFormat = MediaRecorderOutputFormat.MP4;
             m_VideoBitRateMode = VideoBitrateMode.High;
             m_CaptureAlpha = false;
@@ -59,12 +59,12 @@ namespace UnityEditor.Recorder
         {
             var ok = base.ValidityCheck(errors);
 
-            if( string.IsNullOrEmpty(destinationPath.GetFullPath() ))
+            if( string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath() ))
             {
                 ok = false;
                 errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(baseFileName.pattern))
+            if(  string.IsNullOrEmpty(fileNameGenerator.pattern))
             {
                 ok = false;
                 errors.Add("missing file name");

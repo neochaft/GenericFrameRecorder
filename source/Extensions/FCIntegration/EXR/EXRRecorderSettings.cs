@@ -10,7 +10,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public EXRRecorderSettings()
         {
-            baseFileName.pattern = "image_<0000>.<ext>";
+            fileNameGenerator.pattern = "image_<0000>.<ext>";
         }
     }
 }

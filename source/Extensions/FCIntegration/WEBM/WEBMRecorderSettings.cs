@@ -9,7 +9,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public WEBMRecorderSettings()
         {
-            baseFileName.pattern = "movie.<ext>";
+            fileNameGenerator.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
         }
     }

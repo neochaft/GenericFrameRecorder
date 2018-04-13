@@ -19,7 +19,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             if (!base.BeginRecording(session)) { return false; }
 
-            m_Settings.destinationPath.CreateDirectory();
+            m_Settings.fileNameGenerator.path.CreateDirectory();
 
             var input = (BaseRenderTextureInput)m_Inputs[0];
             if (input.outputWidth > 4096 || input.outputHeight > 2160 )
@@ -56,8 +56,7 @@ namespace UTJ.FrameCapturer.Recorders
                 {
                     s.videoTargetBitrate = (int)(( (frame.width * frame.height/1000.0) / 245 + 1.16) * (s.videoTargetFramerate / 48.0 + 0.5) * 1000000);
                 }
-                var fileName = m_Settings.baseFileName.BuildFileName( session, recordedFramesCount, frame.width, frame.height, "mp4");
-                var path = Path.Combine( m_Settings.destinationPath.GetFullPath(), fileName);
+                var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, frame.width, frame.height, "mp4");
                 m_ctx = fcAPI.fcMP4OSCreateContext(ref s, path);
             }
 

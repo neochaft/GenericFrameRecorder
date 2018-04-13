@@ -12,7 +12,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public MP4RecorderSettings()
         {
-            baseFileName.pattern = "movie.<ext>";
+            fileNameGenerator.pattern = "movie.<ext>";
             m_AutoSelectBR = true;
             m_VideoSelector.SetMaxResolution(EImageDimension.x2160p_4K);
         }

@@ -19,8 +19,7 @@ namespace UnityEditor.Recorder
         readonly List<string> m_SettingsErrors = new List<string>();
 
         SerializedProperty m_CaptureEveryNthFrame;
-        SerializedProperty m_DestinationPath;
-        SerializedProperty m_BaseFileName;
+        SerializedProperty m_FileNameGenerator;
 
         static Texture2D s_SeparatorTexture;
         static readonly Color s_SeparatorColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
@@ -31,8 +30,7 @@ namespace UnityEditor.Recorder
             {               
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
                 m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
-                m_DestinationPath = pf.Find(w => w.destinationPath);
-                m_BaseFileName = pf.Find(w => w.baseFileName);
+                m_FileNameGenerator = pf.Find(w => w.fileNameGenerator);
                 
                 s_SeparatorTexture = Resources.Load<Texture2D>("vertical_gradient");
             }
@@ -116,8 +114,8 @@ namespace UnityEditor.Recorder
 
         protected virtual void NameAndPathGUI()
         {
-            EditorGUILayout.PropertyField(m_BaseFileName, new GUIContent("File Name"));
-            EditorGUILayout.PropertyField(m_DestinationPath, new GUIContent("Path"));
+            EditorGUILayout.PropertyField(m_FileNameGenerator, new GUIContent("File Name"));
+            
             // TODO
             // Save to Folder
             // Folder Name

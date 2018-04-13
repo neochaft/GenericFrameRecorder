@@ -8,7 +8,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public PNGRecorderSettings()
         {
-            baseFileName.pattern = "image_<0000>.<ext>";
+            fileNameGenerator.pattern = "image_<0000>.<ext>";
         }
     }
 }

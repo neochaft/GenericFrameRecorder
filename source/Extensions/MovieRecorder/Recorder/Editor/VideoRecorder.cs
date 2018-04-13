@@ -79,11 +79,11 @@ namespace UnityEditor.Recorder
 
             try
             {
-                m_Settings.destinationPath.CreateDirectory();
+                m_Settings.fileNameGenerator.path.CreateDirectory();
             }
             catch (Exception)
             {
-                Debug.LogError(string.Format( "Movie recorder output directory \"{0}\" could not be created.", m_Settings.destinationPath.GetFullPath()));
+                Debug.LogError(string.Format( "Movie recorder output directory \"{0}\" could not be created.", m_Settings.fileNameGenerator.path.GetFullPath()));
                 return false;
             }
 
@@ -144,7 +144,7 @@ namespace UnityEditor.Recorder
                     string.Format(
                         "MovieRecorder starting to write video {0}x{1}@[{2}/{3}] fps into {4}",
                         width, height, videoAttrs.frameRate.numerator,
-                        videoAttrs.frameRate.denominator, m_Settings.destinationPath.GetFullPath()));
+                        videoAttrs.frameRate.denominator, m_Settings.fileNameGenerator.path.GetFullPath()));
 
             var audioInput = (AudioInput)m_Inputs[1];
             var audioAttrsList = new List<AudioTrackAttributes>();
@@ -184,8 +184,8 @@ namespace UnityEditor.Recorder
 
             try
             {
-                var fileName = m_Settings.baseFileName.BuildFileName( session, recordedFramesCount, width, height, m_Settings.m_OutputFormat.ToString().ToLower());
-                var path =  m_Settings.destinationPath.GetFullPath() + "/" + fileName;
+                var fileName = m_Settings.fileNameGenerator.BuildFileName( session, recordedFramesCount, width, height, m_Settings.m_OutputFormat.ToString().ToLower());
+                var path =  m_Settings.fileNameGenerator.path.GetFullPath() + "/" + fileName;
 
                 m_Encoder = new MediaEncoder( path, videoAttrs, audioAttrsList.ToArray() );
                 return true;
@@ -247,7 +247,7 @@ namespace UnityEditor.Recorder
             }
 
             // When adding a file to Unity's assets directory, trigger a refresh so it is detected.
-            if (m_Settings.destinationPath.root == OutputPath.ERoot.AssetsPath )
+            if (m_Settings.fileNameGenerator.path.root == OutputPath.ERoot.AssetsPath )
                 AssetDatabase.Refresh();
         }
 

@@ -20,7 +20,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             if (!base.BeginRecording(session)) { return false; }
 
-            m_Settings.destinationPath.CreateDirectory();
+            m_Settings.fileNameGenerator.path.CreateDirectory();
 
             return true;
         } 
@@ -54,8 +54,7 @@ namespace UTJ.FrameCapturer.Recorders
 
                 settings.videoTargetFramerate = (int)Math.Ceiling(m_Settings.frameRate);
                 m_ctx = fcAPI.fcWebMCreateContext(ref settings);
-                var fileName = m_Settings.baseFileName.BuildFileName( session, recordedFramesCount, settings.videoWidth, settings.videoHeight, "webm");
-                var path = Path.Combine( m_Settings.destinationPath.GetFullPath(), fileName);
+                var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, settings.videoWidth, settings.videoHeight, "webm");
                 m_stream = fcAPI.fcCreateFileStream(path);
                 fcAPI.fcWebMAddOutputStream(m_ctx, m_stream);
             }

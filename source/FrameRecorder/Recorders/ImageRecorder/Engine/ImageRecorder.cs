@@ -12,7 +12,7 @@ namespace UnityEngine.Recorder
         {
             if (!base.BeginRecording(session)) { return false; }
 
-            m_Settings.destinationPath.CreateDirectory();
+            m_Settings.fileNameGenerator.path.CreateDirectory();
 
             return true;
         }
@@ -77,8 +77,7 @@ namespace UnityEngine.Recorder
             if(m_Inputs[0] is BaseRenderTextureInput || m_Settings.m_OutputFormat != ImageRecorderOutputFormat.JPEG)
                 UnityHelpers.Destroy(tex);
 
-            var fileName = m_Settings.baseFileName.BuildFileName( session, recordedFramesCount, tex.width, tex.height, ext);
-            var path = Path.Combine( m_Settings.destinationPath.GetFullPath(), fileName);
+            var path = m_Settings.fileNameGenerator.BuildFullPath(session, recordedFramesCount, tex.width, tex.height, ext);
 
             File.WriteAllBytes( path, bytes);
         }

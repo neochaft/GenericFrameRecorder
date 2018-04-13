@@ -13,7 +13,7 @@ namespace UnityEditor.Experimental.Recorder
 
         public AnimationRecorderSettings()
         {
-            baseFileName.pattern = "animation_<0000>.anim";
+            fileNameGenerator.pattern = "animation_<0000>.anim";
         }
 
         public override bool isPlatformSupported

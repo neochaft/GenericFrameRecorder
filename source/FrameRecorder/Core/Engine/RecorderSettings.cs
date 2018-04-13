@@ -29,20 +29,6 @@ namespace UnityEngine.Recorder
         TimeInterval
     }
     
-    public class InputGroups : List<IEnumerable<RecorderInputSetting>>
-    {
-    }
-    
-//    public abstract class InputSettingsSelector
-//    {
-//        [SerializeField] protected RecorderInputSetting m_Selected;
-//
-//        public RecorderInputSetting selected
-//        {
-//            get { return m_Selected; }
-//        }
-//    }
-
     /// <summary>
     /// What is this: Base settings class for all Recorders.
     /// Motivation  : All recorders share a basic common set of settings and some of them are known to the 
@@ -53,8 +39,9 @@ namespace UnityEngine.Recorder
     /// </summary>
     public abstract class RecorderSettings : ScriptableObject
     {
-        public FileNameGenerator baseFileName;
-        public OutputPath destinationPath;
+        public FileNameGenerator fileNameGenerator = new FileNameGenerator();
+        //public OutputPath destinationPath;
+        
         public int captureEveryNthFrame = 1;
 
         [SerializeField] string m_RecorderTypeName;
@@ -133,8 +120,8 @@ namespace UnityEngine.Recorder
         
         protected RecorderSettings()
         {
-            destinationPath.root = OutputPath.ERoot.Current;
-            destinationPath.leaf = "Recordings";
+            fileNameGenerator.path.root = OutputPath.ERoot.Current;
+            fileNameGenerator.path.leaf = "Recordings";
         }
 
         public Type recorderType

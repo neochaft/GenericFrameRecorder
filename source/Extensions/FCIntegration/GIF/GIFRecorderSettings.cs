@@ -8,7 +8,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public GIFRecorderSettings()
         {
-            baseFileName.pattern = "image.<ext>";
+            fileNameGenerator.pattern = "image.<ext>";
         }
     }
 }

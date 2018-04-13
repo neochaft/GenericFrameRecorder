@@ -36,12 +36,12 @@ namespace UTJ.FrameCapturer.Recorders
         {
             var ok = base.ValidityCheck(errors);
             
-            if( string.IsNullOrEmpty(destinationPath.GetFullPath() ))
+            if( string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath() ))
             {
                 ok = false;
                 errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(baseFileName.pattern))
+            if(  string.IsNullOrEmpty(fileNameGenerator.pattern))
             {
                 ok = false;
                 errors.Add("missing file name");
