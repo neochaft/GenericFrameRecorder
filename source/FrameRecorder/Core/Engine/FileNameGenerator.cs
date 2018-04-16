@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Recorder
@@ -38,26 +38,9 @@ namespace UnityEngine.Recorder
         
         static string s_ProjectName;
 
-        public readonly Dictionary<ETags, Wildcard> wildcards; // = new Dictionary<ETags, Wildcard>();
+        public readonly Dictionary<ETags, Wildcard> wildcards;
 
         public OutputPath path;
-        
-//        [Flags]
-//        public enum ETags
-//        {
-//            None   = 0,
-//            
-//            Time = 1 << 0,
-//            Date = 1 << 1,
-//            Project = 1 << 2,
-//            Product = 1 << 3,
-//            Scene = 1 << 4,
-//            Resolution = 1 << 5,
-//            Frame = 1 << 6,
-//            Extension = 1 << 7,
-//            
-//            All = Time | Date | Project | Product | Scene | Resolution | Frame | Extension,
-//        }
         
         public enum ETags
         {           
@@ -101,40 +84,34 @@ namespace UnityEngine.Recorder
             };
         }
 
-        public string TimeResolver(RecordingSession session)
+        string TimeResolver(RecordingSession session)
         {
-            if (session != null)
-                return string.Format("{0:HH}h{1:mm}m", session.m_SessionStartTS, session.m_SessionStartTS);
-
-            //return DateTime.Now.ToStringhortDateString().Replace('/', '-');
-            return string.Format("{0:HH}h{1:mm}m", DateTime.Now, DateTime.Now);
-            //return "HH:mm";
-        }
-        
-        public string DateResolver(RecordingSession session)
-        {
-            if (session != null)
-                return session.m_SessionStartTS.ToShortDateString().Replace('/', '-');
-            
-            return DateTime.Now.ToShortDateString().Replace('/', '-');
+            var date = session != null ? session.m_SessionStartTS : DateTime.Now;
+            return string.Format("{0:HH}h{1:mm}m", date, date);
         }
 
-        public string ExtensionResolver(RecordingSession session)
+        string DateResolver(RecordingSession session)
+        {
+            var date = session != null ? session.m_SessionStartTS : DateTime.Now;
+            return date.ToString(CultureInfo.InvariantCulture).Replace('/', '-');
+        }
+
+        string ExtensionResolver(RecordingSession session)
         {
             return m_RecorderSettings.extension;
         }
 
-        public string ResolutionResolver(RecordingSession session)
+        string ResolutionResolver(RecordingSession session)
         {
             return string.Format("{0}x{1}", m_RecorderSettings.resolution.x, m_RecorderSettings.resolution.y); // TODO Ignore if recorder does not support res
         }
         
-        public string SceneResolver(RecordingSession session)
+        string SceneResolver(RecordingSession session)
         {
             return SceneManager.GetActiveScene().name;
         }
         
-        public string FrameResolver(RecordingSession session)
+        string FrameResolver(RecordingSession session)
         {
             if (session != null)
                 return session.frameIndex.ToString();
@@ -142,12 +119,12 @@ namespace UnityEngine.Recorder
             return "001";
         }
         
-        public string ProjectNameResolver(RecordingSession session)
+        string ProjectNameResolver(RecordingSession session)
         {
             return s_ProjectName;
         }
         
-        public string ProductNameResolver(RecordingSession session)
+        string ProductNameResolver(RecordingSession session)
         {
 #if UNITY_EDITOR
             return UnityEditor.PlayerSettings.productName;
