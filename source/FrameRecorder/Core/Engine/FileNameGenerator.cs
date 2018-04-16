@@ -78,19 +78,19 @@ namespace UnityEngine.Recorder
                 { ETags.Project, new Wildcard("$Project", ProjectNameResolver) },
                 { ETags.Product, new Wildcard("$Product", ProductNameResolver, "(editor only)") },
                 { ETags.Scene, new Wildcard("$Scene", SceneResolver) },
-                { ETags.Resolution, new Wildcard("$Resolution", ResolutionResolver) }, // TODO Oh My GOD!
+                { ETags.Resolution, new Wildcard("$Resolution", ResolutionResolver) },
                 { ETags.Frame, new Wildcard("$Frame", FrameResolver) },
                 { ETags.Extension, new Wildcard("$Extension", ExtensionResolver) }
             };
         }
 
-        string TimeResolver(RecordingSession session)
+        static string TimeResolver(RecordingSession session)
         {
             var date = session != null ? session.m_SessionStartTS : DateTime.Now;
             return string.Format("{0:HH}h{1:mm}m", date, date);
         }
 
-        string DateResolver(RecordingSession session)
+        static string DateResolver(RecordingSession session)
         {
             var date = session != null ? session.m_SessionStartTS : DateTime.Now;
             return date.ToString(CultureInfo.InvariantCulture).Replace('/', '-');
@@ -103,28 +103,25 @@ namespace UnityEngine.Recorder
 
         string ResolutionResolver(RecordingSession session)
         {
-            return string.Format("{0}x{1}", m_RecorderSettings.resolution.x, m_RecorderSettings.resolution.y); // TODO Ignore if recorder does not support res
+            return string.Format("{0}x{1}", m_RecorderSettings.resolution.x, m_RecorderSettings.resolution.y);
         }
-        
-        string SceneResolver(RecordingSession session)
+
+        static string SceneResolver(RecordingSession session)
         {
             return SceneManager.GetActiveScene().name;
         }
-        
-        string FrameResolver(RecordingSession session)
-        {
-            if (session != null)
-                return session.frameIndex.ToString();
 
-            return "001";
+        static string FrameResolver(RecordingSession session)
+        {
+            return session != null ? session.frameIndex.ToString() : "001";
         }
-        
-        string ProjectNameResolver(RecordingSession session)
+
+        static string ProjectNameResolver(RecordingSession session)
         {
             return s_ProjectName;
         }
-        
-        string ProductNameResolver(RecordingSession session)
+
+        static string ProductNameResolver(RecordingSession session)
         {
 #if UNITY_EDITOR
             return UnityEditor.PlayerSettings.productName;
@@ -153,18 +150,6 @@ namespace UnityEngine.Recorder
                 s_projectName = "N/A";
 #endif
             }
-//            var regEx = new Regex("(<0*>)");
-//            var match = regEx.Match(pattern);
-//            if (match.Success)
-//            {
-//                m_FramePattern = match.Value;
-//                m_FramePatternDst = m_FramePattern.Substring(1,m_FramePattern.Length-2 );
-//            }
-//            else
-//            {
-//                m_FramePattern = "<0>";
-//                m_FramePatternDst = "0";
-//            }
 
             var fileName = pattern;
 
