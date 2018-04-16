@@ -61,12 +61,12 @@ namespace UnityEditor.Recorder
             {
                 var menu = new GenericMenu();
 
-                foreach (var tag in target.wildcards.Keys)
+                foreach (var w in target.wildcards)
                 {
-                    var w = target.wildcards[tag];
+                    var pattern = w.pattern;
                     menu.AddItem(new GUIContent(w.label), false, () =>
                     {
-                        m_Pattern.stringValue = InsertTag(w, m_Pattern.stringValue, editor);
+                        m_Pattern.stringValue = InsertTag(pattern, m_Pattern.stringValue, editor);
                         m_Pattern.serializedObject.ApplyModifiedProperties();
                     });
                 }
@@ -76,22 +76,21 @@ namespace UnityEditor.Recorder
 
             EditorGUILayout.PropertyField(m_Path);
 
-            ++EditorGUI.indentLevel;
+            var r = EditorGUILayout.GetControlRect();
+            r.xMin = position.xMin;
             
-            EditorGUILayout.LabelField(" ", target.BuildFullPath(null));
-            
-            --EditorGUI.indentLevel;
+            EditorGUI.SelectableLabel(r, target.BuildFullPath(null));
             
             EditorGUI.EndProperty();
         }
 
-        static string InsertTag(FileNameGenerator.Wildcard w, string text, TextEditor editor) //int index, string selectedText)
+        static string InsertTag(string pattern, string text, TextEditor editor) //int index, string selectedText)
         {
             if (!string.IsNullOrEmpty(editor.text)) // HACK If editor is not focused on
             {
                 try
                 {
-                    editor.ReplaceSelection(w.pattern);
+                    editor.ReplaceSelection(pattern);
                     return editor.text;
                 }
                 catch (Exception e)
@@ -100,7 +99,7 @@ namespace UnityEditor.Recorder
                 }
             }
 
-            return text + w.pattern;
+            return text + pattern;
         }
     }
 }

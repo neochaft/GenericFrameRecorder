@@ -7,52 +7,57 @@ using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Recorder
 {
+    public enum ETags
+    {           
+        Time,
+        Date,
+        Project,
+        Product,
+        Scene,
+        Resolution,
+        Frame,
+        Extension
+    }
+    
+    public class Wildcard
+    {
+        readonly string m_Pattern;
+        readonly string m_Label;
+        readonly Func<RecordingSession, string> m_Resolver;
+
+        public string pattern { get { return m_Pattern; } }
+        public string label { get { return m_Label; } }
+
+        public Wildcard(string pattern, Func<RecordingSession, string> resolver, string info = null)
+        {
+            m_Pattern = pattern;
+            m_Label = m_Pattern;
+                
+            if (info != null)
+                m_Label += " " + info;
+                
+            m_Resolver = resolver;
+        }
+
+        public string Resolve(RecordingSession session)
+        {
+            return m_Resolver == null ? string.Empty : m_Resolver(session);
+        }
+    }
+    
     [Serializable]
     public class FileNameGenerator
     {
-        public class Wildcard
-        {
-            readonly string m_Pattern;
-            readonly string m_Label;
-            readonly Func<RecordingSession, string> m_Resolver;
-
-            public string pattern { get { return m_Pattern; } }
-            public string label { get { return m_Label; } }
-
-            public Wildcard(string pattern, Func<RecordingSession, string> resolver, string info = null)
-            {
-                m_Pattern = pattern;
-                m_Label = pattern;
-                
-                if (info != null)
-                    m_Label += " " + info;
-                
-                m_Resolver = resolver;
-            }
-
-            public string Resolve(RecordingSession session)
-            {
-                return m_Resolver == null ? string.Empty : m_Resolver(session);
-            }
-        }
-        
         static string s_ProjectName;
 
-        public readonly Dictionary<ETags, Wildcard> wildcards;
+        readonly List<Wildcard> m_Wildcards;
+        
+        public IEnumerable<Wildcard> wildcards
+        {
+            get { return m_Wildcards; }
+        }
 
         public OutputPath path;
-        
-        public enum ETags
-        {           
-            Time,
-            Date,
-            Project,
-            Product,
-            Scene,
-            Resolution,
-            Frame,
-            Extension
-        }
 
         [SerializeField]
         string m_Pattern;
@@ -71,19 +76,24 @@ namespace UnityEngine.Recorder
         {
             m_RecorderSettings = recorderSettings;
             
-            wildcards = new Dictionary<ETags, Wildcard>
+            m_Wildcards = new List<Wildcard>
             {
-                { ETags.Time, new Wildcard("$Time", TimeResolver) },
-                { ETags.Date, new Wildcard("$Date", DateResolver) },
-                { ETags.Project, new Wildcard("$Project", ProjectNameResolver) },
-                { ETags.Product, new Wildcard("$Product", ProductNameResolver, "(editor only)") },
-                { ETags.Scene, new Wildcard("$Scene", SceneResolver) },
-                { ETags.Resolution, new Wildcard("$Resolution", ResolutionResolver) },
-                { ETags.Frame, new Wildcard("$Frame", FrameResolver) },
-                { ETags.Extension, new Wildcard("$Extension", ExtensionResolver) }
+                new Wildcard(GetTagPattern(ETags.Time), TimeResolver),
+                new Wildcard(GetTagPattern(ETags.Date), DateResolver),
+                new Wildcard(GetTagPattern(ETags.Project), ProjectNameResolver),
+                new Wildcard(GetTagPattern(ETags.Product), ProductNameResolver,"(editor only)"),
+                new Wildcard(GetTagPattern(ETags.Scene), SceneResolver),
+                new Wildcard(GetTagPattern(ETags.Resolution), ResolutionResolver),
+                new Wildcard(GetTagPattern(ETags.Frame), FrameResolver),
+                new Wildcard(GetTagPattern(ETags.Extension), ExtensionResolver)
             };
         }
-
+        
+        public static string GetTagPattern(ETags tag)
+        {
+            return "$" + tag;
+        }
+        
         static string TimeResolver(RecordingSession session)
         {
             var date = session != null ? session.m_SessionStartTS : DateTime.Now;
@@ -153,8 +163,8 @@ namespace UnityEngine.Recorder
 
             var fileName = pattern;
 
-            foreach (var wildcard in wildcards.Values)
-                fileName = fileName.Replace(wildcard.pattern, wildcard.Resolve(session));
+            foreach (var w in wildcards)
+                fileName = fileName.Replace(w.pattern, w.Resolve(session));
 
             fileName += "." + ExtensionResolver(session);
             

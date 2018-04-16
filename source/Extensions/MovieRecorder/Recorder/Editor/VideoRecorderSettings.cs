@@ -48,7 +48,7 @@ namespace UnityEditor.Recorder
         
         public VideoRecorderSettings()
         {
-            fileNameGenerator.pattern = "movie.<ext>";
+            fileNameGenerator.pattern = "movie";
             m_OutputFormat = MediaRecorderOutputFormat.MP4;
             m_VideoBitRateMode = VideoBitrateMode.High;
             m_CaptureAlpha = false;

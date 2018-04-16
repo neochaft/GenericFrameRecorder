@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -8,7 +9,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public PNGRecorderSettings()
         {
-            fileNameGenerator.pattern = "image_<0000>.<ext>";
+            fileNameGenerator.pattern = "image_" + FileNameGenerator.GetTagPattern(ETags.Frame);
         }
         
         public override string extension

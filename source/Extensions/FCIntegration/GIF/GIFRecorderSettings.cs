@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -8,7 +9,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public GIFRecorderSettings()
         {
-            fileNameGenerator.pattern = "image.<ext>";
+            fileNameGenerator.pattern = "image_" + FileNameGenerator.GetTagPattern(ETags.Frame);
         }
         
         public override string extension

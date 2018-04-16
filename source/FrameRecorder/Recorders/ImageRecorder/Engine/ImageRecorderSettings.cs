@@ -30,7 +30,7 @@ namespace UnityEngine.Recorder
 
         public ImageRecorderSettings()
         {
-            fileNameGenerator.pattern = "image_<0000>.<ext>";
+            fileNameGenerator.pattern = "image_" + FileNameGenerator.GetTagPattern(ETags.Frame);
         }
         
         public override string extension

@@ -13,8 +13,7 @@ namespace UnityEditor.Experimental.Recorder
 
         public AnimationRecorderSettings()
         {
-            fileNameGenerator.pattern = "animation_<0000>.anim";
-            //fileNameGenerator.filters = FileNameGenerator.ETags.All;
+            fileNameGenerator.pattern = "animation_" + FileNameGenerator.GetTagPattern(ETags.Frame);
         }
 
         public override bool isPlatformSupported

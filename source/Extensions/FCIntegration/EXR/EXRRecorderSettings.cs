@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -9,7 +10,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public EXRRecorderSettings()
         {
-            fileNameGenerator.pattern = "image_<0000>.<ext>";
+            
         }
 
         public override string extension

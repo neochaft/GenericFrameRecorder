@@ -14,8 +14,8 @@ namespace UnityEditor.Recorder
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            float rootWidth = 70;
-            float btnWidth = 30;
+            const float rootWidth = 110;
+            const float btnWidth = 30;
             float leafWidth = position.width - rootWidth - btnWidth - 10;
             var rootRect = new Rect(position.x, position.y, rootWidth, position.height);
             var leafRect = new Rect(position.x + rootWidth + 5, position.y, leafWidth, position.height);
