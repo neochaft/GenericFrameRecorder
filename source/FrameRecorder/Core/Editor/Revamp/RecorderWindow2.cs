@@ -164,7 +164,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            m_RecordingsPanel = new VisualContainer
+            m_RecordingsPanel = new VisualElement
             {
                 name = "recordingsPanel",
                 style =
@@ -187,7 +187,7 @@ namespace UnityEditor.Recorder
 
             root.Add(recordingAndParameters);
 
-            var recordingButtonPanel = new VisualContainer
+            var recordingButtonPanel = new VisualElement
             {
                 name = "addRecordingsButton",
                 style = { flexDirection = FlexDirection.Row }
@@ -272,7 +272,7 @@ namespace UnityEditor.Recorder
                 style = { flex = 1.0f }
             };
 
-            var statusBar = new VisualContainer
+            var statusBar = new VisualElement
             {
                 name = "statusBar"
             };
