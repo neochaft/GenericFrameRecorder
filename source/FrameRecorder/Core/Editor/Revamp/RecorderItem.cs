@@ -45,7 +45,7 @@ namespace UnityEditor.Recorder
 
         static readonly Dictionary<string, Texture2D> s_IconCache = new Dictionary<string, Texture2D>();
         
-        public RecorderItem(RecorderSettingsPrefs prefs, RecorderSettings recorderSettings, string iconName, EventCallback<MouseUpEvent> onRecordMouseUp)
+        public RecorderItem(RecorderSettingsPrefs prefs, RecorderSettings recorderSettings, string iconName)
         {           
             settings = recorderSettings;
             
@@ -92,21 +92,17 @@ namespace UnityEditor.Recorder
             });
             Add(m_EditableLabel);
             
-            RegisterCallback<MouseUpEvent>(InternalMouseUp);
-            RegisterCallback(onRecordMouseUp);
+            //RegisterCallback<MouseUpEvent>(InternalMouseUp);
+            //RegisterCallback(onRecordMouseUp);
 
             var recorderEnabled = prefs.IsRecorderEnabled(settings);
             toggle.on = recorderEnabled;
             SetItemEnabled(prefs, recorderEnabled);
         }
     
-        void InternalMouseUp(MouseUpEvent evt)
+        public void StartRenaming()
         {
-            if (m_Selected && evt.clickCount == 1 && evt.button == (int) MouseButton.LeftMouse)
-            {
-                evt.StopImmediatePropagation();
-                m_EditableLabel.StartEditing();
-            }
+            m_EditableLabel.StartEditing();
         }
     }
 }

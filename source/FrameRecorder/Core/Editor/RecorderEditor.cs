@@ -36,7 +36,7 @@ namespace UnityEditor.Recorder
             }
         }
         
-        protected static void DrawSeparator()
+        static void DrawSeparator()
         {
             EditorGUILayout.Separator();
             

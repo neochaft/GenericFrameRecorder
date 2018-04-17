@@ -21,7 +21,9 @@ namespace UnityEditor.Recorder
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
         }
 
-        VisualElement m_Recordings;
+        VisualListItem<RecorderItem> m_RecordingListItem;
+        
+        
         VisualElement m_SettingsPanel;
         VisualElement m_RecordingsPanel;
         
@@ -35,7 +37,7 @@ namespace UnityEditor.Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         [SerializeField] float m_RecordingsPanelWidth = 200.0f;
-        [SerializeField] int m_SelectedRecorderItemIndex = 0;
+        //[SerializeField] int m_SelectedRecorderItemIndex = 0;
         
         RecorderSettingsPrefs m_Prefs;
         
@@ -206,54 +208,22 @@ namespace UnityEditor.Recorder
             });
             
             m_AddNewRecord.RegisterCallback<MouseUpEvent>(evt =>
-            {               
-                // TODO static or move inside RecordersInventory
-                var builtInRecorders = new List<RecorderInfo>
-                {
-                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
-                };
-                
-                var newRecordMenu = new GenericMenu();
-                
-                foreach (var info in builtInRecorders)
-                {
-                    if (ShouldDisableRecordSettings())
-                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
-                    else
-                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
-                }
-                
-                newRecordMenu.AddSeparator(string.Empty);
-                
-                var recorderList = RecordersInventory.recorderInfos.Where(r => !builtInRecorders.Contains(r));
-                
-                foreach (var info in recorderList)
-                {
-                    if (ShouldDisableRecordSettings())
-                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
-                    else
-                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
-                }
-                
-                newRecordMenu.ShowAsContext();
+            {
+                ShowNewRecorderMenu();
             });
             
-            m_Recordings = new ScrollView
+            m_RecordingListItem = new VisualListItem<RecorderItem>
             {
-                style =
-                {
-                    flex = 1.0f,
-                    flexDirection = FlexDirection.Column,
-                }
+                style = { flex = 1.0f }
             };
-
-            m_Recordings.contentContainer.style.positionLeft = 0;
-            m_Recordings.contentContainer.style.positionRight = 0;
+            
+            m_RecordingListItem.OnItemContextMenu += OnRecordContextMenu;
+            m_RecordingListItem.OnSelectionChanged += OnRecordSelectionChanged;
+            m_RecordingListItem.OnItemRename += item => item.StartRenaming();
+            m_RecordingListItem.OnContextMenu += ShowNewRecorderMenu;
 
             m_RecordingsPanel.Add(recordingButtonPanel);
-            m_RecordingsPanel.Add(m_Recordings);
+            m_RecordingsPanel.Add(m_RecordingListItem);
 
             var parametersControl = new VisualElement
             {
@@ -305,27 +275,132 @@ namespace UnityEditor.Recorder
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
-            ReloadRecordings();
+            m_RecordingListItem.itemSource = new RecordingItemSource(this);
+            
+            m_RecordingListItem.RegisterCallback<KeyUpEvent>(OnRecorderListKeyUp);
+            //m_RecordingListItem.Reload();
+
+            //ReloadRecordings();
         }
 
-        void ReloadRecordings()
+        void OnRecorderListMouseUp(MouseUpEvent evt)
         {
-            m_Recordings.Clear();
             
-            foreach (var recorderSettings in m_Prefs.recorders)
+            
+            evt.StopImmediatePropagation();
+        }
+
+        void OnRecorderListKeyUp(KeyUpEvent evt)
+        {
+            if (evt.keyCode == KeyCode.Delete)
             {
-                var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
-                m_Recordings.Add(new RecorderItem(m_Prefs, recorderSettings, info.iconName, OnRecordMouseUp));
+                var toDelete = m_RecordingListItem.items.ToArray();               
+                foreach (var item in toDelete)
+                    DeleteRecording(item);
+            }
+        }
+
+        void ShowNewRecorderMenu()
+        {
+            // TODO static or move inside RecordersInventory
+            var builtInRecorders = new List<RecorderInfo>
+            {
+                RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
+                RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
+                RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
+            };
+                
+            var newRecordMenu = new GenericMenu();
+                
+            foreach (var info in builtInRecorders)
+            {
+                if (ShouldDisableRecordSettings())
+                    newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
+                else
+                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+            }
+                
+            newRecordMenu.AddSeparator(string.Empty);
+                
+            var recorderList = RecordersInventory.recorderInfos.Where(r => !builtInRecorders.Contains(r));
+                
+            foreach (var info in recorderList)
+            {
+                if (ShouldDisableRecordSettings())
+                    newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
+                else
+                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+            }
+                
+            newRecordMenu.ShowAsContext();
+        }
+
+        RecorderItem CreateRecorderItem(RecorderSettings recorderSettings)
+        {
+            var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
+            return new RecorderItem(m_Prefs, recorderSettings, info.iconName);
+        }
+
+        class RecordingItemSource : IItemSource<RecorderItem>
+        {
+            //RecorderSettingsPrefs m_Prefs;
+            readonly RecorderWindow2 m_RecorderWindow;
+
+            public RecordingItemSource(RecorderWindow2 recorderWindow)
+            {
+                m_RecorderWindow = recorderWindow;
+            }
+            
+            public IEnumerable<RecorderItem> items
+            {
+                get
+                {
+                    foreach (var recorderSettings in m_RecorderWindow.m_Prefs.recorders)
+                        yield return m_RecorderWindow.CreateRecorderItem(recorderSettings);
+                }
             }
 
-            if (m_Recordings.Children().Any())
+//            public RecorderItem CreateNew()
+//            {
+//                throw new NotImplementedException();
+//            }
+
+            public void Remove(RecorderItem item)
             {
-                SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+                throw new NotImplementedException();
             }
-            
-            m_RecorderSettingPanel.Dirty(ChangeType.Layout);
-            Repaint();
+
+            public RecorderItem Duplicate(RecorderItem item)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool CanAddOrDeleteItems()
+            {
+                return !m_RecorderWindow.ShouldDisableRecordSettings();
+            }
         }
+
+//        void ReloadRecordings()
+//        {
+//            /*
+//            m_Recordings.Clear();
+//            
+//            foreach (var recorderSettings in m_Prefs.recorders)
+//            {
+//                var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
+//                m_Recordings.Add(new RecorderItem(m_Prefs, recorderSettings, info.iconName, OnRecordMouseUp));
+//            }
+//
+//            if (m_Recordings.Children().Any())
+//            {
+//                SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
+//            }
+//            */
+//            
+//            m_RecorderSettingPanel.Dirty(ChangeType.Layout);
+//            Repaint();
+//        }
 
         bool ShouldDisableRecordSettings()
         {
@@ -490,8 +565,8 @@ namespace UnityEditor.Recorder
         {
             candidate.AppyTo(m_Prefs);
             
-            m_SelectedRecorderItemIndex = 0;
-            ReloadRecordings();
+            //m_SelectedRecorderItemIndex = 0;
+            //ReloadRecordings();
         }
         
        
@@ -520,9 +595,8 @@ namespace UnityEditor.Recorder
                     m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
                     DestroyImmediate(m_RecorderEditor);
                     m_RecorderEditor = null;
-                    m_SelectedRecorderItemIndex = 0;
-                    m_RecorderSettingPanel.Dirty(ChangeType.Layout);
-                    ReloadRecordings();
+                    //m_SelectedRecorderItemIndex = 0;
+                    //ReloadRecordings();
                 });
 
                 var r = GUILayoutUtility.GetLastRect();
@@ -613,16 +687,27 @@ namespace UnityEditor.Recorder
             recorder.name = GetUniqueRecorderName(desiredName);
             m_Prefs.AddRecorder(recorder, recorder.name, enabled);
 
+            m_RecordingListItem.AddAndSelect(CreateRecorderItem(recorder));
             // TODO Fix Reload VS Selection
-            ReloadRecordings();
-            SelectRecorder(m_Recordings.Last());
+            //ReloadRecordings();
+            //SelectRecorder(m_Recordings.Last());
         }
 
-        void DuplicateRecording(RecorderSettings candidate)
+        void DuplicateRecording(RecorderItem item)
         {
+            var candidate = item.settings;
             var copy = Instantiate(candidate);
             copy.OnAfterDuplicate();
             AddLastAndSelect(copy, m_Prefs.GetRecorderDisplayName(candidate), m_Prefs.IsRecorderEnabled(candidate));
+        }
+
+        void DeleteRecording(RecorderItem item)
+        {
+            var s = item.settings;
+            m_Prefs.RemoveRecorder(s);
+            UnityHelpers.Destroy(s, true);
+            UnityHelpers.Destroy(item.editor, true);
+            m_RecordingListItem.Remove(item);
         }
 
         void OnAddNewRecorder(RecorderInfo info)
@@ -639,88 +724,58 @@ namespace UnityEditor.Recorder
                 desiredName);
         }
 
-        void OnRecordMouseUp(MouseUpEvent evt)
+        void OnRecordContextMenu(RecorderItem recorder)
         {
-            if (evt.clickCount != 1)
-                return;
+            var contextMenu = new GenericMenu();
 
-            var recorder = (RecorderItem) evt.currentTarget;
-            
-            if (evt.button == (int) MouseButton.LeftMouse)
+            if (ShouldDisableRecordSettings())
             {
-              SelectRecorder(recorder);
-              evt.StopImmediatePropagation();
+                contextMenu.AddDisabledItem(new GUIContent("Duplicate"));
+                contextMenu.AddDisabledItem(new GUIContent("Delete"));
             }
             else
-            {             
-                var contextMenu = new GenericMenu();
-
-                if (ShouldDisableRecordSettings())
-                {
-                    contextMenu.AddDisabledItem(new GUIContent("Duplicate"));
-                    contextMenu.AddDisabledItem(new GUIContent("Delete"));
-                }
-                else
-                {
-                    contextMenu.AddItem(new GUIContent("Duplicate"), false,
-                        data =>
-                        {
-                            var item = (RecorderItem) data;
-                            DuplicateRecording(item.settings);
-
-                        }, recorder);
-                    
-                    contextMenu.AddItem(new GUIContent("Delete"), false,
-                        data =>
-                        {
-                            var item = (RecorderItem) data;
-                            var s = item.settings;
-                            m_Prefs.RemoveRecorder(s);
-
-                            var selected = item.IsItemSelected();
-
-                            UnityHelpers.Destroy(s, true);
-                            UnityHelpers.Destroy(item.editor, true);
-
-                            m_Recordings.Remove(item);
-                            
-                            if (selected)
-                                SelectRecorder(m_Recordings.FirstOrDefault());
-
-                        }, recorder);
-                }
-
-                contextMenu.ShowAsContext();
-            }
-        }
-       
-        void SelectRecorder(VisualElement selected)
-        {
-            m_RecorderEditor = null;
-            m_SelectedRecorderItemIndex = 0;
-            
-            int i = 0;
-            foreach (var recording in m_Recordings)
             {
-                var r = (RecorderItem) recording;
+                contextMenu.AddItem(new GUIContent("Duplicate"), false,
+                    data =>
+                    {
+                        DuplicateRecording((RecorderItem) data);
+                    }, recorder);
+                
+                contextMenu.AddItem(new GUIContent("Delete"), false,
+                    data =>
+                    {
+                        DeleteRecording((RecorderItem) data);
+                    }, recorder);
+            }
 
-                if (recording == selected)
+            contextMenu.ShowAsContext();
+        }
+        
+        void OnRecordSelectionChanged()
+        {        
+            m_RecorderEditor = null;
+            
+            foreach (var r in m_RecordingListItem.items)
+            {
+                if (m_RecordingListItem.IsSelected(r))
                 {
-                    m_RecorderEditor = r.editor;
+                    if (m_RecorderEditor == null)
+                        m_RecorderEditor = r.editor;
+                    
                     r.SetItemSelected(true);
-                    m_SelectedRecorderItemIndex = i;
                 }
                 else
                 {
                     r.SetItemSelected(false);
-                    ++i;
                 }
             }
 
             if (m_RecorderEditor != null)
             {
-                m_RecorderSettingPanel.Dirty(ChangeType.Layout);
+                m_RecorderSettingPanel.Dirty(ChangeType.Layout | ChangeType.Styles);
             }
+            
+            Repaint();
         }
 
         bool HaveActiveRecordings()
