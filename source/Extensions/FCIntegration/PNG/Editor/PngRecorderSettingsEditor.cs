@@ -6,7 +6,7 @@ using UnityEngine;
 namespace UTJ.FrameCapturer.Recorders
 {
     [CustomEditor(typeof(PNGRecorderSettings))]
-    public class PngRecorderSettingsEditor : RecorderEditorBase
+    public class PngRecorderSettingsEditor : RecorderEditor
     {
         protected override void OnEncodingGui()
         {

@@ -35,8 +35,8 @@ namespace UnityEditor.Recorder.Timeline
 
                 if (m_recorderSelector == null)
                 {
-                    m_recorderSelector = new RecorderSelector(OnRecorderSelected, false);
-                    m_recorderSelector.Init((target as RecorderClip).m_Settings);
+                    m_recorderSelector = new RecorderSelector(OnRecorderSelected);
+                    m_recorderSelector.Init(((RecorderClip) target).m_Settings);
                 }
 
                 m_recorderSelector.OnGui();

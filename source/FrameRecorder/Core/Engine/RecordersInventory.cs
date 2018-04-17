@@ -12,24 +12,14 @@ namespace UnityEngine.Recorder
     {
         public Type recorderType;
         public Type settingsClass;
-        public string category;
         public string displayName;
         public string iconName;
     }
 
-
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
-
-    // to be internal once inside unity code base
     public static class RecordersInventory
     {
-        internal static SortedDictionary<string, RecorderInfo> m_Recorders { get; private set; }
-
-
+        static SortedDictionary<string, RecorderInfo> s_Recorders;
+        
         static IEnumerable<KeyValuePair<Type, object[]>> FindRecorders()
         {
             var attribType = typeof(RecorderAttribute);
@@ -58,119 +48,68 @@ namespace UnityEngine.Recorder
         static void Init()
         {
 #if UNITY_EDITOR
-            if (m_Recorders != null)
+            if (s_Recorders != null)
                 return;
 
-            m_Recorders = new SortedDictionary<string, RecorderInfo>();
-            foreach (var recorder in FindRecorders() )
+            s_Recorders = new SortedDictionary<string, RecorderInfo>();
+            foreach (var recorder in FindRecorders())
                 AddRecorder(recorder.Key);
 #endif
         }
 
-#if UNITY_EDITOR
-        static SortedDictionary<string, List<RecorderInfo>> m_RecordersByCategory;
-
-        public static SortedDictionary<string, List<RecorderInfo>> recordersByCategory
-        {
-            get
-            {
-                Init();
-                return m_RecordersByCategory;
-            }
-        }
-
-        static string[] m_AvailableCategories;
-        public static string[] availableCategories
-        {
-            get
-            {
-                if (m_AvailableCategories == null)
-                {
-                    m_AvailableCategories = ListRecorders()
-                        .GroupBy(x => x.category)
-                        .Select(x => x.Key)
-                        .OrderBy(x => x)
-                        .ToArray();
-                }
-                return m_AvailableCategories;
-            }
-        }
-#endif
-
         static bool AddRecorder(Type recorderType)
-        {          
+        {
+            if (recorderType == null || string.IsNullOrEmpty(recorderType.FullName))
+                return false;
+            
             var recorderAttribs = recorderType.GetCustomAttributes(typeof(RecorderAttribute), false);
             if (recorderAttribs.Length == 1)
             {
                 var recorderAttrib = (RecorderAttribute)recorderAttribs[0];
             
-                if (m_Recorders == null)
-                    m_Recorders = new SortedDictionary<string, RecorderInfo>();
+                if (s_Recorders == null)
+                    s_Recorders = new SortedDictionary<string, RecorderInfo>();
 
                 var info = new RecorderInfo
                 {
                     recorderType = recorderType,
                     settingsClass = recorderAttrib.settings,
-                    category = recorderAttrib.category,
                     displayName = recorderAttrib.displayName,
                     iconName = recorderAttrib.iconName
                 };
 
-                m_Recorders.Add(info.recorderType.FullName, info);
+                s_Recorders.Add(info.recorderType.FullName, info);
 
-#if UNITY_EDITOR
-                if (m_RecordersByCategory == null)
-                    m_RecordersByCategory = new SortedDictionary<string, List<RecorderInfo>>();
-
-                if (!m_RecordersByCategory.ContainsKey(info.category))
-                    m_RecordersByCategory.Add(info.category, new List<RecorderInfo>());
-
-                m_RecordersByCategory[info.category].Add(info);
-
-
-                // Find associated editor to recorder's settings type.
-
-                 
-
-#endif
                 return true;
             }
-            else
-            {
-                Debug.LogError(String.Format("The class '{0}' does not have a FrameRecorderAttribute attached to it. ", recorderType.FullName));
-            }
+            
+            Debug.LogError(string.Format("The class '{0}' does not have a FrameRecorderAttribute attached to it. ", recorderType.FullName));
 
             return false;
-        }
-
-        public static RecorderInfo GetRecorderInfo<TRecorder>() where TRecorder : class
-        {
-            return GetRecorderInfo(typeof(TRecorder));
         }
 
         public static RecorderInfo GetRecorderInfo(Type recorderType)
         {
             Init();
-            if (m_Recorders.ContainsKey(recorderType.FullName))
-                return m_Recorders[recorderType.FullName];
+            if (s_Recorders.ContainsKey(recorderType.FullName))
+                return s_Recorders[recorderType.FullName];
 
 #if UNITY_EDITOR
             return null;
 #else
             if (AddRecorder(recorderType))
-                return m_Recorders[recorderType.FullName];
+                return s_Recorders[recorderType.FullName];
             else
                 return null;
 #endif
         }
 
-        public static IEnumerable<RecorderInfo> ListRecorders()
+        public static List<RecorderInfo> recorderInfos
         {
-            Init();
-
-            foreach (var recorderInfo in m_Recorders)
+            get
             {
-                yield return recorderInfo.Value;
+                Init();
+                return s_Recorders.Values.ToList();
             }
         }
 

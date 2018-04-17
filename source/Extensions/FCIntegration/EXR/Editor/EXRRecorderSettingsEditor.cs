@@ -6,7 +6,7 @@ using UnityEngine.Recorder;
 namespace UTJ.FrameCapturer.Recorders
 {
     [CustomEditor(typeof(EXRRecorderSettings))]
-    public class EXRRecorderSettingsEditor : RecorderEditorBase
+    public class EXRRecorderSettingsEditor : RecorderEditor
     {
         protected override void OnEncodingGui()
         {

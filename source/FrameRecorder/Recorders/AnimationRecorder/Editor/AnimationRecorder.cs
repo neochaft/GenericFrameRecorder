@@ -8,13 +8,12 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Experimental.Recorder
 {
-    [Recorder(typeof(AnimationRecorderSettings), "Animation Clips", "Unity/Animation Recording", "animation_recorder")]
+    [Recorder(typeof(AnimationRecorderSettings), "Animation", "animation_recorder")]
     public class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
     {
         public override void RecordFrame(RecordingSession session)
         {
         }
-
 
         public override void EndRecording(RecordingSession session)
         {

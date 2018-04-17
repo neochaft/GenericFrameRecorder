@@ -10,12 +10,6 @@ namespace UnityEditor.Recorder
     {
         SerializedProperty m_OutputFormat;
         
-        [MenuItem("Tools/Recorder/Video")]
-        static void ShowRecorderWindow()
-        {
-            RecorderWindow.ShowAndPreselectCategory("Video");
-        }
-
         protected override void OnEnable()
         {
             base.OnEnable();

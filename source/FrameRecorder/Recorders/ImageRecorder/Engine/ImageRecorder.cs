@@ -4,8 +4,8 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEngine.Recorder
 {
-    [Recorder(typeof(ImageRecorderSettings), "Video", "Unity/Image sequence", "image_seq_recorder")]
-    public class ImageRecorder : GenericRecorder<ImageRecorderSettings>
+    [Recorder(typeof(ImageRecorderSettings), "Image Sequence", "image_seq_recorder")]
+    public class ImageRecorder : GenericRecorder<ImageRecorderSettings> // TODO Rename to ImageSequenceRecorder
     {
 
         public override bool BeginRecording(RecordingSession session)

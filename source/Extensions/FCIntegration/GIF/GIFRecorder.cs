@@ -5,7 +5,7 @@ using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [Recorder(typeof(GIFRecorderSettings),"Video", "UTJ/GIF" )]
+    [Recorder(typeof(GIFRecorderSettings), "GIF (UTJ)" )]
     public class GIFRecorder : GenericRecorder<GIFRecorderSettings>
     {
         fcAPI.fcGifContext m_ctx;

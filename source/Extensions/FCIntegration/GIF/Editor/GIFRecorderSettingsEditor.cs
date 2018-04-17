@@ -6,7 +6,7 @@ using UnityEngine.Recorder;
 namespace UTJ.FrameCapturer.Recorders
 {
     [CustomEditor(typeof(GIFRecorderSettings))]
-    public class GIFRecorderSettingsEditor : RecorderEditorBase
+    public class GIFRecorderSettingsEditor : RecorderEditor
     {
         protected override void OnEncodingGui()
         {

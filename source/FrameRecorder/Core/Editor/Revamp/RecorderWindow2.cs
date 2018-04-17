@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.Recorder;
 using UnityEditor.Experimental.UIElements;
 using UnityEditor.Presets;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace UnityEditor.Recorder
 {
     public class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
     {
-        [MenuItem("Tools/New Recorder")]
+        [MenuItem("Tools/Media Recorder")]
         public static void ShowRecorderWindow2()
         {
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
@@ -206,9 +207,27 @@ namespace UnityEditor.Recorder
             
             m_AddNewRecord.RegisterCallback<MouseUpEvent>(evt =>
             {               
+                // TODO static or move inside RecordersInventory
+                var builtInRecorders = new List<RecorderInfo>
+                {
+                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
+                };
+                
                 var newRecordMenu = new GenericMenu();
-
-                var recorderList = RecordersInventory.ListRecorders();
+                
+                foreach (var info in builtInRecorders)
+                {
+                    if (ShouldDisableRecordSettings())
+                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
+                    else
+                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+                }
+                
+                newRecordMenu.AddSeparator(string.Empty);
+                
+                var recorderList = RecordersInventory.recorderInfos.Where(r => !builtInRecorders.Contains(r));
                 
                 foreach (var info in recorderList)
                 {
@@ -221,10 +240,8 @@ namespace UnityEditor.Recorder
                 newRecordMenu.ShowAsContext();
             });
             
-            
             m_Recordings = new ScrollView
             {
-                
                 style =
                 {
                     flex = 1.0f,

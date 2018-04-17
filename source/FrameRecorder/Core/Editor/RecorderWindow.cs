@@ -6,6 +6,7 @@ using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder
 {
+    // TODO Needs to be deleted and replaced with RecorderWindow2
     public class RecorderWindow : EditorWindow
     {
         enum EState
@@ -19,21 +20,9 @@ namespace UnityEditor.Recorder
         EState m_State = EState.Idle;
 
         RecorderSelector m_recorderSelector;
-        string m_Category = string.Empty;
 
         RecorderWindowSettings m_WindowSettingsAsset;
         int m_FrameCount = 0;
-
-        public static void ShowAndPreselectCategory(string category)
-        {
-            var window = GetWindow(typeof(RecorderWindow), false, "Recorder " + RecorderVersion.Stage) as RecorderWindow;
-
-            if (RecordersInventory.recordersByCategory.ContainsKey(category))
-            {
-                window.m_Category = category;
-                window.m_recorderSelector = null;
-            }
-        }
 
         public void OnEnable()
         {
@@ -91,8 +80,8 @@ namespace UnityEditor.Recorder
                             }
                         }
 
-                        m_recorderSelector = new RecorderSelector(OnRecorderSelected, false);
-                        m_recorderSelector.Init(m_WindowSettingsAsset.m_Settings, m_Category);
+                        m_recorderSelector = new RecorderSelector(OnRecorderSelected);
+                        m_recorderSelector.Init(m_WindowSettingsAsset.m_Settings);
                     }
 
                     if (m_State == EState.WaitingForPlayModeToStartRecording && EditorApplication.isPlaying)
@@ -303,8 +292,6 @@ namespace UnityEditor.Recorder
 
             if (m_recorderSelector.selectedRecorder == null)
                 return;
-
-            m_Category = m_recorderSelector.category;
 
             if (m_WindowSettingsAsset.m_Settings != null 
                 && RecordersInventory.GetRecorderInfo(m_recorderSelector.selectedRecorder).settingsClass != m_WindowSettingsAsset.m_Settings.GetType())
