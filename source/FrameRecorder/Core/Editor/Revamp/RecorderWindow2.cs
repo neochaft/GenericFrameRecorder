@@ -21,7 +21,7 @@ namespace UnityEditor.Recorder
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
         }
 
-        VisualListItem<RecorderItem> m_RecordingListItem;
+        [SerializeField] VisualListItem<RecorderItem> m_RecordingListItem;
         
         
         VisualElement m_SettingsPanel;
@@ -275,22 +275,12 @@ namespace UnityEditor.Recorder
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
-            m_RecordingListItem.itemSource = new RecordingItemSource(this);
+            m_RecordingListItem.Reload(CreateRecorderItemsFromPrefs());
             
-            m_RecordingListItem.RegisterCallback<KeyUpEvent>(OnRecorderListKeyUp);
-            //m_RecordingListItem.Reload();
-
-            //ReloadRecordings();
+            root.RegisterCallback<KeyUpEvent>(OnKeyUp);
         }
-
-        void OnRecorderListMouseUp(MouseUpEvent evt)
-        {
-            
-            
-            evt.StopImmediatePropagation();
-        }
-
-        void OnRecorderListKeyUp(KeyUpEvent evt)
+        
+        void OnKeyUp(KeyUpEvent evt)
         {
             if (evt.keyCode == KeyCode.Delete)
             {
@@ -340,67 +330,11 @@ namespace UnityEditor.Recorder
             var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
             return new RecorderItem(m_Prefs, recorderSettings, info.iconName);
         }
-
-        class RecordingItemSource : IItemSource<RecorderItem>
+        
+        IEnumerable<RecorderItem> CreateRecorderItemsFromPrefs()
         {
-            //RecorderSettingsPrefs m_Prefs;
-            readonly RecorderWindow2 m_RecorderWindow;
-
-            public RecordingItemSource(RecorderWindow2 recorderWindow)
-            {
-                m_RecorderWindow = recorderWindow;
-            }
-            
-            public IEnumerable<RecorderItem> items
-            {
-                get
-                {
-                    foreach (var recorderSettings in m_RecorderWindow.m_Prefs.recorders)
-                        yield return m_RecorderWindow.CreateRecorderItem(recorderSettings);
-                }
-            }
-
-//            public RecorderItem CreateNew()
-//            {
-//                throw new NotImplementedException();
-//            }
-
-            public void Remove(RecorderItem item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public RecorderItem Duplicate(RecorderItem item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool CanAddOrDeleteItems()
-            {
-                return !m_RecorderWindow.ShouldDisableRecordSettings();
-            }
+            return m_Prefs.recorders.Select(CreateRecorderItem);
         }
-
-//        void ReloadRecordings()
-//        {
-//            /*
-//            m_Recordings.Clear();
-//            
-//            foreach (var recorderSettings in m_Prefs.recorders)
-//            {
-//                var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
-//                m_Recordings.Add(new RecorderItem(m_Prefs, recorderSettings, info.iconName, OnRecordMouseUp));
-//            }
-//
-//            if (m_Recordings.Children().Any())
-//            {
-//                SelectRecorder(m_Recordings.Children().ElementAt(m_SelectedRecorderItemIndex));
-//            }
-//            */
-//            
-//            m_RecorderSettingPanel.Dirty(ChangeType.Layout);
-//            Repaint();
-//        }
 
         bool ShouldDisableRecordSettings()
         {

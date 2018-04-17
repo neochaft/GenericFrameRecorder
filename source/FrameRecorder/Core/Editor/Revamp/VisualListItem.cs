@@ -3,22 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
-using UnityEngine.Recorder;
-using UnityEngine.XR.WSA.Persistence;
 
 namespace UnityEditor.Recorder
-{
-    public interface IItemSource<T>
-    {
-        IEnumerable<T> items { get; }
-        //T CreateNew();
-        void Remove(T item);
-        T Duplicate(T item);
-        bool CanAddOrDeleteItems();
-    }
-    
-    
-
+{   
     public class VisualListItem<T> : VisualElement where T : VisualElement// TODO Selection persistence
     {
         public event Action OnSelectionChanged;
@@ -27,25 +14,6 @@ namespace UnityEditor.Recorder
         public event Action<T> OnItemRename;
         
         readonly List<T> m_SelectedItems = new List<T>();
-
-        IItemSource<T> m_ItemSource;
-        
-        public IEnumerable<T> selectedItems
-        {
-            get { return m_SelectedItems; }
-        }   
-        
-        public IItemSource<T> itemSource
-        {
-            get { return m_ItemSource; }
-            set
-            {
-                m_ItemSource = value;
-                
-                if (m_ItemSource != null)
-                    Reload();
-            }
-        }
 
         readonly ScrollView m_ScrollView;
         
@@ -68,12 +36,12 @@ namespace UnityEditor.Recorder
             RegisterCallback<MouseUpEvent>(OnMouseUp);
         }
 
-        void Reload()
+        public void Reload(IEnumerable<T> itemList)
         {
             m_ScrollView.Clear();
             m_SelectedItems.Clear();
             
-            foreach (var item in m_ItemSource.items)
+            foreach (var item in itemList)
                 Add(item);
         }
         
