@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
@@ -13,7 +14,7 @@ namespace UnityEditor.Recorder
         public event Action<T> OnItemContextMenu;
         public event Action<T> OnItemRename;
         
-        readonly List<T> m_SelectedItems = new List<T>();
+        T m_SelectedItem;
 
         readonly ScrollView m_ScrollView;
         
@@ -39,10 +40,12 @@ namespace UnityEditor.Recorder
         public void Reload(IEnumerable<T> itemList)
         {
             m_ScrollView.Clear();
-            m_SelectedItems.Clear();
+            m_SelectedItem = null;
             
             foreach (var item in itemList)
                 Add(item);
+
+            selection = items.FirstOrDefault();
         }
         
         public IEnumerable<T> items
@@ -51,6 +54,21 @@ namespace UnityEditor.Recorder
             {
                 foreach (var item in m_ScrollView)
                     yield return (T) item;
+            }
+        }
+
+        public T selection
+        {
+            get { return m_SelectedItem; }
+            private set
+            {
+                if (m_SelectedItem == value)
+                    return;
+
+                m_SelectedItem = value;
+                
+                if (OnSelectionChanged != null)
+                    OnSelectionChanged.Invoke();
             }
         }
 
@@ -63,40 +81,17 @@ namespace UnityEditor.Recorder
         public void AddAndSelect(T item)
         {
             Add(item);
-            ClearSelection();
-            SetSelected(item, true);
-            
-            if (OnSelectionChanged != null)
-                OnSelectionChanged.Invoke();
+            selection = item;
         }
         
         public void Remove(T item)
         {
-            m_SelectedItems.Remove(item);
+            var selected = selection == item;
+            
             m_ScrollView.Remove(item);
-        }
 
-        void ClearSelection()
-        {
-            m_SelectedItems.Clear();
-        }
-        
-        void SetSelected(T item, bool select)
-        {
-            if (select)
-            {
-                if (!m_SelectedItems.Contains(item));
-                    m_SelectedItems.Add(item);
-            }
-            else
-            {
-                m_SelectedItems.Remove(item);    
-            }
-        }
-
-        public bool IsSelected(T item)
-        {
-            return m_SelectedItems.Contains(item);
+            if (selected)
+                selection = items.FirstOrDefault();
         }
         
         void OnMouseUp(MouseUpEvent evt)
@@ -122,51 +117,21 @@ namespace UnityEditor.Recorder
                 return;
 
             var item = (T) evt.currentTarget;
-            var alreadySelected = IsSelected(item);
-            
-            var selectionChanged = false;
+            var alreadySelected = selection == item;
             
             if (evt.modifiers == EventModifiers.None)
             {
-                if (m_SelectedItems.Count == 1 && alreadySelected)
+                if (alreadySelected)
                 {
                     if (OnItemRename != null)
                         OnItemRename.Invoke(item);
                 }
                 else
                 {
-                    ClearSelection();
-                    SetSelected(item, true);
-                    
-                    selectionChanged = true;
-                }
-            }
-            else if (evt.commandKey || evt.ctrlKey)
-            {
-                SetSelected(item, !alreadySelected);
-                
-                selectionChanged = true;
-            }
-            else if (evt.shiftKey)
-            {
-                if (!alreadySelected)
-                {
-                    SetSelected(item, true);
-                    selectionChanged = true;
-                }
-            }
-            else if (evt.altKey)
-            {
-                if (alreadySelected)
-                {
-                    SetSelected(item, false);
-                    selectionChanged = true;
+                    selection = item;
                 }
             }
 
-            if (selectionChanged && OnSelectionChanged != null)
-                OnSelectionChanged.Invoke();
-            
             if (evt.modifiers == EventModifiers.None && evt.button == (int) MouseButton.RightMouse)
             {
                 if (OnItemContextMenu != null)

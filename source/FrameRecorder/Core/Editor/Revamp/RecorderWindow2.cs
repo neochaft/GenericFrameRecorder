@@ -23,7 +23,6 @@ namespace UnityEditor.Recorder
 
         [SerializeField] VisualListItem<RecorderItem> m_RecordingListItem;
         
-        
         VisualElement m_SettingsPanel;
         VisualElement m_RecordingsPanel;
         
@@ -37,7 +36,6 @@ namespace UnityEditor.Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         [SerializeField] float m_RecordingsPanelWidth = 200.0f;
-        //[SerializeField] int m_SelectedRecorderItemIndex = 0;
         
         RecorderSettingsPrefs m_Prefs;
         
@@ -275,18 +273,51 @@ namespace UnityEditor.Recorder
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
-            m_RecordingListItem.Reload(CreateRecorderItemsFromPrefs());
+            ReloadRecordings();
             
-            root.RegisterCallback<KeyUpEvent>(OnKeyUp);
+            m_RecordingListItem.RegisterCallback<IMGUIEvent>(OnIMGUIEvent);
+            m_RecordingListItem.focusIndex = 0;
+        }
+
+        void ReloadRecordings()
+        {
+            if (m_Prefs == null)
+                return;
+            
+            var recorderItems = m_Prefs.recorders.Select(CreateRecorderItem);
+            m_RecordingListItem.Reload(recorderItems);
         }
         
-        void OnKeyUp(KeyUpEvent evt)
+        void OnIMGUIEvent(IMGUIEvent evt)
         {
-            if (evt.keyCode == KeyCode.Delete)
+            if (evt.imguiEvent.type == EventType.ValidateCommand)
+            { 
+                if (m_RecordingListItem.selection == null)
+                    return;
+
+                if (evt.imguiEvent.commandName == "Duplicate" ||
+                    evt.imguiEvent.commandName == "SoftDelete" || evt.imguiEvent.commandName == "Delete")
+                {
+                    evt.StopPropagation();
+                }
+            }
+            else if (evt.imguiEvent.type == EventType.ExecuteCommand)
             {
-                var toDelete = m_RecordingListItem.items.ToArray();               
-                foreach (var item in toDelete)
+                var item = m_RecordingListItem.selection;
+                
+                if (item == null)
+                    return;
+
+                if (evt.imguiEvent.commandName == "Duplicate")
+                {
+                    DuplicateRecording(item);
+                    evt.StopPropagation();
+                }
+                else if (evt.imguiEvent.commandName == "SoftDelete" || evt.imguiEvent.commandName == "Delete")
+                {
                     DeleteRecording(item);
+                    evt.StopPropagation();
+                }
             }
         }
 
@@ -329,11 +360,6 @@ namespace UnityEditor.Recorder
         {
             var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
             return new RecorderItem(m_Prefs, recorderSettings, info.iconName);
-        }
-        
-        IEnumerable<RecorderItem> CreateRecorderItemsFromPrefs()
-        {
-            return m_Prefs.recorders.Select(CreateRecorderItem);
         }
 
         bool ShouldDisableRecordSettings()
@@ -498,11 +524,8 @@ namespace UnityEditor.Recorder
         void ApplySettingPreset(RecorderListPreset candidate)
         {
             candidate.AppyTo(m_Prefs);
-            
-            //m_SelectedRecorderItemIndex = 0;
-            //ReloadRecordings();
+            ReloadRecordings();
         }
-        
        
         void OnRecorderListSettingPresetGUI()
         {
@@ -529,8 +552,7 @@ namespace UnityEditor.Recorder
                     m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
                     DestroyImmediate(m_RecorderEditor);
                     m_RecorderEditor = null;
-                    //m_SelectedRecorderItemIndex = 0;
-                    //ReloadRecordings();
+                    ReloadRecordings();
                 });
 
                 var r = GUILayoutUtility.GetLastRect();
@@ -691,7 +713,7 @@ namespace UnityEditor.Recorder
             
             foreach (var r in m_RecordingListItem.items)
             {
-                if (m_RecordingListItem.IsSelected(r))
+                if (m_RecordingListItem.selection == r)
                 {
                     if (m_RecorderEditor == null)
                         m_RecorderEditor = r.editor;
