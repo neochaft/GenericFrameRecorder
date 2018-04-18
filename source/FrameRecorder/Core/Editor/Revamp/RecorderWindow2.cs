@@ -13,7 +13,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderWindow2 : EditorWindow, ISerializationCallbackReceiver
+    public class RecorderWindow2 : EditorWindow
     {
         [MenuItem("Tools/Media Recorder")]
         public static void ShowRecorderWindow2()
@@ -38,8 +38,6 @@ namespace UnityEditor.Recorder
         
         VisualElement m_RecordModeOptionsPanel;
         VisualElement m_FrameRateOptionsPanel;
-        
-        [SerializeField] float m_RecordingsPanelWidth = 200.0f;
         
         RecorderSettingsPrefs m_Prefs;
         
@@ -174,7 +172,7 @@ namespace UnityEditor.Recorder
                 name = "recordingsPanel",
                 style =
                 {
-                    width = m_RecordingsPanelWidth,
+                    width = 200.0f,
                     minWidth = 150.0f,
                     maxWidth = 500.0f
                 }
@@ -182,7 +180,10 @@ namespace UnityEditor.Recorder
             
             m_RecordingsPanel.AddToClassList("StandardPanel");
 
-            m_PanelSplitter = new PanelSplitter(m_RecordingsPanel);
+            m_PanelSplitter = new PanelSplitter(m_RecordingsPanel)
+            {
+                persistenceKey = "RecordingPanelSplitter"
+            };
             
             recordingAndParameters.Add(m_RecordingsPanel);
             recordingAndParameters.Add(m_PanelSplitter);
@@ -797,16 +798,6 @@ namespace UnityEditor.Recorder
                     break;
                 }
             }
-        }
-
-        public void OnBeforeSerialize()
-        {
-            m_RecordingsPanelWidth = m_RecordingsPanel.style.width;
-        }
-
-        public void OnAfterDeserialize()
-        {
-            // Nothing
         }
     }
 }

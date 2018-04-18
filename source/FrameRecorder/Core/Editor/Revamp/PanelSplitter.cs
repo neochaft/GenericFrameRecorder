@@ -1,3 +1,4 @@
+using System;
 using UnityEditor.Experimental.UIElements;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
@@ -14,6 +15,25 @@ namespace UnityEditor.Recorder
         float m_ElementOriginalWidth;
 
         const float k_SplitterWidth = 5.0f;
+        
+        [Serializable]
+        class Width
+        {
+            public float value;
+        }
+        
+        Width m_Width;
+        
+        void SetWidth(float value)
+        {
+            if (m_Width == null)
+                return;
+           
+            m_Width.value = value;
+            m_AffectedElement.style.width = value;
+
+            SavePersistentData();
+        }
 
         public PanelSplitter(VisualElement affectedElement) // TODO Support more than one element
         {
@@ -53,12 +73,12 @@ namespace UnityEditor.Recorder
 
             var delta = evt.mousePosition.x - m_GrabbedMousePosition.x;
 
-            var width = Mathf.Max(m_ElementOriginalWidth + delta, m_AffectedElement.style.minWidth);
+            var newWidth = Mathf.Max(m_ElementOriginalWidth + delta, m_AffectedElement.style.minWidth);
           
             if (m_AffectedElement.style.maxWidth > 0.0f)
-                width = Mathf.Min(width, m_AffectedElement.style.maxWidth);
+                newWidth = Mathf.Min(newWidth, m_AffectedElement.style.maxWidth);
 
-            m_AffectedElement.style.width = width;
+            SetWidth(newWidth);
         }
         
         void OnMouseUp(MouseUpEvent evt)
@@ -73,6 +93,18 @@ namespace UnityEditor.Recorder
             this.ReleaseMouseCapture();
             
             evt.StopImmediatePropagation();
+        }
+        
+        public override void OnPersistentDataReady()
+        {
+            base.OnPersistentDataReady();
+
+            var key = GetFullHierarchicalPersistenceKey();
+
+            m_Width = GetOrCreatePersistentData<Width>(m_Width, key);
+
+            if (m_Width.value > 0.0f)
+                m_AffectedElement.style.width = m_Width.value;
         }
     }
 }

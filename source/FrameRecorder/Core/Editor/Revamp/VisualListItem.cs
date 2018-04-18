@@ -19,18 +19,18 @@ namespace UnityEditor.Recorder
             public int index = 0;
         }
         
-        Selection m_Persistent;
+        Selection m_Selection;
         
         int selectedIndex
         {
-            get { return m_Persistent != null ? m_Persistent.index : 0; }
+            get { return m_Selection != null ? m_Selection.index : 0; }
             
             set
             {
-                if (m_Persistent == null)
+                if (m_Selection == null)
                     return;
                
-                m_Persistent.index = value;
+                m_Selection.index = value;
                 
                 if (OnSelectionChanged != null)
                     OnSelectionChanged.Invoke();
@@ -175,7 +175,7 @@ namespace UnityEditor.Recorder
 
             var key = GetFullHierarchicalPersistenceKey();
 
-            m_Persistent = GetOrCreatePersistentData<Selection>(m_Persistent, key);
+            m_Selection = GetOrCreatePersistentData<Selection>(m_Selection, key);
             
             if (OnSelectionChanged != null)
                 OnSelectionChanged.Invoke();
