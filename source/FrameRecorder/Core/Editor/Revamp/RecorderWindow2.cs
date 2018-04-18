@@ -21,7 +21,11 @@ namespace UnityEditor.Recorder
             GetWindow(typeof(RecorderWindow2), false, "Recorder");
         }
 
-        [SerializeField] VisualListItem<RecorderItem> m_RecordingListItem;
+        class RicorderItemList : VisualListItem<RecorderItem>
+        {
+        }
+        
+        RicorderItemList m_RecordingListItem;
         
         VisualElement m_SettingsPanel;
         VisualElement m_RecordingsPanel;
@@ -210,8 +214,9 @@ namespace UnityEditor.Recorder
                 ShowNewRecorderMenu();
             });
             
-            m_RecordingListItem = new VisualListItem<RecorderItem>
+            m_RecordingListItem = new RicorderItemList
             {
+                persistenceKey = "RecordingsList",
                 style = { flex = 1.0f }
             };
             
@@ -273,10 +278,10 @@ namespace UnityEditor.Recorder
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
-            ReloadRecordings();
-            
             m_RecordingListItem.RegisterCallback<IMGUIEvent>(OnIMGUIEvent);
             m_RecordingListItem.focusIndex = 0;
+            
+            ReloadRecordings();
         }
 
         void ReloadRecordings()

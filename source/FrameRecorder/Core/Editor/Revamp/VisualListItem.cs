@@ -1,25 +1,49 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 
 namespace UnityEditor.Recorder
 {   
-    public class VisualListItem<T> : VisualElement where T : VisualElement// TODO Selection persistence
+    public class VisualListItem<T> : VisualElement where T : VisualElement
     {
         public event Action OnSelectionChanged;
         public event Action OnContextMenu;
         public event Action<T> OnItemContextMenu;
         public event Action<T> OnItemRename;
         
-        T m_SelectedItem;
+        [Serializable]
+        class Selection
+        {
+            public int index = 0;
+        }
+        
+        Selection m_Persistent;
+        
+        int selectedIndex
+        {
+            get { return m_Persistent != null ? m_Persistent.index : 0; }
+            
+            set
+            {
+                if (m_Persistent == null)
+                    return;
+               
+                m_Persistent.index = value;
+                
+                if (OnSelectionChanged != null)
+                    OnSelectionChanged.Invoke();
+
+                SavePersistentData();
+            }
+        }
 
         readonly ScrollView m_ScrollView;
-        
-        public VisualListItem()
-        {
+        readonly List<T> m_ItemsCache = new List<T>();
+
+        protected VisualListItem()
+        {   
             m_ScrollView = new ScrollView
             {
                 style =
@@ -40,35 +64,35 @@ namespace UnityEditor.Recorder
         public void Reload(IEnumerable<T> itemList)
         {
             m_ScrollView.Clear();
-            m_SelectedItem = null;
+            m_ItemsCache.Clear();
             
             foreach (var item in itemList)
                 Add(item);
-
-            selection = items.FirstOrDefault();
+            
+            selectedIndex = 0;
         }
         
-        public IEnumerable<T> items
+        public List<T> items
         {
-            get
-            {
-                foreach (var item in m_ScrollView)
-                    yield return (T) item;
-            }
+            get { return m_ItemsCache; }
         }
 
         public T selection
         {
-            get { return m_SelectedItem; }
+            get
+            {
+                if(selectedIndex < 0 || selectedIndex > m_ItemsCache.Count - 1)
+                    return null;
+                
+                return m_ItemsCache[selectedIndex];
+            }
+            
             private set
             {
-                if (m_SelectedItem == value)
+                if (selection == value)
                     return;
 
-                m_SelectedItem = value;
-                
-                if (OnSelectionChanged != null)
-                    OnSelectionChanged.Invoke();
+                selectedIndex = m_ItemsCache.IndexOf(value);
             }
         }
 
@@ -76,6 +100,7 @@ namespace UnityEditor.Recorder
         {
             item.RegisterCallback<MouseUpEvent>(OnItemMouseUp);
             m_ScrollView.Add(item);
+            m_ItemsCache.Add(item);
         }
         
         public void AddAndSelect(T item)
@@ -89,9 +114,12 @@ namespace UnityEditor.Recorder
             var selected = selection == item;
             
             m_ScrollView.Remove(item);
+            m_ItemsCache.Remove(item);
 
             if (selected)
-                selection = items.FirstOrDefault();
+            {
+                selectedIndex = Math.Min(selectedIndex, items.Count - 1);
+            }
         }
         
         void OnMouseUp(MouseUpEvent evt)
@@ -139,6 +167,19 @@ namespace UnityEditor.Recorder
             }
             
             evt.StopImmediatePropagation();
+        }
+
+        public override void OnPersistentDataReady()
+        {
+            base.OnPersistentDataReady();
+
+            var key = GetFullHierarchicalPersistenceKey();
+
+            m_Persistent = GetOrCreatePersistentData<Selection>(m_Persistent, key);
+            
+            if (OnSelectionChanged != null)
+                OnSelectionChanged.Invoke();
+                
         }
     }
 }
