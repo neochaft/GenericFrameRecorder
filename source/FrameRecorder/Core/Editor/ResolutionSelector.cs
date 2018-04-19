@@ -5,7 +5,7 @@ using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
 {
-    public class ResolutionSelector
+    public static class ResolutionSelector
     {
         static readonly string[] s_MaskedNames;
         static readonly Dictionary<EImageDimension, int> s_ImageDimensionToIndex = new Dictionary<EImageDimension, int>();
@@ -17,7 +17,6 @@ namespace UnityEditor.Recorder
             var values = Enum.GetValues(typeof(EImageDimension));
             for (int i = 0; i < values.Length; ++i)
                 s_ImageDimensionToIndex[(EImageDimension)values.GetValue(i)] = i;
-            
         }
 
         public static int Popup(string label, EImageDimension max, int intValue)

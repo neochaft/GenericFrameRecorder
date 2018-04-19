@@ -1,9 +1,9 @@
-﻿#addRecordingsButton {
+﻿.RecorderListHeader {
     background-color: #DEDEDE;
     border-color: #747474;
 }
 
-#addRecordingsButton:hover {
+.RecorderListHeader:hover {
     background-color: #F4F4F4;
 }
 
@@ -46,7 +46,7 @@ PanelSplitter {
     background-color: #A2A2A2;
 }
 
-#recordingsPanel {
+#recordersPanel {
     background-color: #DEDEDE;
 }
 
