@@ -91,7 +91,7 @@ namespace UnityEngine.Recorder
         
         public static string GetTagPattern(ETags tag)
         {
-            return "$" + tag;
+            return "<" + tag + ">";
         }
         
         static string TimeResolver(RecordingSession session)
