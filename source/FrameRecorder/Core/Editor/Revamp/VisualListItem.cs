@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
@@ -16,7 +17,7 @@ namespace UnityEditor.Recorder
         [Serializable]
         class Selection
         {
-            public int index = 0;
+            public int index = -1;
         }
         
         Selection m_Selection;
@@ -65,11 +66,12 @@ namespace UnityEditor.Recorder
         {
             m_ScrollView.Clear();
             m_ItemsCache.Clear();
+            selectedIndex = -1;
             
             foreach (var item in itemList)
                 Add(item);
             
-            selectedIndex = 0;
+            selection = m_ItemsCache.FirstOrDefault();
         }
         
         public List<T> items
@@ -117,9 +119,7 @@ namespace UnityEditor.Recorder
             m_ItemsCache.Remove(item);
 
             if (selected)
-            {
                 selectedIndex = Math.Min(selectedIndex, items.Count - 1);
-            }
         }
         
         void OnMouseUp(MouseUpEvent evt)

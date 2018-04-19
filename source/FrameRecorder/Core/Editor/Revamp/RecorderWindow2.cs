@@ -523,7 +523,7 @@ namespace UnityEditor.Recorder
             }
             else
             {
-                EditorGUILayout.LabelField("Nothing selected");
+                EditorGUILayout.LabelField("No recording selected");
             }
         }
 
@@ -650,9 +650,6 @@ namespace UnityEditor.Recorder
             m_Prefs.AddRecorder(recorder, recorder.name, enabled);
 
             m_RecordingListItem.AddAndSelect(CreateRecorderItem(recorder));
-            // TODO Fix Reload VS Selection
-            //ReloadRecordings();
-            //SelectRecorder(m_Recordings.Last());
         }
 
         void DuplicateRecording(RecorderItem item)
