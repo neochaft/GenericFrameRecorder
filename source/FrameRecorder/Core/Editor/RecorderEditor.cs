@@ -109,13 +109,6 @@ namespace UnityEditor.Recorder
         protected virtual void NameAndPathGUI()
         {
             EditorGUILayout.PropertyField(m_FileNameGenerator, new GUIContent("File Name"));
-            
-            // TODO
-            // Save to Folder
-            // Folder Name
-            // Export Settings
-            //    File Name
-            //    Folder Name
         }
 
         protected virtual void ImageRenderOptionsGUI()
@@ -136,7 +129,7 @@ namespace UnityEditor.Recorder
             var targetObject = (object)owner.targetObject;
             var type = targetObject.GetType();
 
-            foreach (var info in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (var info in InputSettingsSelector.GetInputFields(type))
             {
                 if (info.GetValue(targetObject) == fieldValue)
                 {
@@ -146,7 +139,7 @@ namespace UnityEditor.Recorder
                 if (typeof(InputSettingsSelector).IsAssignableFrom(info.FieldType))
                 {
                     var selector = info.GetValue(targetObject);
-                    var fields = selector.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                    var fields = InputSettingsSelector.GetInputFields(selector.GetType());
                     var selectorInput = fields.FirstOrDefault(i => i.GetValue(selector) == fieldValue);
                     
                     if (selectorInput != null)

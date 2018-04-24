@@ -27,7 +27,12 @@ namespace UnityEditor.Recorder
 
         public IEnumerable<FieldInfo> InputSettingFields()
         {
-            return GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => typeof(RecorderInputSetting).IsAssignableFrom(f.FieldType));
+            return GetInputFields(GetType()).Where(f => typeof(RecorderInputSetting).IsAssignableFrom(f.FieldType));
+        }
+
+        public static IEnumerable<FieldInfo> GetInputFields(Type type)
+        {
+            return type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
 
         protected InputSettingsSelector()
