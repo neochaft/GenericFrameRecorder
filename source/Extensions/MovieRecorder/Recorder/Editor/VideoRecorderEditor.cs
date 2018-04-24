@@ -17,9 +17,9 @@ namespace UnityEditor.Recorder
             if (target == null)
                 return;
 
-            m_OutputFormat = serializedObject.FindProperty("m_OutputFormat");
-            m_CaptureAlpha = serializedObject.FindProperty("m_CaptureAlpha");
-            m_EncodingBitRateMode = serializedObject.FindProperty("m_VideoBitRateMode");           
+            m_OutputFormat = serializedObject.FindProperty("outputFormat");
+            m_CaptureAlpha = serializedObject.FindProperty("captureAlpha");
+            m_EncodingBitRateMode = serializedObject.FindProperty("videoBitRateMode");           
         }
 
         protected override void OnEncodingGui()
@@ -31,7 +31,7 @@ namespace UnityEditor.Recorder
         {
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
 
-            if (((VideoRecorderSettings) target).m_OutputFormat == MediaRecorderOutputFormat.WEBM)
+            if (((VideoRecorderSettings) target).outputFormat == MediaRecorderOutputFormat.WEBM)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CaptureAlpha, new GUIContent("Capture Alpha"));

@@ -129,11 +129,12 @@ namespace UnityEditor.Recorder.Timeline
             if (m_Timeline == null)
                 return;
 
-            var settings = m_Editor.target as UnityEngine.Recorder.RecorderSettings;
-            //settings.recordMode = RecordMode.Manual; // TODO Fix Me!!!
+            var settings = (RecorderSettings)m_Editor.target;
+            
+            settings.recordMode = RecordMode.Manual;
 
             // Time
-            //settings.m_FrameRate = m_Timeline.editorSettings.fps; // TODO Fix Me!!!
+            settings.frameRate = m_Timeline.editorSettings.fps;
         }
 
         void PushRecorderIntoTimeline()
@@ -141,11 +142,11 @@ namespace UnityEditor.Recorder.Timeline
             if (m_Timeline == null)
                 return;
 
-            var settings = m_Editor.target as UnityEngine.Recorder.RecorderSettings;
-            //settings.recordMode = RecordMode.Manual; // TODO Fix Me!!!
+            var settings = (RecorderSettings)m_Editor.target;
+            settings.recordMode = RecordMode.Manual;
 
             // Time
-            m_Timeline.editorSettings.fps = (float)settings.frameRate;
+            m_Timeline.editorSettings.fps = settings.frameRate;
         }
     }
 }

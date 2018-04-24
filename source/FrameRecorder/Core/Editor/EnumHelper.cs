@@ -89,7 +89,6 @@ namespace UnityEditor.Recorder
         public static string[] ClipOutEnumNames<TEnum>(int start, int end, EnumToStringDelegate<TEnum> toString)
         {
             if (!typeof(TEnum).IsEnum) throw new ArgumentException("Arg not an enum");
-            var names = Enum.GetNames(typeof(TEnum));
             var values = Enum.GetValues(typeof(TEnum));
             var result = new List<String>();
             for( int i = 0; i < values.Length; i++ )

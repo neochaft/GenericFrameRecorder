@@ -60,12 +60,6 @@ namespace UnityEditor.Recorder
                 && ((RecorderSettings) target).isPlatformSupported;
         }
 
-        bool m_FoldoutInput = true;
-        bool m_FoldoutEncoder = true;
-        bool m_FoldoutTime = true;
-        bool m_FoldoutBounds = true;
-        bool m_FoldoutOutput = true;
-
         public override void OnInspectorGUI()
         {
             if (target == null)

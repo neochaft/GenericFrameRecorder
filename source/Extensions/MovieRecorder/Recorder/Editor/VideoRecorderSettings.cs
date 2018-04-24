@@ -39,9 +39,9 @@ namespace UnityEditor.Recorder
 
     public class VideoRecorderSettings : RecorderSettings
     {
-        public MediaRecorderOutputFormat m_OutputFormat;
-        public VideoBitrateMode m_VideoBitRateMode = VideoBitrateMode.High;
-        public bool m_CaptureAlpha;
+        public MediaRecorderOutputFormat outputFormat = MediaRecorderOutputFormat.MP4;
+        public VideoBitrateMode videoBitRateMode = VideoBitrateMode.High;
+        public bool captureAlpha;
 
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
         [SerializeField] AudioInputSettings m_AudioInputSettings;
@@ -49,9 +49,6 @@ namespace UnityEditor.Recorder
         public VideoRecorderSettings()
         {
             fileNameGenerator.pattern = "movie";
-            m_OutputFormat = MediaRecorderOutputFormat.MP4;
-            m_VideoBitRateMode = VideoBitrateMode.High;
-            m_CaptureAlpha = false;
             ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = EImageDimension.x2160p_4K;
         }
 
@@ -84,7 +81,7 @@ namespace UnityEditor.Recorder
 
         public override string extension
         {
-            get { return m_OutputFormat.ToString().ToLower(); }
+            get { return outputFormat.ToString().ToLower(); }
         }
 
         public override Vector2 resolution
@@ -106,12 +103,12 @@ namespace UnityEditor.Recorder
             if (selectedInput == null)
                 return;
 
-            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = m_OutputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
+            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = outputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
 
             var cbis = selectedInput as CBRenderTextureInputSettings;
             if (cbis != null)
             {
-                cbis.allowTransparency = m_OutputFormat == MediaRecorderOutputFormat.WEBM && m_CaptureAlpha;
+                cbis.allowTransparency = outputFormat == MediaRecorderOutputFormat.WEBM && captureAlpha;
             }
         }
        

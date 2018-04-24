@@ -93,7 +93,7 @@ namespace UnityEditor.Recorder
                     editor.ReplaceSelection(pattern);
                     return editor.text;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // ignored
                 }

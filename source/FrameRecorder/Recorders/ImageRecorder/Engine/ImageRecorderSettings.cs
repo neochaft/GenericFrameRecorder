@@ -15,16 +15,16 @@ namespace UnityEngine.Recorder
     [Serializable]
     public class VideoSelector : InputSettingsSelector
     {      
-        [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
-        [SerializeField] ScreenCaptureInputSettings m_ScreenCaptureInputSettings = new ScreenCaptureInputSettings();
-        [SerializeField] Camera360InputSettings m_Camera360InputSettings = new Camera360InputSettings();
-        [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
-        [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
+        [SerializeField] public CBRenderTextureInputSettings cbRenderTextureInputSettings = new CBRenderTextureInputSettings();
+        [SerializeField] public ScreenCaptureInputSettings screenCaptureInputSettings = new ScreenCaptureInputSettings();
+        [SerializeField] public Camera360InputSettings camera360InputSettings = new Camera360InputSettings();
+        [SerializeField] public RenderTextureInputSettings renderTextureInputSettings = new RenderTextureInputSettings();
+        [SerializeField] public RenderTextureSamplerSettings renderTextureSamplerSettings = new RenderTextureSamplerSettings();
     }
     
     public class ImageRecorderSettings : RecorderSettings
     {
-        public ImageRecorderOutputFormat m_OutputFormat = ImageRecorderOutputFormat.JPEG;
+        public ImageRecorderOutputFormat outputFormat = ImageRecorderOutputFormat.JPEG;
 
         [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
 
@@ -37,7 +37,7 @@ namespace UnityEngine.Recorder
         {
             get
             {
-                switch (m_OutputFormat)
+                switch (outputFormat)
                 {
                     case ImageRecorderOutputFormat.PNG:                        
                         return "png";
@@ -97,7 +97,7 @@ namespace UnityEngine.Recorder
             var renderTextureSamplerSettings = input as RenderTextureSamplerSettings;
             if (renderTextureSamplerSettings != null)
             {
-                var colorSpace = m_OutputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
+                var colorSpace = outputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
                 renderTextureSamplerSettings.colorSpace = colorSpace;
             }
         }

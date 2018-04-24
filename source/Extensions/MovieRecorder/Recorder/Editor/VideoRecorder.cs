@@ -116,7 +116,7 @@ namespace UnityEditor.Recorder
                 return false;
             }
 
-            if (width > 4096 || height > 2160 && m_Settings.m_OutputFormat == MediaRecorderOutputFormat.MP4)
+            if (width > 4096 || height > 2160 && m_Settings.outputFormat == MediaRecorderOutputFormat.MP4)
             {
                 Debug.LogError("Mp4 format does not support requested resolution.");
             }
@@ -124,7 +124,7 @@ namespace UnityEditor.Recorder
             var cbRenderTextureInput = m_Inputs[0] as CBRenderTextureInput;
 
             bool includeAlphaFromTexture = cbRenderTextureInput != null && cbRenderTextureInput.cbSettings.allowTransparency;
-            if (includeAlphaFromTexture && m_Settings.m_OutputFormat == MediaRecorderOutputFormat.MP4)
+            if (includeAlphaFromTexture && m_Settings.outputFormat == MediaRecorderOutputFormat.MP4)
             {
                 Debug.LogWarning("Mp4 format does not support alpha.");
                 includeAlphaFromTexture = false;
@@ -136,7 +136,7 @@ namespace UnityEditor.Recorder
                 width = (uint)width,
                 height = (uint)height,
                 includeAlpha = includeAlphaFromTexture,
-                bitRateMode = m_Settings.m_VideoBitRateMode
+                bitRateMode = m_Settings.videoBitRateMode
             };
 
             if (Verbose.enabled)

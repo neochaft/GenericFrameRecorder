@@ -18,7 +18,7 @@ namespace UnityEditor.Recorder
                 return;
 
             var pf = new PropertyFinder<ImageRecorderSettings>(serializedObject);
-            m_OutputFormat = pf.Find(w => w.m_OutputFormat);
+            m_OutputFormat = pf.Find(w => w.outputFormat);
         }
 
         protected override void FileTypeAndFormatGUI()

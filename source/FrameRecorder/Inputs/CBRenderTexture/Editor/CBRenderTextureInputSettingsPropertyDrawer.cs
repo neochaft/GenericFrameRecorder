@@ -16,7 +16,6 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_RenderSize;
         SerializedProperty m_RenderAspect;
         SerializedProperty m_FlipFinalOutput;
-        SerializedProperty m_Transparency;
         SerializedProperty m_IncludeUI;
         SerializedProperty m_MaxSupportedSize;
 
@@ -34,7 +33,6 @@ namespace UnityEditor.Recorder.Input
             m_RenderSize = property.FindPropertyRelative("outputSize");
             m_RenderAspect = property.FindPropertyRelative("aspectRatio");
             m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
-            m_Transparency = property.FindPropertyRelative("allowTransparency");
             m_IncludeUI = property.FindPropertyRelative("captureUI");
 
             m_Initialized = true;

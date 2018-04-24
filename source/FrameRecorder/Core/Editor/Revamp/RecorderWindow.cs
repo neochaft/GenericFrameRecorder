@@ -13,12 +13,12 @@ using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderWindow2 : EditorWindow
+    public class RecorderWindow : EditorWindow
     {
         [MenuItem("Tools/Media Recorder")]
         public static void ShowRecorderWindow2()
         {
-            GetWindow(typeof(RecorderWindow2), false, "Recorder");
+            GetWindow(typeof(RecorderWindow), false, "Recorder");
         }
 
         class RicorderItemList : VisualListItem<RecorderItem>

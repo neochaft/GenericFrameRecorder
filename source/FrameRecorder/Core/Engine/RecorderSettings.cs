@@ -40,7 +40,6 @@ namespace UnityEngine.Recorder
     public abstract class RecorderSettings : ScriptableObject
     {
         public FileNameGenerator fileNameGenerator;
-        //public OutputPath destinationPath;
         
         public int captureEveryNthFrame = 1;
 
@@ -74,6 +73,11 @@ namespace UnityEngine.Recorder
         public float frameRate
         {
             get { return FrameRateHelper.ToFloat(m_FrameRateType, m_CustomFrameRateValue); }
+            set
+            {
+                m_FrameRateType = FrameRateType.FR_CUSTOM;
+                m_CustomFrameRateValue = value;
+            }
         }
 
         public FrameRateType frameRateType
@@ -134,16 +138,17 @@ namespace UnityEngine.Recorder
         {
             get
             {
-                if (string.IsNullOrEmpty(m_RecorderTypeName))
-                    return null;
-                return Type.GetType(m_RecorderTypeName);
+                return string.IsNullOrEmpty(m_RecorderTypeName) ? null : Type.GetType(m_RecorderTypeName);
             }
-            set { m_RecorderTypeName = value == null ? string.Empty : value.AssemblyQualifiedName; }
+            set
+            {
+                m_RecorderTypeName = value == null ? string.Empty : value.AssemblyQualifiedName;
+            }
         }
 
         public virtual bool ValidityCheck( List<string> errors )
         {
-            bool ok = true;
+            var ok = true;
 
             if (inputsSettings != null)
             {
