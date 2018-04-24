@@ -307,6 +307,19 @@ namespace UnityEditor.Recorder
             m_RecordingListItem.focusIndex = 0;
             
             ReloadRecordings();
+
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
+        }
+
+        void OnUndoRedoPerformed()
+        {
+            if (m_RecorderEditor != null)
+                m_RecorderSettingPanel.Dirty(ChangeType.Layout | ChangeType.Styles);
+            
+            if (m_Prefs != null)
+                m_Prefs.Save();
+            
+            Repaint();
         }
 
         void ReloadRecordings()
@@ -591,14 +604,28 @@ namespace UnityEditor.Recorder
                     EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
                 });
                 
-                menu.AddItem(new GUIContent("Clear Recorder List"), false, () =>
+                var items = m_RecordingListItem.items.ToArray();
+
+                if (items.Length > 0)
                 {
-                    m_Prefs.Release();
-                    m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
-                    DestroyImmediate(m_RecorderEditor);
-                    m_RecorderEditor = null;
-                    ReloadRecordings();
-                });
+                    menu.AddItem(new GUIContent("Clear Recorder List"), false, () =>
+                    {
+                        if (EditorUtility.DisplayDialog("Clear Recoder List?", "All recorder will be deleted. Proceed?", "Delete Recorders"))
+                        {
+                            foreach (var item in items)
+                                DeleteRecorder(item, false);
+                            //m_Prefs.Release();
+                            //m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
+                            DestroyImmediate(m_RecorderEditor);
+                            m_RecorderEditor = null;
+                            ReloadRecordings();
+                        }
+                    });
+                }
+                else
+                {
+                    menu.AddDisabledItem(new GUIContent("Clear Recorder List"));
+                }
 
                 menu.ShowAsContext();
             }
