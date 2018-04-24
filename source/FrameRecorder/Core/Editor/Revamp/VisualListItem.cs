@@ -100,6 +100,7 @@ namespace UnityEditor.Recorder
 
         void Add(T item)
         {
+            item.RegisterCallback<MouseDownEvent>(OnItemMouseDown);
             item.RegisterCallback<MouseUpEvent>(OnItemMouseUp);
             m_ScrollView.Add(item);
             m_ItemsCache.Add(item);
@@ -136,7 +137,7 @@ namespace UnityEditor.Recorder
             evt.StopImmediatePropagation();
         }
         
-        void OnItemMouseUp(MouseUpEvent evt)
+        void OnItemMouseDown(MouseDownEvent evt)
         {           
             if (evt.clickCount != 1)
                 return;
@@ -145,11 +146,11 @@ namespace UnityEditor.Recorder
                 return;
 
             var item = (T) evt.currentTarget;
-            var alreadySelected = selection == item;
             
             if (evt.modifiers == EventModifiers.None)
             {
-                if (alreadySelected)
+                var alreadySelected = selection == item;
+                if (evt.button == (int) MouseButton.LeftMouse && alreadySelected)
                 {
                     if (OnItemRename != null)
                         OnItemRename.Invoke(item);
@@ -159,13 +160,24 @@ namespace UnityEditor.Recorder
                     selection = item;
                 }
             }
-
-            if (evt.modifiers == EventModifiers.None && evt.button == (int) MouseButton.RightMouse)
-            {
-                if (OnItemContextMenu != null)
-                    OnItemContextMenu.Invoke(item);
-            }
             
+            evt.StopImmediatePropagation();
+        }
+        
+        void OnItemMouseUp(MouseUpEvent evt)
+        {           
+            if (evt.clickCount != 1)
+                return;
+
+            if (evt.modifiers != EventModifiers.None || evt.button != (int) MouseButton.RightMouse)
+                return;
+
+            if (OnItemContextMenu != null)
+            {
+                var item = (T) evt.currentTarget;
+                OnItemContextMenu.Invoke(item);
+            }
+
             evt.StopImmediatePropagation();
         }
 
