@@ -22,14 +22,6 @@ namespace UnityEditor.Recorder
 
         GenericMenu m_FrameRateMenu;
 
-        class EditorState
-        {
-            public bool visible;
-            public Editor editor;
-        }
-        
-        readonly Dictionary<RecorderSettings, EditorState> m_InputEditorCache = new Dictionary<RecorderSettings, EditorState>();
-
         static class Styles
         {
             public static readonly GUIContent SRecordModeLabel  = new GUIContent("Record Mode");
@@ -61,12 +53,6 @@ namespace UnityEditor.Recorder
             m_StartTimeProperty = serializedObject.FindProperty("m_StartTime");
             m_EndTimeProperty = serializedObject.FindProperty("m_EndTime");
             m_SynchFrameRateProperty = serializedObject.FindProperty("m_SynchFrameRate");
-        }
-
-        void OnDestroy()
-        {
-            foreach (var editorState in m_InputEditorCache.Values)
-                DestroyImmediate(editorState.editor); 
         }
 
         public override void OnInspectorGUI()
@@ -152,32 +138,6 @@ namespace UnityEditor.Recorder
             
             serializedObject.ApplyModifiedProperties();
 
-            return GUI.changed;
-        }
-
-        public bool RecordersGUI()
-        {
-            var viewPrefs = (RecorderSettingsPrefs) target;
-
-            foreach (var inputSettings in viewPrefs.recorders)
-            {
-                EditorState editorInfo;
-
-                if (!m_InputEditorCache.TryGetValue(inputSettings, out editorInfo))
-                {
-                    editorInfo = new EditorState {editor = (RecorderEditor) CreateEditor(inputSettings)};
-                    m_InputEditorCache[inputSettings] = editorInfo;
-                }
-                
-                editorInfo.visible = EditorGUILayout.Foldout(editorInfo.visible, inputSettings.name);
-                if (editorInfo.visible)
-                {
-                    ++EditorGUI.indentLevel;
-                    editorInfo.editor.OnInspectorGUI();
-                    --EditorGUI.indentLevel;
-                }
-            }
-            
             return GUI.changed;
         }
     }
