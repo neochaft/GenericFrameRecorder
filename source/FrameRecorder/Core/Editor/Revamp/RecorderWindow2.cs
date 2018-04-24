@@ -31,15 +31,20 @@ namespace UnityEditor.Recorder
         VisualElement m_RecordersPanel;
         
         Editor m_RecorderEditor;
+        VisualElement m_ParametersControl;
         VisualElement m_RecorderSettingPanel;
         Button m_RecordButton;
         PanelSplitter m_PanelSplitter;
-        VisualElement m_AddNewRecord;
+        VisualElement m_AddNewRecordPanel;
         
         VisualElement m_RecordModeOptionsPanel;
         VisualElement m_FrameRateOptionsPanel;
         
         RecorderSettingsPrefs m_Prefs;
+
+        bool m_WindowEnabled = true;
+        
+        static List<RecorderInfo> s_BuiltInRecorderInfos;
         
         enum State
         {
@@ -192,14 +197,8 @@ namespace UnityEditor.Recorder
             m_SettingsPanel.AddToClassList("StandardPanel");
 
             root.Add(recordersAndParameters);
-
-            var recordingButtonPanel = new VisualElement
-            {
-                name = "addRecordersButton",
-                style = { flexDirection = FlexDirection.Row }
-            };
             
-            m_AddNewRecord = new Label("+ Add New Recorders")
+            var addRecordButton = new Label("+ Add New Recorders")
             {
                 style = { flex = 1.0f }
             };
@@ -210,7 +209,7 @@ namespace UnityEditor.Recorder
             };
             
             recorderListPresetButton.RegisterCallback<MouseUpEvent>(evt => ShowRecorderListMenu());
-            recorderListPresetButton.RegisterCallback<IMGUIEvent>(OnApplyPreset);
+            recorderListPresetButton.RegisterCallback<IMGUIEvent>(OnApplyPreset, Capture.Capture);
             recorderListPresetButton.focusIndex = 0;
             
             recorderListPresetButton.Add(new Image
@@ -231,13 +230,20 @@ namespace UnityEditor.Recorder
                 }
             });
             
-            m_AddNewRecord.AddToClassList("RecorderListHeader");
+            addRecordButton.AddToClassList("RecorderListHeader");
             recorderListPresetButton.AddToClassList("RecorderListHeader");
             
-            recordingButtonPanel.Add(m_AddNewRecord);
-            recordingButtonPanel.Add(recorderListPresetButton);
+            addRecordButton.RegisterCallback<MouseUpEvent>(evt => ShowNewRecorderMenu());            
             
-            m_AddNewRecord.RegisterCallback<MouseUpEvent>(evt => ShowNewRecorderMenu());
+            m_AddNewRecordPanel = new VisualElement
+            {
+                name = "addRecordersButton",
+                style = { flexDirection = FlexDirection.Row }
+            };
+            
+                                    
+            m_AddNewRecordPanel.Add(addRecordButton);
+            m_AddNewRecordPanel.Add(recorderListPresetButton);
             
             m_RecordingListItem = new RicorderItemList
             {
@@ -250,10 +256,10 @@ namespace UnityEditor.Recorder
             m_RecordingListItem.OnItemRename += item => item.StartRenaming();
             m_RecordingListItem.OnContextMenu += ShowNewRecorderMenu;
 
-            m_RecordersPanel.Add(recordingButtonPanel);
+            m_RecordersPanel.Add(m_AddNewRecordPanel);
             m_RecordersPanel.Add(m_RecordingListItem);
 
-            var parametersControl = new VisualElement
+            m_ParametersControl = new VisualElement
             {
                 style =
                 {
@@ -262,7 +268,7 @@ namespace UnityEditor.Recorder
                 }
             };
             
-            parametersControl.Add(new Button(OnRecorderSettingPresetClicked)
+            m_ParametersControl.Add(new Button(OnRecorderSettingPresetClicked)
             {
                 name = "presetButton",
                 style =
@@ -296,9 +302,9 @@ namespace UnityEditor.Recorder
             
             root.Add(statusBar);
             
-            parametersControl.Add(m_RecorderSettingPanel);
+            m_ParametersControl.Add(m_RecorderSettingPanel);
             
-            m_SettingsPanel.Add(parametersControl);
+            m_SettingsPanel.Add(m_ParametersControl);
 
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
@@ -374,24 +380,25 @@ namespace UnityEditor.Recorder
                     return;
                 
                 ApplySettingPreset(candidate);
-                
                 evt.StopPropagation();
             }
         }
 
         void ShowNewRecorderMenu()
         {
-            // TODO static or move inside RecordersInventory
-            var builtInRecorders = new List<RecorderInfo>
+            if (s_BuiltInRecorderInfos == null)
             {
-                RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
-                RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
-                RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
-            };
-                
+                s_BuiltInRecorderInfos = new List<RecorderInfo>
+                {
+                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
+                };
+            }
+
             var newRecordMenu = new GenericMenu();
                 
-            foreach (var info in builtInRecorders)
+            foreach (var info in s_BuiltInRecorderInfos)
             {
                 if (ShouldDisableRecordSettings())
                     newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
@@ -401,7 +408,7 @@ namespace UnityEditor.Recorder
                 
             newRecordMenu.AddSeparator(string.Empty);
                 
-            var recorderList = RecordersInventory.recorderInfos.Where(r => !builtInRecorders.Contains(r));
+            var recorderList = RecordersInventory.recorderInfos.Where(r => !s_BuiltInRecorderInfos.Contains(r));
                 
             foreach (var info in recorderList)
             {
@@ -440,12 +447,16 @@ namespace UnityEditor.Recorder
                     m_State = State.Idle;
             }
             
-            // TODO Use events instead
             var enable = !ShouldDisableRecordSettings();
-            m_AddNewRecord.SetEnabled(enable);
-            m_RecorderSettingPanel.SetEnabled(enable);
-            m_RecordModeOptionsPanel.SetEnabled(enable);
-            m_FrameRateOptionsPanel.SetEnabled(enable);
+            if (m_WindowEnabled != enable)
+            {
+                m_WindowEnabled = enable;
+                
+                m_AddNewRecordPanel.SetEnabled(enable);
+                m_ParametersControl.SetEnabled(enable);
+                m_RecordModeOptionsPanel.SetEnabled(enable);
+                m_FrameRateOptionsPanel.SetEnabled(enable);
+            }
 
             if (HaveActiveRecordings())
             {
@@ -587,50 +598,44 @@ namespace UnityEditor.Recorder
        
         void ShowRecorderListMenu()
         {
-            //if (EditorGUILayout.DropdownButton(GUIContent.none, FocusType.Passive, new GUIStyle("PaneOptions")))
+            var menu = new GenericMenu();
+            
+            menu.AddItem(new GUIContent("Save Recorder List"), false, () =>
             {
-                var menu = new GenericMenu();
-                
-                menu.AddItem(new GUIContent("Save Recorder List"), false, () =>
-                {
-                    var path = EditorUtility.SaveFilePanelInProject("Save Preset", "RecorderSettingPreset.asset", "asset", "");
+                var path = EditorUtility.SaveFilePanelInProject("Save Preset", "RecorderSettingPreset.asset", "asset", "");
 
-                    if (path.Length != 0)
-                        RecorderListPreset.SaveAtPath(m_Prefs, path);
-                });
-                
-                menu.AddItem(new GUIContent("Load Recorder List"), false, () =>
-                {
-                    EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
-                });
-                
-                var items = m_RecordingListItem.items.ToArray();
+                if (path.Length != 0)
+                    RecorderListPreset.SaveAtPath(m_Prefs, path);
+            });
+            
+            menu.AddItem(new GUIContent("Load Recorder List"), false, () =>
+            {
+                EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
+            });
+            
+            var items = m_RecordingListItem.items.ToArray();
 
-                if (items.Length > 0)
+            if (items.Length > 0)
+            {
+                menu.AddItem(new GUIContent("Clear Recorder List"), false, () =>
                 {
-                    menu.AddItem(new GUIContent("Clear Recorder List"), false, () =>
+                    if (EditorUtility.DisplayDialog("Clear Recoder List?", "All recorder will be deleted. Proceed?", "Delete Recorders"))
                     {
-                        if (EditorUtility.DisplayDialog("Clear Recoder List?", "All recorder will be deleted. Proceed?", "Delete Recorders"))
-                        {
-                            foreach (var item in items)
-                                DeleteRecorder(item, false);
-                            //m_Prefs.Release();
-                            //m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
-                            DestroyImmediate(m_RecorderEditor);
-                            m_RecorderEditor = null;
-                            ReloadRecordings();
-                        }
-                    });
-                }
-                else
-                {
-                    menu.AddDisabledItem(new GUIContent("Clear Recorder List"));
-                }
-
-                menu.ShowAsContext();
+                        foreach (var item in items)
+                            DeleteRecorder(item, false);
+                        
+                        DestroyImmediate(m_RecorderEditor);
+                        m_RecorderEditor = null;
+                        ReloadRecordings();
+                    }
+                });
             }
-                       
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Clear Recorder List"));
+            }
 
+            menu.ShowAsContext();
         }
 
         class PresetReceiver : PresetSelectorReceiver
@@ -717,8 +722,7 @@ namespace UnityEditor.Recorder
         void DeleteRecorder(RecorderItem item, bool prompt)
         {
             if (!prompt || EditorUtility.DisplayDialog("Delete Recoder?",
-                    "Are you sure you want to delete '" + m_Prefs.GetRecorderDisplayName(item.settings) + "' ?",
-                    "Delete"))
+                    "Are you sure you want to delete '" + m_Prefs.GetRecorderDisplayName(item.settings) + "' ?", "Delete"))
             {
 
                 var s = item.settings;
