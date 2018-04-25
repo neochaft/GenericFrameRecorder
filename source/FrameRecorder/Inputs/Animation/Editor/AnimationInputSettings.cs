@@ -36,7 +36,7 @@ namespace UnityEditor.Experimental.Recorder.Input
             get { return typeof(AnimationInput); }
         }
 
-        public override bool ValidityCheck(List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = true;
 

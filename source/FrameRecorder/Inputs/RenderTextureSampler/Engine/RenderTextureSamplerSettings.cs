@@ -31,7 +31,7 @@ namespace UnityEngine.Recorder.Input
             get { return typeof(RenderTextureSampler); }
         }
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             return true;
         }

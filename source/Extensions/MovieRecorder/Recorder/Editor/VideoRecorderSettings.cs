@@ -52,19 +52,20 @@ namespace UnityEditor.Recorder
             ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = EImageDimension.x2160p_4K;
         }
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
 
-            if( string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath() ))
+            if(string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath()))
             {
+                errors.Add("Missing destination path");
                 ok = false;
-                errors.Add("Missing destination path.");
             } 
-            if(  string.IsNullOrEmpty(fileNameGenerator.pattern))
+            
+            if( string.IsNullOrEmpty(fileNameGenerator.pattern))
             {
+                errors.Add("Missing file name");
                 ok = false;
-                errors.Add("missing file name");
             }
 
             return ok;

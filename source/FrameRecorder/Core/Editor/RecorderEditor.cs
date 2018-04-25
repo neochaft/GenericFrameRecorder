@@ -1,23 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Recorder;
 
 namespace UnityEditor.Recorder
-{
-    public enum EFieldDisplayState
-    {
-        Enabled,
-        Disabled,
-        Hidden
-    }
-
+{   
     public abstract class RecorderEditor : Editor
     {
-        readonly List<string> m_SettingsErrors = new List<string>();
-
         SerializedProperty m_CaptureEveryNthFrame;
         SerializedProperty m_FileNameGenerator;
 
@@ -52,12 +42,6 @@ namespace UnityEditor.Recorder
             GUI.color = orgColor;
             
             EditorGUILayout.Separator();
-        }
-
-        public bool ValidityCheck(List<string> errors)
-        {
-            return ((RecorderSettings) target).ValidityCheck(errors)
-                && ((RecorderSettings) target).isPlatformSupported;
         }
 
         public override void OnInspectorGUI()
@@ -96,13 +80,11 @@ namespace UnityEditor.Recorder
 
         protected virtual void OnValidateSettingsGUI()
         {
-            m_SettingsErrors.Clear();
-            if (!((RecorderSettings) target).ValidityCheck(m_SettingsErrors))
+            var errors = new List<string>();
+            if (!((RecorderSettings) target).ValidityCheck(errors))
             {
-                foreach (var error in m_SettingsErrors)
-                {
+                foreach (var error in errors)
                     EditorGUILayout.HelpBox(error, MessageType.Warning);
-                }
             }
         }
 

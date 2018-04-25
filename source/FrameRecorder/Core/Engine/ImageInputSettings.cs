@@ -16,7 +16,7 @@ namespace UnityEngine.Recorder.Input
             maxSupportedSize = EImageDimension.x4320p_8K;
         }
         
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = true;
 

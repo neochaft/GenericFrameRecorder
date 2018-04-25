@@ -16,7 +16,7 @@ namespace UnityEditor.Recorder
     public class RecorderWindow : EditorWindow
     {
         [MenuItem("Tools/Media Recorder")]
-        public static void ShowRecorderWindow2()
+        public static void ShowRecorderWindow()
         {
             GetWindow(typeof(RecorderWindow), false, "Recorder");
         }
@@ -306,7 +306,8 @@ namespace UnityEditor.Recorder
             
             m_SettingsPanel.Add(m_ParametersControl);
 
-            m_Prefs = RecorderSettingsPrefs.LoadOrCreate();
+            m_Prefs = RecorderSettingsPrefs.instance;
+            
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
             m_RecordingListItem.RegisterCallback<IMGUIEvent>(OnIMGUIEvent);

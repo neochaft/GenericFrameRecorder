@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 using UnityEditorInternal;
-using UnityEngine.Recorder;
 using UnityObject = UnityEngine.Object;
 
-namespace UnityEditor.Recorder
+namespace UnityEngine.Recorder
 {
-    class RecorderSettingsPrefs : ScriptableObject
+    public class RecorderSettingsPrefs : ScriptableObject
     {
         [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
         [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
@@ -23,6 +21,19 @@ namespace UnityEditor.Recorder
         [SerializeField] float m_EndTime;
         
         [SerializeField] bool m_SynchFrameRate;
+
+        static RecorderSettingsPrefs s_Instance;
+
+        public static RecorderSettingsPrefs instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                    s_Instance = LoadOrCreate();
+
+                return s_Instance;
+            }
+        }
 
         [Serializable]
         class RecorderInfo
@@ -176,6 +187,8 @@ namespace UnityEditor.Recorder
             recorder.endTime = m_EndTime;
             recorder.synchFrameRate = m_SynchFrameRate;
             recorder.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
+            
+            recorder.SelfAdjustSettings();
         }
         
         public void ApplyGlobalSettingToAllRecorders()

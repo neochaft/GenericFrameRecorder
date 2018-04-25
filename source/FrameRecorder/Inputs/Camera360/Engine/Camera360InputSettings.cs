@@ -24,7 +24,7 @@ namespace UnityEngine.Recorder.Input
             get { return typeof(Camera360Input); }
         }
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             bool ok = base.ValidityCheck(errors);
 

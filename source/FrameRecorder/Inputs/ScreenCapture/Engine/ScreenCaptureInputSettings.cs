@@ -1,9 +1,7 @@
-﻿#if UNITY_2017_3_OR_NEWER
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.ComponentModel;
+using System.Linq;
 
 namespace UnityEngine.Recorder.Input
 {
@@ -16,11 +14,20 @@ namespace UnityEngine.Recorder.Input
             get { return typeof(ScreenCaptureInput); }
         }
 
-        public override bool ValidityCheck( List<string> errors )
-        {
+        public override bool ValidityCheck(List<string> errors)
+        {   
+            var prefs = RecorderSettingsPrefs.instance;
+            
+            foreach (var recorder in prefs.recorders)
+            {
+                if (recorder.inputsSettings.Where(inputSetting => inputSetting != this).OfType<ScreenCaptureInputSettings>().Any())
+                {
+                    errors.Add("Game View usage is conflicting with recorder '" + prefs.GetRecorderDisplayName(recorder) + "'");
+                    return false;
+                }
+            }
+            
             return true;
         }
     }
 }
-
-#endif

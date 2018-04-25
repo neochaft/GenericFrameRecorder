@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Recorder;
 
 namespace UnityEngine.Recorder
 {
@@ -146,7 +145,7 @@ namespace UnityEngine.Recorder
             }
         }
 
-        public virtual bool ValidityCheck( List<string> errors )
+        public virtual bool ValidityCheck(List<string> errors)
         {
             var ok = true;
 
@@ -158,7 +157,7 @@ namespace UnityEngine.Recorder
                 
                 if (!valid)
                 {
-                    errors.Add("Input settings are incorrect.");
+                    errors.AddRange(inputErrors);
                     ok = false;
                 }
             }
@@ -193,10 +192,6 @@ namespace UnityEngine.Recorder
         public abstract string extension { get; }
         public abstract Vector2 resolution { get; }
 
-        /// <summary>
-        /// Allows for recorder specific settings logic to correct/adjust settings that might be missed by it's editor.
-        /// </summary>
-        /// <returns>true if setting where changed</returns>
         public virtual void SelfAdjustSettings()
         {
         }

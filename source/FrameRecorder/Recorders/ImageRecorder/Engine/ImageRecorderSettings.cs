@@ -64,7 +64,7 @@ namespace UnityEngine.Recorder
             }
         }
         
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
 

@@ -32,7 +32,7 @@ namespace UTJ.FrameCapturer.Recorders
     {
         [SerializeField] protected UTJVideoSelector m_VideoSelector = new UTJVideoSelector();
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
             

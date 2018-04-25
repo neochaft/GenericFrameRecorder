@@ -19,7 +19,7 @@ namespace UnityEngine.Recorder.Input
             get { return typeof(CBRenderTextureInput); }
         }
 
-        public override bool ValidityCheck( List<string> errors )
+        public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
             if (source == EImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
