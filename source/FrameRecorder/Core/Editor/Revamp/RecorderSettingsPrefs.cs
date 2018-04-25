@@ -177,6 +177,12 @@ namespace UnityEditor.Recorder
             recorder.synchFrameRate = m_SynchFrameRate;
             recorder.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
         }
+        
+        public void ApplyGlobalSettingToAllRecorders()
+        {
+            foreach (var recorder in recorders)
+                ApplyGlobalSetting(recorder);
+        }
 
         public bool IsRecorderEnabled(RecorderSettings recorder)
         {

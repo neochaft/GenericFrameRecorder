@@ -133,7 +133,7 @@ namespace UnityEditor.Recorder
             m_RecordModeOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_RecorderSettingsPrefsEditor.RecordModeGUI())
-                    m_Prefs.Save();
+                    OnGlobalSettingsChanged();
             })
             {
                 style = { flex = 1.0f }
@@ -146,7 +146,7 @@ namespace UnityEditor.Recorder
             m_FrameRateOptionsPanel = new IMGUIContainer(() =>
             {
                 if (m_RecorderSettingsPrefsEditor.FrameRateGUI())
-                    m_Prefs.Save();
+                    OnGlobalSettingsChanged();
             })
             {
                 style = { flex = 1.0f }
@@ -314,16 +314,26 @@ namespace UnityEditor.Recorder
             
             ReloadRecordings();
 
-            Undo.undoRedoPerformed += OnUndoRedoPerformed;
+            Undo.undoRedoPerformed +=  SaveAndRepaint;
         }
 
-        void OnUndoRedoPerformed()
+        void OnGlobalSettingsChanged()
         {
-            if (m_RecorderEditor != null)
-                m_RecorderSettingPanel.Dirty(ChangeType.Layout | ChangeType.Styles);
+            if (m_Prefs == null)
+                return;
             
+            m_Prefs.ApplyGlobalSettingToAllRecorders();
+
+            SaveAndRepaint();
+        }
+
+        void SaveAndRepaint()
+        {   
             if (m_Prefs != null)
                 m_Prefs.Save();
+            
+            if (m_RecorderEditor != null)
+                m_RecorderSettingPanel.Dirty(ChangeType.Layout | ChangeType.Styles);
             
             Repaint();
         }
