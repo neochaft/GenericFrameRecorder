@@ -154,10 +154,13 @@ namespace UnityEditor.Recorder
                     objs[i + 1] = recordersCopy[i];
 
                 InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
+                
+                if (Verbose.enabled)
+                    Debug.Log("Recorder settings saved");
             }
             catch (Exception e)
             {
-                Debug.LogError("Unhandled exception while saving Recorder preferences: " + e);
+                Debug.LogError("Unhandled exception while saving Recorder settings: " + e);
             }
         }
 
