@@ -67,7 +67,7 @@ RecorderItem.selected {
     border-right-width:1;
 }
 
-RecorderItem > Image {
+.RecorderItemIcon {
     width : 20;
     height : 20;
     margin-left : 4;

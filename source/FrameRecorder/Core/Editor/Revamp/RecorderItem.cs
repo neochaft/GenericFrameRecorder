@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Recorder;
+using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.Recorder
 {
@@ -14,14 +14,10 @@ namespace UnityEditor.Recorder
         public Editor editor { get; private set; }
 
         readonly EditableLabel m_EditableLabel;
-        readonly Image m_Icon;
+        readonly VisualElement m_Icon;
 
         bool m_Selected;
-        
-        public bool IsItemSelected()
-        {
-            return m_Selected;
-        }
+        bool m_Disabled;
         
         public void SetItemSelected(bool value)
         {
@@ -35,6 +31,7 @@ namespace UnityEditor.Recorder
 
         void SetItemEnabled(RecorderSettingsPrefs prefs, bool value)
         {
+            m_Disabled = !value;
             prefs.SetRecorderEnabled(settings, value);
             m_EditableLabel.SetLabelEnabled(value);
             if (value)
@@ -49,7 +46,7 @@ namespace UnityEditor.Recorder
         {           
             settings = recorderSettings;
             
-            editor = Editor.CreateEditorWithContext(new[] { settings }, SceneHook.GetRecorderBindings(), null);
+            editor = Editor.CreateEditorWithContext(new UnityObject[] { settings }, SceneHook.GetRecorderBindings(), null);
     
             style.flex = 1.0f;
             style.flexDirection = FlexDirection.Row;
@@ -72,14 +69,30 @@ namespace UnityEditor.Recorder
                     icon = s_IconCache[iconName] = Resources.Load<Texture2D>(iconName);
                 }
             }
-    
+
             if (icon == null)
-                icon = Texture2D.whiteTexture;
+                icon = Texture2D.whiteTexture; // TODO Default icon
+
+            m_Icon = new IMGUIContainer(() => // UIElement Image doesn't support tint yet. Use IMGUI instead.
+            {   
+                var r = EditorGUILayout.GetControlRect();
+                r.width = r.height = Mathf.Max(r.width, r.height);
+                
+                var c = GUI.color;
+
+                var newColor = m_Disabled ? Color.gray : (EditorGUIUtility.isProSkin ? Color.white : Color.black);
+                
+                if (!m_Selected)
+                    newColor.a = 0.7f;
+
+                GUI.color = newColor;
+                
+                GUI.DrawTexture(r, icon);
+
+                GUI.color = c;
+            });
             
-            m_Icon = new Image
-            {
-                image = icon
-            };
+            m_Icon.AddToClassList("RecorderItemIcon");
 
             m_Icon.SetEnabled(false);
             
@@ -91,9 +104,6 @@ namespace UnityEditor.Recorder
                 prefs.SetRecorderDisplayName(settings, newValue);
             });
             Add(m_EditableLabel);
-            
-            //RegisterCallback<MouseUpEvent>(InternalMouseUp);
-            //RegisterCallback(onRecordMouseUp);
 
             var recorderEnabled = prefs.IsRecorderEnabled(settings);
             toggle.on = recorderEnabled;
