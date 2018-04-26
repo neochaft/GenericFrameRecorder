@@ -10,10 +10,24 @@ namespace UnityEditor.Experimental.Recorder
     public class AnimationRecorderSettings : RecorderSettings
     {
         [SerializeField] AnimationInputSettings m_AnimationInputSettings = new AnimationInputSettings();
-
+        
+        public int take = 1;
+   
         public AnimationRecorderSettings()
         {
-            fileNameGenerator.pattern = "animation_" + FileNameGenerator.GetTagPattern(ETags.Frame);
+            var goWildcard = FileNameGenerator.GeneratePattern("GameObject");
+            var takeWildcard = FileNameGenerator.GeneratePattern("Take");
+            
+            fileNameGenerator.AddWildcard(goWildcard, GameObjectNameResolver);
+            fileNameGenerator.AddWildcard(takeWildcard, session => take.ToString("000"));
+            fileNameGenerator.pattern = "animation_" + goWildcard + "_" + takeWildcard;
+            
+        }
+
+        string GameObjectNameResolver(RecordingSession session)
+        {
+            var go = m_AnimationInputSettings.gameObject.Resolve(SceneHook.GetRecorderBindings());
+            return go != null ? go.name : "None";
         }
 
         public override bool isPlatformSupported

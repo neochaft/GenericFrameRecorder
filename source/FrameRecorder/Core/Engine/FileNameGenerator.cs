@@ -6,19 +6,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Recorder
-{
-    public enum ETags
-    {           
-        Time,
-        Date,
-        Project,
-        Product,
-        Scene,
-        Resolution,
-        Frame,
-        Extension
-    }
-    
+{   
     public class Wildcard
     {
         readonly string m_Pattern;
@@ -72,24 +60,41 @@ namespace UnityEngine.Recorder
 
         readonly RecorderSettings m_RecorderSettings;
         
+        public static class DefaultWildcard
+        {
+            public static readonly string Time = FileNameGenerator.GeneratePattern("Time");
+            public static readonly string Date = FileNameGenerator.GeneratePattern("Date");
+            public static readonly string Project = FileNameGenerator.GeneratePattern("Project");
+            public static readonly string Product = FileNameGenerator.GeneratePattern("Product");
+            public static readonly string Scene = FileNameGenerator.GeneratePattern("Scene");
+            public static readonly string Resolution = FileNameGenerator.GeneratePattern("Resolution");
+            public static readonly string Frame = FileNameGenerator.GeneratePattern("Frame");
+            public static readonly string Extension = FileNameGenerator.GeneratePattern("Extension");
+        }
+        
         public FileNameGenerator(RecorderSettings recorderSettings)
         {
             m_RecorderSettings = recorderSettings;
             
             m_Wildcards = new List<Wildcard>
             {
-                new Wildcard(GetTagPattern(ETags.Time), TimeResolver),
-                new Wildcard(GetTagPattern(ETags.Date), DateResolver),
-                new Wildcard(GetTagPattern(ETags.Project), ProjectNameResolver),
-                new Wildcard(GetTagPattern(ETags.Product), ProductNameResolver,"(editor only)"),
-                new Wildcard(GetTagPattern(ETags.Scene), SceneResolver),
-                new Wildcard(GetTagPattern(ETags.Resolution), ResolutionResolver),
-                new Wildcard(GetTagPattern(ETags.Frame), FrameResolver),
-                new Wildcard(GetTagPattern(ETags.Extension), ExtensionResolver)
+                new Wildcard(DefaultWildcard.Time, TimeResolver),
+                new Wildcard(DefaultWildcard.Date, DateResolver),
+                new Wildcard(DefaultWildcard.Project, ProjectNameResolver),
+                new Wildcard(DefaultWildcard.Product, ProductNameResolver,"(editor only)"),
+                new Wildcard(DefaultWildcard.Scene, SceneResolver),
+                new Wildcard(DefaultWildcard.Resolution, ResolutionResolver),
+                new Wildcard(DefaultWildcard.Frame, FrameResolver),
+                new Wildcard(DefaultWildcard.Extension, ExtensionResolver)
             };
         }
+
+        public void AddWildcard(string tag, Func<RecordingSession, string> resolver)
+        {
+            m_Wildcards.Add(new Wildcard(tag, resolver));
+        }
         
-        public static string GetTagPattern(ETags tag)
+        public static string GeneratePattern(string tag)
         {
             return "<" + tag + ">";
         }

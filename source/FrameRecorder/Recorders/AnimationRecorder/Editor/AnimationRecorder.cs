@@ -1,10 +1,6 @@
-﻿using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEditor.Experimental.Recorder.Input;
+﻿using UnityEditor.Experimental.Recorder.Input;
 using UnityEngine;
 using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Experimental.Recorder
 {
@@ -17,12 +13,12 @@ namespace UnityEditor.Experimental.Recorder
 
         public override void EndRecording(RecordingSession session)
         {
-            var ars = session.settings as AnimationRecorderSettings;
+            var ars = (AnimationRecorderSettings)session.settings;
 
             foreach (var input in m_Inputs)
             {
-                var aInput = input as AnimationInput;
-                AnimationClip clip = new AnimationClip();
+                var aInput = (AnimationInput)input;
+                var clip = new AnimationClip();
                 var clipName = ars.fileNameGenerator.BuildFileName(session);
                 
                 ars.fileNameGenerator.path.CreateDirectory();
@@ -32,6 +28,7 @@ namespace UnityEditor.Experimental.Recorder
                 aInput.m_gameObjectRecorder.ResetRecording();
             }
 
+            ++ars.take;
             base.EndRecording(session);
         }
     }
