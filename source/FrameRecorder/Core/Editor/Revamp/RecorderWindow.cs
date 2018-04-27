@@ -41,8 +41,6 @@ namespace UnityEditor.Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         RecorderSettingsPrefs m_Prefs;
-
-        bool m_WindowEnabled = true;
         
         static List<RecorderInfo> s_BuiltInRecorderInfos;
         
@@ -459,15 +457,11 @@ namespace UnityEditor.Recorder
             }
             
             var enable = !ShouldDisableRecordSettings();
-            if (m_WindowEnabled != enable)
-            {
-                m_WindowEnabled = enable;
                 
-                m_AddNewRecordPanel.SetEnabled(enable);
-                m_ParametersControl.SetEnabled(enable);
-                m_RecordModeOptionsPanel.SetEnabled(enable);
-                m_FrameRateOptionsPanel.SetEnabled(enable);
-            }
+            m_AddNewRecordPanel.SetEnabled(enable);
+            m_ParametersControl.SetEnabled(enable);
+            m_RecordModeOptionsPanel.SetEnabled(enable);
+            m_FrameRateOptionsPanel.SetEnabled(enable);
 
             if (HaveActiveRecordings())
             {
