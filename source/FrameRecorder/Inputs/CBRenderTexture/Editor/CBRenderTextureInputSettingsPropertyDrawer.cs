@@ -66,7 +66,7 @@ namespace UnityEditor.Recorder.Input
             {
                 m_RenderSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
-                if (m_RenderSize.intValue > (int)EImageDimension.Window)
+                if (m_RenderSize.intValue > (int)ImageDimension.Window)
                 {
                     EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio"));
                 }

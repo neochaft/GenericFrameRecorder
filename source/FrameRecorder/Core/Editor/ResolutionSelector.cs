@@ -8,26 +8,26 @@ namespace UnityEditor.Recorder
     public static class ResolutionSelector
     {
         static readonly string[] s_MaskedNames;
-        static readonly Dictionary<EImageDimension, int> s_ImageDimensionToIndex = new Dictionary<EImageDimension, int>();
+        static readonly Dictionary<ImageDimension, int> s_ImageDimensionToIndex = new Dictionary<ImageDimension, int>();
 
         static ResolutionSelector()
         {
-            s_MaskedNames = EnumHelper.ClipOutEnumNames<EImageDimension>((int)EImageDimension.Window, (int)EImageDimension.x4320p_8K, ToLabel);
+            s_MaskedNames = EnumHelper.ClipOutEnumNames<ImageDimension>((int)ImageDimension.Window, (int)ImageDimension.x4320p_8K, ToLabel);
 
-            var values = Enum.GetValues(typeof(EImageDimension));
+            var values = Enum.GetValues(typeof(ImageDimension));
             for (int i = 0; i < values.Length; ++i)
-                s_ImageDimensionToIndex[(EImageDimension)values.GetValue(i)] = i;
+                s_ImageDimensionToIndex[(ImageDimension)values.GetValue(i)] = i;
         }
 
-        public static int Popup(string label, EImageDimension max, int intValue)
+        public static int Popup(string label, ImageDimension max, int intValue)
         {              
             using (var check = new EditorGUI.ChangeCheckScope())
             {
-                var index = EnumHelper.GetClippedIndexFromEnumValue<EImageDimension>(intValue, (int)EImageDimension.Window, (int)max);
+                var index = EnumHelper.GetClippedIndexFromEnumValue<ImageDimension>(intValue, (int)ImageDimension.Window, (int)max);
                 index = EditorGUILayout.Popup(label, index, s_MaskedNames.Take(s_ImageDimensionToIndex[max] + 1).ToArray());
 
                 if (check.changed)
-                    intValue = EnumHelper.GetEnumValueFromClippedIndex<EImageDimension>(index, (int)EImageDimension.Window, (int)max);
+                    intValue = EnumHelper.GetEnumValueFromClippedIndex<ImageDimension>(index, (int)ImageDimension.Window, (int)max);
 
                 if (intValue > (int)max)
                     intValue = (int)max;
@@ -36,27 +36,27 @@ namespace UnityEditor.Recorder
             return intValue;
         }
 
-        static string ToLabel(EImageDimension value)
+        static string ToLabel(ImageDimension value)
         {
             switch (value)
             {
-                case EImageDimension.x4320p_8K:
+                case ImageDimension.x4320p_8K:
                     return "8K - 4320p";
-                case EImageDimension.x2880p_5K:
+                case ImageDimension.x2880p_5K:
                     return "5K - 2880p";
-                case EImageDimension.x2160p_4K:
+                case ImageDimension.x2160p_4K:
                     return "4K - 2160p";
-                case EImageDimension.x1440p_QHD:
+                case ImageDimension.x1440p_QHD:
                     return "QHD - 1440p";
-                case EImageDimension.x1080p_FHD:
+                case ImageDimension.x1080p_FHD:
                     return "FHD - 1080p";
-                case EImageDimension.x720p_HD:
+                case ImageDimension.x720p_HD:
                     return "HD - 720p";
-                case EImageDimension.x480p:
+                case ImageDimension.x480p:
                     return "SD - 480p";
-                case EImageDimension.x240p:
+                case ImageDimension.x240p:
                     return "240p";
-                case EImageDimension.Window:
+                case ImageDimension.Window:
                     return "Match Window Size";
                 default:
                     return "unknown";

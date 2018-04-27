@@ -112,7 +112,7 @@ namespace UnityEngine.Recorder.Input
             // Calculate aspect and render/output sizes
             // Clamp size to 16K, which is the min always supported size in d3d11
             // Force output to divisible by two as x264 doesn't approve of odd image dimensions.
-            var aspect = AspectRatioHelper.GetRealAR(rtsSettings.aspectRatio);
+            var aspect = AspectRatioHelper.GetRealAspect(rtsSettings.aspectRatio);
             m_renderHeight = (int)rtsSettings.renderSize;
             m_renderWidth = Mathf.Min(16 * 1024, Mathf.RoundToInt(m_renderHeight * aspect));
             outputHeight = (int)rtsSettings.outputSize;

@@ -14,7 +14,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             fileNameGenerator.pattern = "movie";
             m_AutoSelectBR = true;
-            m_VideoSelector.SetMaxResolution(EImageDimension.x2160p_4K);
+            m_VideoSelector.SetMaxResolution(ImageDimension.x2160p_4K);
         }
 
         public override bool isPlatformSupported

@@ -49,7 +49,7 @@ namespace UnityEditor.Recorder
         public VideoRecorderSettings()
         {
             fileNameGenerator.pattern = "movie";
-            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = EImageDimension.x2160p_4K;
+            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = ImageDimension.x2160p_4K;
         }
 
         public override bool ValidityCheck(List<string> errors)
@@ -92,7 +92,7 @@ namespace UnityEditor.Recorder
                 var inputSettings = (ImageInputSettings)m_VideoSelector.selected; // TODO Refactor commun code
                 
                 var h = (int)inputSettings.outputSize;
-                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+                var w = (int)(h * AspectRatioHelper.GetRealAspect(inputSettings.aspectRatio));
 
                 return new Vector2(w, h);
             }
@@ -104,7 +104,7 @@ namespace UnityEditor.Recorder
             if (selectedInput == null)
                 return;
 
-            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = outputFormat == MediaRecorderOutputFormat.MP4 ? EImageDimension.x2160p_4K : EImageDimension.x4320p_8K;
+            ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = outputFormat == MediaRecorderOutputFormat.MP4 ? ImageDimension.x2160p_4K : ImageDimension.x4320p_8K;
 
             var cbis = selectedInput as CBRenderTextureInputSettings;
             if (cbis != null)

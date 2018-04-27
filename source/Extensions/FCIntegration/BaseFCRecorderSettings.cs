@@ -20,7 +20,7 @@ namespace UTJ.FrameCapturer.Recorders
             m_RenderTextureSamplerSettings.flipFinalOutput = true;
         }
 
-        public void SetMaxResolution(EImageDimension maxSupportedSize)
+        public void SetMaxResolution(ImageDimension maxSupportedSize)
         {
             m_CbRenderTextureInputSettings.maxSupportedSize = maxSupportedSize;
             m_RenderTextureSamplerSettings.maxSupportedSize = maxSupportedSize;
@@ -57,7 +57,7 @@ namespace UTJ.FrameCapturer.Recorders
                 var inputSettings = (ImageInputSettings)m_VideoSelector.selected; // TODO Refactor commun code
                 
                 var h = (int)inputSettings.outputSize;
-                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+                var w = (int)(h * AspectRatioHelper.GetRealAspect(inputSettings.aspectRatio));
 
                 return new Vector2(w, h);
             }

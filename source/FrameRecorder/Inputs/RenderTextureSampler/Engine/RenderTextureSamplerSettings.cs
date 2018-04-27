@@ -18,7 +18,7 @@ namespace UnityEngine.Recorder.Input
     public class RenderTextureSamplerSettings : ImageInputSettings
     {
         public EImageSource source = EImageSource.ActiveCameras;
-        public EImageDimension renderSize = EImageDimension.x720p_HD;
+        public ImageDimension renderSize = ImageDimension.x720p_HD;
         public ESuperSamplingCount superSampling = ESuperSamplingCount.X1;
         public float superKernelPower = 16f;
         public float superKernelScale = 1f;

@@ -61,7 +61,7 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != EImageSource.RenderTexture)
             {
-                m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", EImageDimension.x4320p_8K,
+                m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", ImageDimension.x4320p_8K,
                     m_RenderSize.intValue);
                 
                 if (m_FinalSize.intValue > renderSize.intValue)
@@ -70,8 +70,8 @@ namespace UnityEditor.Recorder.Input
 
             m_FinalSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_FinalSize.intValue);
             
-            if (m_FinalSize.intValue == (int)EImageDimension.Window)
-                m_FinalSize.intValue = (int)EImageDimension.x720p_HD;
+            if (m_FinalSize.intValue == (int)ImageDimension.Window)
+                m_FinalSize.intValue = (int)ImageDimension.x720p_HD;
             
             if (m_FinalSize.intValue > renderSize.intValue)
                 renderSize.intValue = m_FinalSize.intValue;

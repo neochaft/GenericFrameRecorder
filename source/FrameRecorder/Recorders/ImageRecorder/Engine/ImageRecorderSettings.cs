@@ -58,7 +58,7 @@ namespace UnityEngine.Recorder
                 var inputSettings = (ImageInputSettings)m_VideoSelector.selected;
                 
                 var h = (int)inputSettings.outputSize;
-                var w = (int)(h * AspectRatioHelper.GetRealAR(inputSettings.aspectRatio));
+                var w = (int)(h * AspectRatioHelper.GetRealAspect(inputSettings.aspectRatio));
 
                 return new Vector2(w, h);
             }
