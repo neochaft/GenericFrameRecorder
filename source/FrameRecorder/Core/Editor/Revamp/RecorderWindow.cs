@@ -314,6 +314,25 @@ namespace UnityEditor.Recorder
             ReloadRecordings();
 
             Undo.undoRedoPerformed +=  SaveAndRepaint;
+            
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        void OnPlayModeStateChanged(PlayModeStateChange obj)
+        {
+            // TODO More synch feature?
+            // TODO Remove auto session cleanup that can causes crashes?
+            if (obj == PlayModeStateChange.ExitingPlayMode)
+            {
+                if (m_State == State.WaitingForPlayModeToStartRecording)
+                {
+                    m_State = State.Idle;
+                }
+                else if (m_State == State.Recording)
+                {
+                    StopRecording();
+                }
+            }
         }
 
         void OnGlobalSettingsChanged()
@@ -453,7 +472,9 @@ namespace UnityEditor.Recorder
             else
             {
                 if (m_State == State.Recording)
-                    m_State = State.Idle;
+                {
+                    StopRecording();
+                }
             }
             
             var enable = !ShouldDisableRecordSettings();
@@ -493,7 +514,10 @@ namespace UnityEditor.Recorder
         }
 
         void StartRecording(bool autoExitPlayMode)
-        {         
+        {        
+            if (Verbose.enabled)
+                Debug.Log("Start Recording.");
+            
             var sessions = new List<RecordingSession>();
             
             foreach (var recorder in m_Prefs.recorders)
@@ -562,6 +586,9 @@ namespace UnityEditor.Recorder
               
         void StopRecording()
         {
+            if (Verbose.enabled)
+                Debug.Log("Stop Recording.");
+            
             var recorderGO = SceneHook.GetRecorderHost();
             if (recorderGO != null)
             {
@@ -570,6 +597,9 @@ namespace UnityEditor.Recorder
             
             m_State = State.Idle;
             m_FrameCount = 0;
+            
+            // Settings might have changed after the session ended
+            m_Prefs.Save();
         }
 
         void OnRecorderSettingsGUI()
