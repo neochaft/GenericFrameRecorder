@@ -13,7 +13,7 @@ namespace UnityEngine.Recorder
     }
     
     [Serializable]
-    public class VideoSelector : InputSettingsSelector
+    class VideoSelector : InputSettingsSelector
     {      
         [SerializeField] public CBRenderTextureInputSettings cbRenderTextureInputSettings = new CBRenderTextureInputSettings();
         [SerializeField] public ScreenCaptureInputSettings screenCaptureInputSettings = new ScreenCaptureInputSettings();

@@ -18,7 +18,7 @@ namespace UnityEditor.Recorder
         {
             get
             {
-                if (string.IsNullOrEmpty(m_Selected))
+                if (string.IsNullOrEmpty(m_Selected) || !m_RecorderInputSettings.ContainsKey(m_Selected))
                     m_Selected = m_RecorderInputSettings.Keys.First();
                 
                 return m_RecorderInputSettings[m_Selected];
