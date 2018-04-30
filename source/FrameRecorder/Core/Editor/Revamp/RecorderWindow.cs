@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor.Experimental.Recorder;
 using UnityEditor.Experimental.UIElements;
@@ -207,8 +208,6 @@ namespace UnityEditor.Recorder
             };
             
             recorderListPresetButton.RegisterCallback<MouseUpEvent>(evt => ShowRecorderListMenu());
-            recorderListPresetButton.RegisterCallback<IMGUIEvent>(OnApplyPreset, Capture.Capture);
-            recorderListPresetButton.focusIndex = 0;
             
             recorderListPresetButton.Add(new Image
             {
@@ -398,18 +397,15 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void OnApplyPreset(IMGUIEvent evt)
+        void ApplyPreset(string presetPath)
         {           
-            if (evt.imguiEvent.commandName == "ObjectSelectorClosed")
-            {
-                var candidate = EditorGUIUtility.GetObjectPickerObject() as RecorderListPreset;
+            var candidate = AssetDatabase.LoadAssetAtPath<RecorderListPreset>(presetPath);
 
-                if (candidate == null)
-                    return;
+            if (candidate == null)
+                return;
                 
-                ApplySettingPreset(candidate);
-                evt.StopPropagation();
-            }
+            candidate.AppyTo(m_Prefs);
+            ReloadRecordings();
         }
 
         void ShowNewRecorderMenu()
@@ -624,12 +620,6 @@ namespace UnityEditor.Recorder
                 EditorGUILayout.LabelField("No recorder selected");
             }
         }
-
-        void ApplySettingPreset(RecorderListPreset candidate)
-        {
-            candidate.AppyTo(m_Prefs);
-            ReloadRecordings();
-        }
        
         void ShowRecorderListMenu()
         {
@@ -642,12 +632,23 @@ namespace UnityEditor.Recorder
                 if (path.Length != 0)
                     RecorderListPreset.SaveAtPath(m_Prefs, path);
             });
-            
-            menu.AddItem(new GUIContent("Load Recorder List"), false, () =>
+
+            var presets = AssetDatabase.FindAssets("t:" + typeof(RecorderListPreset).Name);
+
+            if (presets.Length > 0)
             {
-                EditorGUIUtility.ShowObjectPicker<RecorderListPreset>(null, false, "", GUIUtility.GetControlID(FocusType.Passive) + 100);
-            });
-            
+                foreach (var preset in presets)
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(preset);
+                    var fileName = Path.GetFileNameWithoutExtension(path);
+                    menu.AddItem(new GUIContent("Load Recorder List/" + fileName), false, data => { ApplyPreset((string)data); }, path);
+                }
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Load Recorder List"));
+            }
+
             var items = m_RecordingListItem.items.ToArray();
 
             if (items.Length > 0)
