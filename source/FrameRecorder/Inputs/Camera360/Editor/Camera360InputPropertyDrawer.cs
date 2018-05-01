@@ -19,8 +19,6 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_OutputHeight;
         SerializedProperty m_RenderStereo;
 
-        SerializedProperty[] m_NearAndFarProperties;
-
         protected override void Initialize(SerializedProperty property)
         {
             base.Initialize(property);
@@ -34,8 +32,6 @@ namespace UnityEditor.Recorder.Input
             m_OutputWidth = property.FindPropertyRelative("outputWidth");
             m_OutputHeight = property.FindPropertyRelative("outputHeight");
             m_RenderStereo = property.FindPropertyRelative("renderStereo");
-            
-            m_NearAndFarProperties = new[] { m_OutputWidth, m_OutputHeight };
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

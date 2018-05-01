@@ -3,7 +3,7 @@ using UnityEditor.Experimental.Animations;
 using UnityEngine;
 using UnityEngine.Recorder;
 
-namespace UnityEditor.Experimental.Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     public class AnimationInput : RecorderInput
     {

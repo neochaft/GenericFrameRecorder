@@ -1,8 +1,8 @@
-﻿using UnityEditor.Experimental.Recorder.Input;
+﻿using UnityEditor.Recorder.Input;
 using UnityEngine;
 using UnityEngine.Recorder;
 
-namespace UnityEditor.Experimental.Recorder
+namespace UnityEditor.Recorder
 {
     [Recorder(typeof(AnimationRecorderSettings), "Animation", "animation_recorder")]
     public class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
@@ -24,8 +24,8 @@ namespace UnityEditor.Experimental.Recorder
                 ars.fileNameGenerator.path.CreateDirectory();
                 clipName = "Assets/" + ars.fileNameGenerator.path.leaf + "/" + AssetDatabase.GenerateUniqueAssetPath(clipName);
                 AssetDatabase.CreateAsset(clip, clipName);
-                aInput.m_gameObjectRecorder.SaveToClip(clip);
-                aInput.m_gameObjectRecorder.ResetRecording();
+                aInput.gameObjectRecorder.SaveToClip(clip);
+                aInput.gameObjectRecorder.ResetRecording();
             }
 
             ++ars.take;

@@ -29,6 +29,18 @@ RecorderItem.disabled {
     background-color: #A0A0A0;
 }
 
+RecorderItem.disabled.selected {
+    background-color: #F4F4F4;
+}
+
+RecorderItem.hasErrors {
+    background-color: #F08080;
+}
+
+RecorderItem.hasErrors.selected {
+    background-color: #F02020;
+}
+
 RecorderItem > EditableLabel > * {
     text-color: #303030;
 }

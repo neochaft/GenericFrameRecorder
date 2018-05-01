@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.Recorder.Input;
-using UnityEditor.Recorder;
 using UnityEngine;
 using UnityEngine.Recorder;
 
-namespace UnityEditor.Experimental.FrameRecorder.Input
+namespace UnityEditor.Recorder.Input
 {
     [CustomPropertyDrawer(typeof(AnimationInputSettings))]
     public class AnimationInputSettingsPropertyDrawer : InputPropertyDrawer<AnimationInputSettings>
@@ -102,7 +100,7 @@ namespace UnityEditor.Experimental.FrameRecorder.Input
                 }
             }
 
-            EditorGUILayout.PropertyField(m_Recursive);   
+            EditorGUILayout.PropertyField(m_Recursive, new GUIContent("Record Hierarchy"));   
         }
     }
 }

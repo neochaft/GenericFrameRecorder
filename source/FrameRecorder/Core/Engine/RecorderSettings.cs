@@ -191,5 +191,15 @@ namespace UnityEngine.Recorder
         public virtual void OnAfterDuplicate()
         {
         }
+
+        public virtual bool HasErrors()
+        {
+            return recorderType == null; // TODO Check for other error states
+        }
+
+        public virtual bool HasWarnings()
+        {
+            return !ValidityCheck(new List<string>()); // TODO Have a better way to get warnings
+        }
     }
 }

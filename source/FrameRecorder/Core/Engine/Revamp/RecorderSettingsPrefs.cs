@@ -123,7 +123,7 @@ namespace UnityEngine.Recorder
             m_RecorderInfos.dictionary.Clear();
         }
         
-        public IEnumerable<RecorderSettings> recorders
+        public IEnumerable<RecorderSettings> recorderSettings
         {
             get { return m_RecorderInfos.dictionary.Keys; }
         }
@@ -156,7 +156,7 @@ namespace UnityEngine.Recorder
                 if (!Directory.Exists(fullPath))
                     Directory.CreateDirectory(fullPath);
 
-                var recordersCopy = recorders.ToArray();
+                var recordersCopy = recorderSettings.ToArray();
 
                 var objs = new UnityObject[recordersCopy.Length + 1];
                 objs[0] = this;
@@ -193,7 +193,7 @@ namespace UnityEngine.Recorder
         
         public void ApplyGlobalSettingToAllRecorders()
         {
-            foreach (var recorder in recorders)
+            foreach (var recorder in recorderSettings)
                 ApplyGlobalSetting(recorder);
         }
 

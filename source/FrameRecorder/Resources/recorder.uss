@@ -74,6 +74,12 @@ RecorderItem.selected {
     margin-right : 4;
 }
 
+RecorderItem.hasErrors > .RecorderItemIcon
+{
+    width : 16;
+    height : 16;
+}
+
 PanelSplitter {
     border-left-width:1;
     border-top-width:0;

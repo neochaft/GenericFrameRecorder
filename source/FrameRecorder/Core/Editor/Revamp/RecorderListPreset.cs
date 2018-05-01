@@ -65,7 +65,7 @@ namespace UnityEditor.Recorder
             var p = new Preset(copy) { name = model.name };
             data.m_Model = p;
             
-            foreach (var recorder in model.recorders)
+            foreach (var recorder in model.recorderSettings)
             {
                 var rp = new Preset(recorder) { name = recorder.name };
                 data.m_RecorderPresetInfos.Add(new RecorderPresetInfo(rp, model.GetRecorderDisplayName(recorder), model.IsRecorderEnabled(recorder)));

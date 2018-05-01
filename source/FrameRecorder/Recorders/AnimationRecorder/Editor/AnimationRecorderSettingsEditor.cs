@@ -1,7 +1,5 @@
-﻿using UnityEditor.Experimental.Recorder;
-using UnityEditor.Recorder;
-
-namespace UnityEditor.Experimental.FrameRecorder
+﻿
+namespace UnityEditor.Recorder
 {
     [CustomEditor(typeof(AnimationRecorderSettings))]
     public class AnimationRecorderSettingsEditor: RecorderEditor

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.Recorder.Input;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
 using UnityEngine.Recorder;
 
-namespace UnityEditor.Experimental.Recorder
+namespace UnityEditor.Recorder
 {
     [Serializable]
     public class AnimationRecorderSettings : RecorderSettings

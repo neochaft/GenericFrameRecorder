@@ -18,7 +18,7 @@ namespace UnityEngine.Recorder.Input
         {   
             var prefs = RecorderSettingsPrefs.instance;
             
-            foreach (var recorder in prefs.recorders)
+            foreach (var recorder in prefs.recorderSettings)
             {
                 if (recorder.inputsSettings.Where(inputSetting => inputSetting != this).OfType<ScreenCaptureInputSettings>().Any())
                 {

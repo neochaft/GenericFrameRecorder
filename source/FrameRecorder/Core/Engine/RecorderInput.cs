@@ -2,12 +2,6 @@ using System;
 
 namespace UnityEngine.Recorder
 {
-
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
     public class RecorderInput : IDisposable
     {
         public int SourceID { get; set; }

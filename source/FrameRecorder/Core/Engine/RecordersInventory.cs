@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEngineInternal;
-#if UNITY_EDITOR
 using UnityEditor;
 using System.Linq;
-#endif
 
 namespace UnityEngine.Recorder
 {
@@ -91,17 +88,11 @@ namespace UnityEngine.Recorder
         public static RecorderInfo GetRecorderInfo(Type recorderType)
         {
             Init();
-            if (s_Recorders.ContainsKey(recorderType.FullName))
-                return s_Recorders[recorderType.FullName];
 
-#if UNITY_EDITOR
-            return null;
-#else
-            if (AddRecorder(recorderType))
-                return s_Recorders[recorderType.FullName];
-            else
+            if (recorderType == null || string.IsNullOrEmpty(recorderType.FullName))
                 return null;
-#endif
+            
+            return s_Recorders.ContainsKey(recorderType.FullName) ? s_Recorders[recorderType.FullName] : null;
         }
 
         public static List<RecorderInfo> recorderInfos
