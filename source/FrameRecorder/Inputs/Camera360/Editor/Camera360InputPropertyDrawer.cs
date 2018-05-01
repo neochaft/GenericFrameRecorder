@@ -7,7 +7,7 @@ namespace UnityEditor.Recorder.Input
     [CustomPropertyDrawer(typeof(Camera360InputSettings))]
     public class Camera360InputPropertyDrawer : InputPropertyDrawer<Camera360InputSettings>
     {
-        static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.TaggedCamera;
+        static ImageSource m_SupportedSources = ImageSource.MainCamera | ImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
 
         SerializedProperty m_Source;
@@ -18,6 +18,8 @@ namespace UnityEditor.Recorder.Input
         SerializedProperty m_OutputWidth;
         SerializedProperty m_OutputHeight;
         SerializedProperty m_RenderStereo;
+
+        SerializedProperty[] m_NearAndFarProperties;
 
         protected override void Initialize(SerializedProperty property)
         {
@@ -32,6 +34,8 @@ namespace UnityEditor.Recorder.Input
             m_OutputWidth = property.FindPropertyRelative("outputWidth");
             m_OutputHeight = property.FindPropertyRelative("outputHeight");
             m_RenderStereo = property.FindPropertyRelative("renderStereo");
+            
+            m_NearAndFarProperties = new[] { m_OutputWidth, m_OutputHeight };
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -41,28 +45,42 @@ namespace UnityEditor.Recorder.Input
             using (var check = new EditorGUI.ChangeCheckScope())
             {
                 if (m_MaskedSourceNames == null)
-                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<EImageSource>((int)m_SupportedSources);
-                var index = EnumHelper.GetMaskedIndexFromEnumValue<EImageSource>(m_Source.intValue, (int)m_SupportedSources);
+                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<ImageSource>((int)m_SupportedSources);
+                
+                var index = EnumHelper.GetMaskedIndexFromEnumValue<ImageSource>(m_Source.intValue, (int)m_SupportedSources);
                 index = EditorGUILayout.Popup("Source", index, m_MaskedSourceNames);
 
                 if (check.changed)
-                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EImageSource>(index, (int)m_SupportedSources);
+                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<ImageSource>(index, (int)m_SupportedSources);
             }
 
-            var inputType = (EImageSource)m_Source.intValue;
-            if ((EImageSource)m_Source.intValue == EImageSource.TaggedCamera )
+            if ((ImageSource)m_Source.intValue == ImageSource.TaggedCamera )
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CameraTag, new GUIContent("Tag"));
                 --EditorGUI.indentLevel;
             }
-
-            EditorGUILayout.PropertyField(m_OutputWidth, new GUIContent("Output width"));EditorGUILayout.PropertyField(m_OutputHeight, new GUIContent("Output height"));
             
-
-            EditorGUILayout.PropertyField(m_CubeMapSz, new GUIContent("Cube map width"));
+            var outputDimensions = new int[2];
+            outputDimensions[0] = m_OutputWidth.intValue;
+            outputDimensions[1] = m_OutputHeight.intValue;
             
-            EditorGUILayout.PropertyField(m_RenderStereo, new GUIContent("Render in Stereo"));
+            if (MultiIntField(new GUIContent("360 View Output"), new [] { new GUIContent("W"), new GUIContent("H") }, outputDimensions))
+            {
+                m_OutputWidth.intValue = outputDimensions[0];
+                m_OutputHeight.intValue = outputDimensions[1];
+            }
+            
+            var cubeMapWidth = new int[1];
+            cubeMapWidth[0] = m_CubeMapSz.intValue;
+            outputDimensions[1] = m_OutputHeight.intValue;
+            
+            if (MultiIntField(new GUIContent("Cube Map"), new [] { new GUIContent("W") }, cubeMapWidth))
+            {
+                m_CubeMapSz.intValue = cubeMapWidth[0];
+            }
+            
+            EditorGUILayout.PropertyField(m_RenderStereo, new GUIContent("Stereo"));
 
             ++EditorGUI.indentLevel;
             using (new EditorGUI.DisabledScope(!m_RenderStereo.boolValue))
@@ -73,6 +91,22 @@ namespace UnityEditor.Recorder.Input
 
             if (Verbose.enabled)
                 EditorGUILayout.LabelField("Flip output", m_FlipFinalOutput.boolValue.ToString());
+        }
+
+        static bool MultiIntField(GUIContent label, GUIContent[] subLabels, int[] values)
+        {
+            var r = EditorGUILayout.GetControlRect();
+
+            var rLabel = r;
+            rLabel.width = EditorGUIUtility.labelWidth;
+            EditorGUI.LabelField(rLabel, label);
+
+            var rContent = r;
+            rContent.xMin = rLabel.xMax;
+            
+            EditorGUI.BeginChangeCheck();
+            EditorGUI.MultiIntField(rContent, subLabels, values);
+            return EditorGUI.EndChangeCheck();
         }
     }
 }

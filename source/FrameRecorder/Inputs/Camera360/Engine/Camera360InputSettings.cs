@@ -10,7 +10,7 @@ namespace UnityEngine.Recorder.Input
     [Serializable]
     public class Camera360InputSettings : ImageInputSettings
     {
-        public EImageSource source = EImageSource.MainCamera;
+        public ImageSource source = ImageSource.MainCamera;
         public string cameraTag;
         public bool flipFinalOutput = false;
         public bool renderStereo = true;
@@ -28,7 +28,7 @@ namespace UnityEngine.Recorder.Input
         {
             bool ok = base.ValidityCheck(errors);
 
-            if (source == EImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
+            if (source == ImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
             {
                 ok = false;
                 errors.Add("Missing camera tag");

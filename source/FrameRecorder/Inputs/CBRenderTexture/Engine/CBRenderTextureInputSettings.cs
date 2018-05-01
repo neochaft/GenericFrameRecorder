@@ -8,7 +8,7 @@ namespace UnityEngine.Recorder.Input
     [Serializable]
     public class CBRenderTextureInputSettings : ImageInputSettings
     {
-        public EImageSource source = EImageSource.ActiveCameras;
+        public ImageSource source = ImageSource.ActiveCameras;
         public string cameraTag;
         public bool flipFinalOutput;
         public bool allowTransparency;// { get; set; }
@@ -22,7 +22,7 @@ namespace UnityEngine.Recorder.Input
         public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
-            if (source == EImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
+            if (source == ImageSource.TaggedCamera && string.IsNullOrEmpty(cameraTag))
             {
                 ok = false;
                 errors.Add("Missing tag for camera selection");

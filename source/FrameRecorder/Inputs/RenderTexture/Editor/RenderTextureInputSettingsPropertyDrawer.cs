@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Recorder;
+﻿using UnityEngine;
 using UnityEngine.Recorder.Input;
 
 namespace UnityEditor.Recorder.Input
@@ -22,7 +20,7 @@ namespace UnityEditor.Recorder.Input
         {
             Initialize(property);
             
-            EditorGUILayout.PropertyField(m_SourceRTxtr, new GUIContent("Source"));
+            EditorGUILayout.PropertyField(m_SourceRTxtr, new GUIContent("Render Texture"));
             using (new EditorGUI.DisabledScope(true))
             {
                 var res = "N/A";

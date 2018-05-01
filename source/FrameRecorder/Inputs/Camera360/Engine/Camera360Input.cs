@@ -50,14 +50,14 @@ namespace UnityEngine.Recorder.Input
         {
             switch (settings360.source)
             {
-                case EImageSource.MainCamera:
+                case ImageSource.MainCamera:
                 {
                     if (targetCamera != Camera.main )
                         targetCamera = Camera.main;
                     break;
                 }
 
-                case EImageSource.TaggedCamera:
+                case ImageSource.TaggedCamera:
                 {
                     var tag = settings360.cameraTag;
 

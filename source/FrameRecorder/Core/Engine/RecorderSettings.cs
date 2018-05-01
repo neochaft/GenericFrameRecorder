@@ -5,7 +5,7 @@ using System.Linq;
 namespace UnityEngine.Recorder
 {
     [Flags]
-    public enum EImageSource
+    public enum ImageSource
     {
         ActiveCameras = 1,
         SceneView = 2,
@@ -28,14 +28,6 @@ namespace UnityEngine.Recorder
         TimeInterval
     }
     
-    /// <summary>
-    /// What is this: Base settings class for all Recorders.
-    /// Motivation  : All recorders share a basic common set of settings and some of them are known to the 
-    ///                 recording framework, so we need a base class to allow the framework to access these settings.
-    /// Notes: 
-    /// - Some of the fields in this class actually don't apply to ALL recorders but are so common that they are included 
-    ///   here for convenience.
-    /// </summary>
     public abstract class RecorderSettings : ScriptableObject
     {
         public FileNameGenerator fileNameGenerator;

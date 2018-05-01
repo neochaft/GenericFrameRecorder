@@ -102,7 +102,7 @@ namespace UnityEditor.Recorder
                 var p = GetInputSerializedProperty(serializedObject, inputsSetting);
                 
                 EditorGUILayout.Separator();
-                EditorGUILayout.PropertyField(p, true);
+                EditorGUILayout.PropertyField(p, new GUIContent("Capture"));
             }
         }
         

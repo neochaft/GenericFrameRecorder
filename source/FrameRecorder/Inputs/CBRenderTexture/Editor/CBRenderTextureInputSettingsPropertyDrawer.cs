@@ -8,7 +8,7 @@ namespace UnityEditor.Recorder.Input
     [CustomPropertyDrawer(typeof(CBRenderTextureInputSettings))]
     public class CBRenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<CBRenderTextureInputSettings>
     {
-        static EImageSource m_SupportedSources = EImageSource.MainCamera | EImageSource.ActiveCameras | EImageSource.TaggedCamera;
+        static ImageSource m_SupportedSources = ImageSource.MainCamera | ImageSource.ActiveCameras | ImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
 
         SerializedProperty m_Source;
@@ -45,24 +45,24 @@ namespace UnityEditor.Recorder.Input
             using (var check = new EditorGUI.ChangeCheckScope())
             {
                 if (m_MaskedSourceNames == null)
-                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<EImageSource>((int)m_SupportedSources);
+                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<ImageSource>((int)m_SupportedSources);
                 
-                var index = EnumHelper.GetMaskedIndexFromEnumValue<EImageSource>(m_Source.intValue, (int)m_SupportedSources);
+                var index = EnumHelper.GetMaskedIndexFromEnumValue<ImageSource>(m_Source.intValue, (int)m_SupportedSources);
                 index = EditorGUILayout.Popup("Source", index, m_MaskedSourceNames);
 
                 if (check.changed)
-                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EImageSource>(index, (int)m_SupportedSources);
+                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<ImageSource>(index, (int)m_SupportedSources);
             }
 
-            var inputType = (EImageSource)m_Source.intValue;
-            if ((EImageSource)m_Source.intValue == EImageSource.TaggedCamera )
+            var inputType = (ImageSource)m_Source.intValue;
+            if ((ImageSource)m_Source.intValue == ImageSource.TaggedCamera )
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CameraTag, new GUIContent("Tag"));
                 --EditorGUI.indentLevel;
             }
 
-            if (inputType != EImageSource.RenderTexture)
+            if (inputType != ImageSource.RenderTexture)
             {
                 m_RenderSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
@@ -71,7 +71,7 @@ namespace UnityEditor.Recorder.Input
                     EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio"));
                 }
 
-                if(inputType == EImageSource.ActiveCameras)
+                if(inputType == ImageSource.ActiveCameras)
                 {
                     EditorGUILayout.PropertyField(m_IncludeUI, new GUIContent("Include UI"));
                 }

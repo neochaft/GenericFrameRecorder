@@ -2,15 +2,6 @@
 
 namespace UnityEngine.Recorder
 {
-
-    /// <summary>
-    /// What is this: Standard industry frame rates.
-    /// Motivation  : Some framerates are not correctly expressible as floats du to precision, so
-    ///               so having an enum with the standard frame rates used in industry, allows us
-    ///               to correctly carry precision in the settings. Precision loss is then the fault
-    ///               of the components further down the line.
-    /// </summary>
-    //[Flags]
     public enum FrameRateType
     {
         FR_23, // 24 * 1000 / 1001
@@ -23,12 +14,7 @@ namespace UnityEngine.Recorder
         FR_60,
         FR_CUSTOM,
     }
-
-    /// <summary>
-    /// What is this: Utility class that converts  EFrameRate to text and to float 
-    /// Motivation  : since the enum is expressed as integers, need something to provide associated float values
-    ///               and also provide human readable lables for the UI.
-    /// </summary>    
+    
     public static class FrameRateHelper
     {
         public static float ToFloat(FrameRateType frameRateType, float customValue)
@@ -58,9 +44,9 @@ namespace UnityEngine.Recorder
             }
         }
 
-        public static string ToLable(FrameRateType frameRateType)
+        public static string ToLable(FrameRateType value)
         {
-            switch (frameRateType)
+            switch (value)
             {
                 case FrameRateType.FR_23:
                     return "23.97";
@@ -79,8 +65,10 @@ namespace UnityEngine.Recorder
                 case FrameRateType.FR_60:
                     return "60";
                 case FrameRateType.FR_CUSTOM:
-                default:
                     return "Custom";
+                    
+                default:
+                    return "unknown";
             }
         }       
     }

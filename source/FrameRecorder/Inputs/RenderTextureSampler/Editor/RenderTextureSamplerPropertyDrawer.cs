@@ -7,7 +7,7 @@ namespace UnityEditor.Recorder.Input
     [CustomPropertyDrawer(typeof(RenderTextureSamplerSettings))]
     public class RenderTextureSamplerPropertyDrawer : InputPropertyDrawer<RenderTextureSamplerSettings>
     {
-        static EImageSource m_SupportedSources = EImageSource.ActiveCameras | EImageSource.MainCamera | EImageSource.TaggedCamera;
+        static ImageSource m_SupportedSources = ImageSource.ActiveCameras | ImageSource.MainCamera | ImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;
         SerializedProperty m_Source;
         SerializedProperty m_RenderSize;
@@ -37,17 +37,17 @@ namespace UnityEditor.Recorder.Input
             using (var check = new EditorGUI.ChangeCheckScope())
             {
                 if (m_MaskedSourceNames == null)
-                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<EImageSource>((int)m_SupportedSources);
-                var index = EnumHelper.GetMaskedIndexFromEnumValue<EImageSource>(m_Source.intValue, (int)m_SupportedSources);
+                    m_MaskedSourceNames = EnumHelper.MaskOutEnumNames<ImageSource>((int)m_SupportedSources);
+                var index = EnumHelper.GetMaskedIndexFromEnumValue<ImageSource>(m_Source.intValue, (int)m_SupportedSources);
                 index = EditorGUILayout.Popup("Object(s) of interest", index, m_MaskedSourceNames);
 
                 if (check.changed)
-                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<EImageSource>(index, (int)m_SupportedSources);
+                    m_Source.intValue = EnumHelper.GetEnumValueFromMaskedIndex<ImageSource>(index, (int)m_SupportedSources);
             }
             
-            var inputType = (EImageSource)m_Source.intValue;
+            var inputType = (ImageSource)m_Source.intValue;
 
-            if ((EImageSource)m_Source.intValue == EImageSource.TaggedCamera)
+            if ((ImageSource)m_Source.intValue == ImageSource.TaggedCamera)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CameraTag, new GUIContent("Tag"));
@@ -59,7 +59,7 @@ namespace UnityEditor.Recorder.Input
 
             var renderSize = m_RenderSize;
 
-            if (inputType != EImageSource.RenderTexture)
+            if (inputType != ImageSource.RenderTexture)
             {
                 m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", ImageDimension.x4320p_8K,
                     m_RenderSize.intValue);

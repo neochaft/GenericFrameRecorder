@@ -153,7 +153,7 @@ namespace UnityEngine.Recorder.Input
         {
             switch (rtsSettings.source)
             {
-                case EImageSource.ActiveCameras:
+                case ImageSource.ActiveCameras:
                 {
                     bool sort = false;
 
@@ -189,7 +189,7 @@ namespace UnityEngine.Recorder.Input
                     }
                     break;
                 }
-                case EImageSource.MainCamera:
+                case ImageSource.MainCamera:
                 {
                     var cam = Camera.main;
                     if (m_hookedCameras.Count > 0)
@@ -210,7 +210,7 @@ namespace UnityEngine.Recorder.Input
                     m_hookedCameras.Add(hookedCam);
                     break;
                 }
-                case EImageSource.TaggedCamera:
+                case ImageSource.TaggedCamera:
                 {
                     GameObject[] taggedObjs;
                     var tag = (settings as RenderTextureSamplerSettings).cameraTag;

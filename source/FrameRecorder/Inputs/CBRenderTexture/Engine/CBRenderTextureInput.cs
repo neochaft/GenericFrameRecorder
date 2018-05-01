@@ -86,9 +86,9 @@ namespace UnityEngine.Recorder.Input
             m_quad = CreateFullscreenQuad();
             switch (cbSettings.source)
             {
-                case EImageSource.ActiveCameras:
-                case EImageSource.MainCamera:
-                case EImageSource.TaggedCamera:
+                case ImageSource.ActiveCameras:
+                case ImageSource.MainCamera:
+                case ImageSource.TaggedCamera:
                 {
                     int screenWidth = Screen.width;
                     int screenHeight = Screen.height;
@@ -166,7 +166,7 @@ namespace UnityEngine.Recorder.Input
         {
             switch (cbSettings.source)
             {
-                case EImageSource.ActiveCameras:
+                case ImageSource.ActiveCameras:
                 {
                     if (targetCamera == null)
                     {
@@ -186,7 +186,7 @@ namespace UnityEngine.Recorder.Input
                     break;
                 }
 
-                case EImageSource.MainCamera:
+                case ImageSource.MainCamera:
                 {
                     if (targetCamera != Camera.main )
                     {
@@ -195,7 +195,7 @@ namespace UnityEngine.Recorder.Input
                     }
                     break;
                 }
-                case EImageSource.TaggedCamera:
+                case ImageSource.TaggedCamera:
                 {
                     var tag = (settings as CBRenderTextureInputSettings).cameraTag;
 
