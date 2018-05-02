@@ -5,8 +5,8 @@ using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [Obsolete("'UTJ/EXR' is obsolete, concider using 'Image Sequence' instead", false)]
-    [Recorder(typeof(EXRRecorderSettings), "Legacy (UTJ)/OpenEXR")]
+    [Obsolete("'Legacy/OpenEXR' is obsolete, concider using 'Image Sequence' instead", false)]
+    [Recorder(typeof(EXRRecorderSettings), "Legacy/OpenEXR")]
     public class EXRRecorder : GenericRecorder<EXRRecorderSettings>
     {
         static readonly string[] s_channelNames = { "R", "G", "B", "A" };

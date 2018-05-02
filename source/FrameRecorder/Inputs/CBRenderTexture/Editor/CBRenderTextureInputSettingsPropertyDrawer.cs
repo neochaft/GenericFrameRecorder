@@ -77,7 +77,7 @@ namespace UnityEditor.Recorder.Input
                 }
             }
 
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 EditorGUILayout.LabelField("Flip output", m_FlipFinalOutput.boolValue.ToString());
         }
     }

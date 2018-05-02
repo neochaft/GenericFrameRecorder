@@ -114,7 +114,7 @@ namespace UnityEditor.Recorder.Input
                     }
             })();
 
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log(string.Format(
                               "AudioInput.BeginRecording for capture frame rate {0}", Time.captureFramerate));
 
@@ -128,7 +128,7 @@ namespace UnityEditor.Recorder.Input
                 return;
 
             var sampleFrameCount = (uint)AudioRenderer.GetSampleCountForCaptureFrame();
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log(string.Format("AudioInput.NewFrameReady {0} audio sample frames @ {1} ch",
                                         sampleFrameCount, m_ChannelCount));
 

@@ -77,7 +77,7 @@ namespace UnityEditor.Recorder.Input
                 renderSize.intValue = m_FinalSize.intValue;
             
             
-            if (Verbose.enabled)
+            if (Options.debugMode)
             {
                 EditorGUILayout.LabelField("Color Space", target.colorSpace.ToString());
                 EditorGUILayout.LabelField("Flip output", m_FlipFinalOutput.boolValue.ToString());

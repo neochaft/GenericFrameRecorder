@@ -166,7 +166,7 @@ namespace UnityEngine.Recorder
 
                 InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
                 
-                if (Verbose.enabled)
+                if (Options.debugMode)
                     Debug.Log("Recorder settings saved");
             }
             catch (Exception e)

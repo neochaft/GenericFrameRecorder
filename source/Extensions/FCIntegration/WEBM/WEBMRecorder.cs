@@ -5,8 +5,8 @@ using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [Obsolete("'UTJ/WEBM' is obsolete, concider using 'Unity/Movie' instead", false)]
-    [Recorder(typeof(WEBMRecorderSettings), "Legacy (UTJ)/WebM" )]
+    [Obsolete("'Legacy/WEBM' is obsolete, concider using 'Unity/Movie' instead", false)]
+    [Recorder(typeof(WEBMRecorderSettings), "Legacy/WebM" )]
     public class WEBMRecorder : GenericRecorder<WEBMRecorderSettings>
     {
         fcAPI.fcWebMContext m_ctx;

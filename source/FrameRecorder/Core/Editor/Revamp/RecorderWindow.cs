@@ -9,6 +9,7 @@ using UnityEngine.Recorder;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Recorder.Input;
+using UTJ.FrameCapturer.Recorders;
 using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.Recorder
@@ -44,6 +45,7 @@ namespace UnityEditor.Recorder
         RecorderSettingsPrefs m_Prefs;
         
         static List<RecorderInfo> s_BuiltInRecorderInfos;
+        static List<RecorderInfo> s_LegacyRecorderInfos;
         
         enum State
         {
@@ -312,7 +314,7 @@ namespace UnityEditor.Recorder
             
             ReloadRecordings();
 
-            Undo.undoRedoPerformed +=  SaveAndRepaint;
+            Undo.undoRedoPerformed += SaveAndRepaint;
             
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
@@ -416,33 +418,59 @@ namespace UnityEditor.Recorder
                 {
                     RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
                     RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder))
+                };
+            }
+
+            if (s_LegacyRecorderInfos == null)
+            {
+                s_LegacyRecorderInfos = new List<RecorderInfo>
+                {
+                    RecordersInventory.GetRecorderInfo(typeof(MP4Recorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(EXRRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(GIFRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(PNGRecorder)),
+                    RecordersInventory.GetRecorderInfo(typeof(WEBMRecorder))
                 };
             }
 
             var newRecordMenu = new GenericMenu();
                 
             foreach (var info in s_BuiltInRecorderInfos)
+                AddRecorderInfoToMenu(info, newRecordMenu);
+
+            if (Options.showLegacyRecorders)
             {
-                if (ShouldDisableRecordSettings())
-                    newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
-                else
-                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+                newRecordMenu.AddSeparator(string.Empty);
+                
+                foreach (var info in s_LegacyRecorderInfos)
+                    AddRecorderInfoToMenu(info, newRecordMenu);
             }
                 
-            newRecordMenu.AddSeparator(string.Empty);
-                
-            var recorderList = RecordersInventory.recorderInfos.Where(r => !s_BuiltInRecorderInfos.Contains(r));
-                
-            foreach (var info in recorderList)
+            var recorderList = RecordersInventory.recorderInfos.Where(r => !s_BuiltInRecorderInfos.Contains(r) && !s_LegacyRecorderInfos.Contains(r));
+
+            if (recorderList.Any())
             {
-                if (ShouldDisableRecordSettings())
-                    newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
-                else
-                    newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
-            }
+                newRecordMenu.AddSeparator(string.Empty);
                 
+                foreach (var info in recorderList)
+                {
+                    if (ShouldDisableRecordSettings())
+                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
+                    else
+                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
+                }
+            }
+            
             newRecordMenu.ShowAsContext();
+        }
+
+        void AddRecorderInfoToMenu(RecorderInfo info, GenericMenu menu)
+        {
+            if (ShouldDisableRecordSettings())
+                menu.AddDisabledItem(new GUIContent(info.displayName));
+            else
+                menu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
         }
         
         RecorderItem CreateRecorderItem(RecorderSettings recorderSettings)
@@ -519,7 +547,7 @@ namespace UnityEditor.Recorder
 
         void StartRecording(bool autoExitPlayMode)
         {        
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log("Start Recording.");
             
             var sessions = new List<RecordingSession>();
@@ -528,7 +556,7 @@ namespace UnityEditor.Recorder
             {
                 if (recorderSetting == null)
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("Ignoring unknown recorder.");
                     
                     continue;
@@ -538,7 +566,7 @@ namespace UnityEditor.Recorder
 
                 if (recorderSetting.HasErrors())
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("Ignoring invalid recorder '" + recorderSetting.name + "'");
                     
                     continue;
@@ -546,13 +574,13 @@ namespace UnityEditor.Recorder
                 
                 if (recorderSetting.HasWarnings())
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.LogWarning("Recorder '" + recorderSetting.name + "' has warnings and may not record properly.");
                 }
                 
                 if (!m_Prefs.IsRecorderEnabled(recorderSetting))
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");
                     
                     continue;
@@ -612,7 +640,7 @@ namespace UnityEditor.Recorder
               
         void StopRecording()
         {
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log("Stop Recording.");
             
             var recorderGO = SceneHook.GetRecorderHost();
@@ -634,7 +662,7 @@ namespace UnityEditor.Recorder
             {
                 if (m_SelectedRecorderItem.state == RecorderItem.State.HasErrors)
                 {
-                    EditorGUILayout.LabelField("Recorder has errors"); // TODO Better messaging
+                    EditorGUILayout.LabelField("Missing reference to the recorder."); // TODO Better messaging
                 }
                 else
                 {
@@ -784,6 +812,9 @@ namespace UnityEditor.Recorder
 
             if (m_RecorderSettingsPrefsEditor != null)
                 DestroyImmediate(m_RecorderSettingsPrefsEditor);
+            
+            Undo.undoRedoPerformed -= SaveAndRepaint;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         }
 
         void AddLastAndSelect(RecorderSettings recorder, string desiredName, bool enabled)

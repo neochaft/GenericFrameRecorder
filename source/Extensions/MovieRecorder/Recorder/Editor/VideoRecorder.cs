@@ -100,7 +100,7 @@ namespace UnityEditor.Recorder
                 var input = (BaseRenderTextureInput)m_Inputs[0];
                 if (input == null)
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("MediaRecorder could not find input.");
                     return false;
                 }
@@ -110,7 +110,7 @@ namespace UnityEditor.Recorder
 
             if (width <= 0 || height <= 0)
             {
-                if (Verbose.enabled)
+                if (Options.debugMode)
                     Debug.Log(string.Format(
                         "MovieRecorder got invalid input resolution {0} x {1}.", width, height));
                 return false;
@@ -139,7 +139,7 @@ namespace UnityEditor.Recorder
                 bitRateMode = m_Settings.videoBitRateMode
             };
 
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log(
                     string.Format(
                         "MovieRecorder starting to write video {0}x{1}@[{2}/{3}] fps into {4}",
@@ -161,7 +161,7 @@ namespace UnityEditor.Recorder
                 };
             audioAttrsList.Add(audioAttrs);
 
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log( string.Format( "MovieRecorder starting to write audio {0}ch @ {1}Hz", audioAttrs.channelCount, audioAttrs.sampleRate.numerator));
 
 #if RECORD_AUDIO_MIXERS
@@ -192,7 +192,7 @@ namespace UnityEditor.Recorder
             }
             catch
             {
-                if (Verbose.enabled)
+                if (Options.debugMode)
                     Debug.LogError("MovieRecorder unable to create MovieEncoder.");
             }
 

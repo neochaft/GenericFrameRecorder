@@ -56,7 +56,7 @@ namespace UnityEngine.Recorder
             if (!Application.runInBackground)
             {
                 Application.runInBackground = true;
-                if (Verbose.enabled)
+                if (Options.debugMode)
                     Debug.Log("Recording sessions is enabling Application.runInBackground!");
             }
         }
@@ -153,13 +153,13 @@ namespace UnityEngine.Recorder
 
                 if (sleep > 2)
                 {
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log(string.Format("Recording session info => dT: {0:F1}s, Target dT: {1:F1}s, Retarding: {2}ms, fps: {3:F1}", elapsed, target, sleep, frameCount / elapsed));
                     System.Threading.Thread.Sleep(Math.Min(sleep, 1000));
                 }
                 else if (sleep < -frameLen)
                     m_InitialFrame--;
-                else if (Verbose.enabled)
+                else if (Options.debugMode)
                     Debug.Log(string.Format("Recording session info => fps: {0:F1}", frameCount / elapsed));
 
                 // reset every 30 frames

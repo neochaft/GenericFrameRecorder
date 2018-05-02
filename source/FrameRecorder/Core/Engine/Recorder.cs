@@ -41,7 +41,7 @@ namespace UnityEngine.Recorder
                 if (sm_CaptureFrameRateCount == 0)
                 {
                     Time.captureFramerate = 0;
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("Recorder resetting 'CaptureFrameRate' to zero");
                 }
             }
@@ -51,7 +51,7 @@ namespace UnityEngine.Recorder
 
         public virtual void SessionCreated(RecordingSession session)
         {
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log(string.Format("Recorder {0} session created", GetType().Name));
 
             settings.SelfAdjustSettings(); // ignore return value.
@@ -61,7 +61,7 @@ namespace UnityEngine.Recorder
             {
                 if (Time.captureFramerate != 0 && fixedRate != Time.captureFramerate )
                     Debug.LogError(string.Format("Recorder {0} is set to record at a fixed rate and another component has already set a conflicting value for [Time.captureFramerate], new value being applied : {1}!", GetType().Name, fixedRate));
-                else if( Time.captureFramerate == 0 && Verbose.enabled )
+                else if( Time.captureFramerate == 0 && Options.debugMode )
                     Debug.Log("Frame recorder set fixed frame rate to " + fixedRate);
 
                 Time.captureFramerate = fixedRate;
@@ -85,7 +85,7 @@ namespace UnityEngine.Recorder
             if (recording)
                 throw new Exception("Already recording!");
 
-            if (Verbose.enabled)
+            if (Options.debugMode)
                 Debug.Log(string.Format("Recorder {0} starting to record", GetType().Name));
          
             return recording = true;
@@ -104,7 +104,7 @@ namespace UnityEngine.Recorder
                 if (sm_CaptureFrameRateCount == 0)
                 {
                     Time.captureFramerate = 0;
-                    if (Verbose.enabled)
+                    if (Options.debugMode)
                         Debug.Log("Recorder resetting 'CaptureFrameRate' to zero");
                 }
             }
@@ -115,7 +115,7 @@ namespace UnityEngine.Recorder
                     input.Dispose();
             }
 
-            if(Verbose.enabled)
+            if(Options.debugMode)
                 Debug.Log(string.Format("{0} recording stopped, total frame count: {1}", GetType().Name, recordedFramesCount));
         }
         

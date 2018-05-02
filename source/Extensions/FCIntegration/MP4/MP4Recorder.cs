@@ -5,8 +5,8 @@ using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [Obsolete("'UTJ/MP4' is obsolete, concider using 'Movie' instead", false)]
-    [Recorder(typeof(MP4RecorderSettings), "Legacy (UTJ)/MP4" )]
+    [Obsolete("'Legacy/MP4' is obsolete, concider using 'Movie' instead", false)]
+    [Recorder(typeof(MP4RecorderSettings), "Legacy/MP4" )]
     public class MP4Recorder : GenericRecorder<MP4RecorderSettings>
     {
         fcAPI.fcMP4Context m_ctx;
