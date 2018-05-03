@@ -20,7 +20,10 @@ namespace UnityEditor.Recorder
             
             fileNameGenerator.AddWildcard(goWildcard, GameObjectNameResolver);
             fileNameGenerator.AddWildcard(takeWildcard, session => take.ToString("000"));
-            fileNameGenerator.pattern = "animation_" + goWildcard + "_" + takeWildcard;
+
+            fileNameGenerator.forceAssetsFolder = true;
+            fileNameGenerator.root = OutputPath.Root.AssetsFolder;
+            fileNameGenerator.fileName = "animation_" + goWildcard + "_" + takeWildcard;
             
         }
 

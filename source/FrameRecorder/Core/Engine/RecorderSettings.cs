@@ -117,11 +117,8 @@ namespace UnityEngine.Recorder
         {
             fileNameGenerator = new FileNameGenerator(this)
             {
-                path =
-                {
-                    root = OutputPath.ERoot.Absolute,
-                    leaf = "Recordings"
-                }
+                root = OutputPath.Root.Project,
+                leaf = "Recordings"
             };
         }
 

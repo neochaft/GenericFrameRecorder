@@ -15,7 +15,7 @@ namespace UTJ.FrameCapturer.Recorders
         {
             if (!base.BeginRecording(session)) { return false; }
 
-            m_Settings.fileNameGenerator.path.CreateDirectory();
+            m_Settings.fileNameGenerator.CreateDirectory(session);
 
             m_ctx = fcAPI.fcPngCreateContext(ref m_Settings.m_PngEncoderSettings);
             return m_ctx;
@@ -34,7 +34,7 @@ namespace UTJ.FrameCapturer.Recorders
 
             var input = (BaseRenderTextureInput)m_Inputs[0];
             var frame = input.outputRT;
-            var path = m_Settings.fileNameGenerator.BuildFullPath(session);
+            var path = m_Settings.fileNameGenerator.BuildAbsolutePath(session);
 
             fcAPI.fcLock(frame, (data, fmt) =>
             {

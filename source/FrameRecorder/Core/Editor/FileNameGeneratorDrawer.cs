@@ -7,7 +7,7 @@ namespace UnityEditor.Recorder
     [CustomPropertyDrawer(typeof(FileNameGenerator))]
     public class FileNameGeneratorDrawer : TargetedPropertyDrawer<FileNameGenerator>
     {
-        SerializedProperty m_Pattern;
+        SerializedProperty m_FileName;
         SerializedProperty m_Path;
 
         protected override void Initialize(SerializedProperty property)
@@ -17,8 +17,8 @@ namespace UnityEditor.Recorder
             
             base.Initialize(property);
             
-            m_Pattern = property.FindPropertyRelative("m_Pattern");
-            m_Path = property.FindPropertyRelative("path");
+            m_FileName = property.FindPropertyRelative("m_FileName");
+            m_Path = property.FindPropertyRelative("m_Path");
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -33,14 +33,8 @@ namespace UnityEditor.Recorder
             var txtRect = new Rect(position.x, position.y, txtWidth, position.height);
             var tagRect = new Rect(position.x + txtWidth + 5, position.y, tagWidth, position.height);
             
-            m_Pattern.stringValue = GUI.TextField(txtRect, m_Pattern.stringValue);
+            m_FileName.stringValue = GUI.TextField(txtRect, m_FileName.stringValue);
             var editor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
-         
-//            EditorGUILayout.LabelField(string.Format("Selected text: {0} - Pos: {1} -- {2}",
-//                editor.SelectedText,
-//                editor.position,
-//                editor.cursorIndex));
-            
             
             if (Event.current.type == EventType.KeyUp && (Event.current.modifiers == EventModifiers.Control || Event.current.modifiers == EventModifiers.Command))
             {
@@ -53,7 +47,7 @@ namespace UnityEditor.Recorder
                 {
                     Event.current.Use();
                     editor.Paste();
-                    m_Pattern.stringValue = editor.text;
+                    m_FileName.stringValue = editor.text;
                 }
             }
 
@@ -66,8 +60,8 @@ namespace UnityEditor.Recorder
                     var pattern = w.pattern;
                     menu.AddItem(new GUIContent(w.label), false, () =>
                     {
-                        m_Pattern.stringValue = InsertTag(pattern, m_Pattern.stringValue, editor);
-                        m_Pattern.serializedObject.ApplyModifiedProperties();
+                        m_FileName.stringValue = InsertTag(pattern, m_FileName.stringValue, editor);
+                        m_FileName.serializedObject.ApplyModifiedProperties();
                     });
                 }
                 
@@ -79,7 +73,7 @@ namespace UnityEditor.Recorder
             var r = EditorGUILayout.GetControlRect();
             r.xMin = position.xMin;
             
-            EditorGUI.SelectableLabel(r, target.BuildFullPath(null));
+            EditorGUI.SelectableLabel(r, target.BuildAbsolutePath(null));
             
             EditorGUI.EndProperty();
         }

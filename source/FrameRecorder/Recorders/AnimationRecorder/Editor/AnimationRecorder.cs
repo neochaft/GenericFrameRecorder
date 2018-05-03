@@ -19,10 +19,11 @@ namespace UnityEditor.Recorder
             {
                 var aInput = (AnimationInput)input;
                 var clip = new AnimationClip();
-                var clipName = ars.fileNameGenerator.BuildFileName(session);
                 
-                ars.fileNameGenerator.path.CreateDirectory();
-                clipName = "Assets/" + ars.fileNameGenerator.path.leaf + "/" + AssetDatabase.GenerateUniqueAssetPath(clipName);
+                ars.fileNameGenerator.CreateDirectory(session);
+                
+                var clipName = ars.fileNameGenerator.BuildAbsolutePath(session).Replace(Application.dataPath, "Assets");
+                
                 AssetDatabase.CreateAsset(clip, clipName);
                 aInput.gameObjectRecorder.SaveToClip(clip);
                 aInput.gameObjectRecorder.ResetRecording();

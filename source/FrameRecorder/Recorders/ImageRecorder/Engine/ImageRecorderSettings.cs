@@ -30,7 +30,7 @@ namespace UnityEngine.Recorder
 
         public ImageRecorderSettings()
         {
-            fileNameGenerator.pattern = "image_" + FileNameGenerator.DefaultWildcard.Frame;
+            fileNameGenerator.fileName = "image_" + FileNameGenerator.DefaultWildcard.Frame;
         }
         
         public override string extension
@@ -67,13 +67,8 @@ namespace UnityEngine.Recorder
         public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
-
-            if( string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath() ))
-            {
-                ok = false;
-                errors.Add("Missing destination path.");
-            } 
-            if(  string.IsNullOrEmpty(fileNameGenerator.pattern))
+ 
+            if(string.IsNullOrEmpty(fileNameGenerator.fileName))
             {
                 ok = false;
                 errors.Add("missing file name");

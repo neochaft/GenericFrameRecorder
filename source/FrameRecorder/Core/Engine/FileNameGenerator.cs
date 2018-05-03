@@ -38,38 +38,51 @@ namespace UnityEngine.Recorder
     {
         static string s_ProjectName;
 
+        [SerializeField] OutputPath m_Path = new OutputPath();
+        [SerializeField] string m_FileName;
+        
         readonly List<Wildcard> m_Wildcards;
         
         public IEnumerable<Wildcard> wildcards
         {
             get { return m_Wildcards; }
         }
+        
+        public string fileName {
+            get { return m_FileName;}
+            set { m_FileName = value;  }
+        }
 
-        public OutputPath path;
+        public OutputPath.Root root
+        {
+            get { return m_Path.root; }
+            set { m_Path.root = value; }
+        }
+        
+        public string leaf
+        {
+            get { return m_Path.leaf; }
+            set { m_Path.leaf = value; }
+        }
 
-        [SerializeField]
-        string m_Pattern;
-
-        string m_FramePattern;
-        string m_FramePatternDst;
-
-        public string pattern {
-            get { return m_Pattern;}
-            set { m_Pattern = value;  }
+        public bool forceAssetsFolder
+        {
+            get { return m_Path.forceAssetsFolder; }
+            set { m_Path.forceAssetsFolder = value; }
         }
 
         readonly RecorderSettings m_RecorderSettings;
         
         public static class DefaultWildcard
         {
-            public static readonly string Time = FileNameGenerator.GeneratePattern("Time");
-            public static readonly string Date = FileNameGenerator.GeneratePattern("Date");
-            public static readonly string Project = FileNameGenerator.GeneratePattern("Project");
-            public static readonly string Product = FileNameGenerator.GeneratePattern("Product");
-            public static readonly string Scene = FileNameGenerator.GeneratePattern("Scene");
-            public static readonly string Resolution = FileNameGenerator.GeneratePattern("Resolution");
-            public static readonly string Frame = FileNameGenerator.GeneratePattern("Frame");
-            public static readonly string Extension = FileNameGenerator.GeneratePattern("Extension");
+            public static readonly string Time = GeneratePattern("Time");
+            public static readonly string Date = GeneratePattern("Date");
+            public static readonly string Project = GeneratePattern("Project");
+            public static readonly string Product = GeneratePattern("Product");
+            public static readonly string Scene = GeneratePattern("Scene");
+            public static readonly string Resolution = GeneratePattern("Resolution");
+            public static readonly string Frame = GeneratePattern("Frame");
+            public static readonly string Extension = GeneratePattern("Extension");
         }
         
         public FileNameGenerator(RecorderSettings recorderSettings)
@@ -133,6 +146,16 @@ namespace UnityEngine.Recorder
 
         static string ProjectNameResolver(RecordingSession session)
         {
+            if (string.IsNullOrEmpty(s_ProjectName))
+            {
+#if UNITY_EDITOR
+                var parts = Application.dataPath.Split('/');
+                s_ProjectName = parts[parts.Length - 2];
+#else
+                s_projectName = "N/A";
+#endif
+            }
+            
             return s_ProjectName;
         }
 
@@ -145,35 +168,43 @@ namespace UnityEngine.Recorder
 #endif
         }
 
-        public string BuildFullPath(RecordingSession session)
+        public string BuildAbsolutePath(RecordingSession session)
         {
-            var fileName = BuildFileName(session);
-            
-            fileName = Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
-            
-            return path.GetFullPath() + "/" + fileName; // TODO Sanitize the \ per platform
+            return BuildPath(m_Path.GetFullPath(), session);
+        }
+        
+        public string BuildRelativePath(RecordingSession session)
+        {
+            return BuildPath(m_Path.leaf, session);
         }
 
-        public string BuildFileName (RecordingSession session)
+        public void CreateDirectory(RecordingSession session)
         {
-            if (string.IsNullOrEmpty(s_ProjectName))
-            {
-#if UNITY_EDITOR
-                var parts = Application.dataPath.Split('/');
-                s_ProjectName = parts[parts.Length - 2];                  
-#else
-                s_projectName = "N/A";
-#endif
-            }
-
-            var fileName = pattern;
-
-            foreach (var w in wildcards)
-                fileName = fileName.Replace(w.pattern, w.Resolve(session));
-
-            fileName += "." + ExtensionResolver(session);
+            var path = ApplyWildcards(m_Path.GetFullPath(), session);
+            if(!string.IsNullOrEmpty(path) && !Directory.Exists(path))
+                Directory.CreateDirectory(path);
+        }
+        
+        string BuildFileName(RecordingSession session)
+        {
+            var f = ApplyWildcards(m_FileName, session);
+            f = Path.GetInvalidFileNameChars().Aggregate(f, (current, c) => current.Replace(c.ToString(), string.Empty));
             
-            return fileName;
+            return f + "." + ExtensionResolver(session);
+        }
+        
+        string BuildPath(string path, RecordingSession session)
+        {
+            path = ApplyWildcards(path, session);
+            return path + "/" + BuildFileName(session); // TODO Sanitize the \ per platform
+        }
+
+        string ApplyWildcards(string str, RecordingSession session)
+        {
+            foreach (var w in wildcards)
+                str = str.Replace(w.pattern, w.Resolve(session));
+            
+            return str;
         }
 
     }

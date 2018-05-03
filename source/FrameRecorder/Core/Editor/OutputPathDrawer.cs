@@ -4,36 +4,64 @@ using UnityEngine.Recorder;
 namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(OutputPath))]
-    class OutputPathDrawer : PropertyDrawer
+    class OutputPathDrawer : TargetedPropertyDrawer<OutputPath>
     {
+        SerializedProperty m_RootProperty;
+        SerializedProperty m_LeafProperty;
+        SerializedProperty m_ForceAssetFolder;
+
+        protected override void Initialize(SerializedProperty property)
+        {
+            base.Initialize(property);
+            
+            if (m_RootProperty == null)
+                m_RootProperty = property.FindPropertyRelative("m_Root");
+            
+            if (m_LeafProperty == null)
+                m_LeafProperty = property.FindPropertyRelative("m_Leaf");
+            
+            if (m_ForceAssetFolder == null)
+                m_ForceAssetFolder = property.FindPropertyRelative("m_ForceAssetFolder");
+        }
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            Initialize(property);
+            
             EditorGUI.BeginProperty(position, label, property);
             position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            const float rootWidth = 110;
-            const float btnWidth = 30;
-            float leafWidth = position.width - rootWidth - btnWidth - 10;
+            const float rootWidth = 110.0f;
+            const float btnWidth = 30.0f;
+            
+            var leafWidth = target.forceAssetsFolder ? position.width - rootWidth : position.width - rootWidth - btnWidth - 10;
             var rootRect = new Rect(position.x, position.y, rootWidth, position.height);
             var leafRect = new Rect(position.x + rootWidth + 5, position.y, leafWidth, position.height);
             var btnRect = new Rect(position.x + rootWidth  + leafWidth + 10, position.y, btnWidth, position.height);
 
-
-            EditorGUI.PropertyField(rootRect, property.FindPropertyRelative("m_root"), GUIContent.none);
-            EditorGUI.PropertyField(leafRect, property.FindPropertyRelative("m_leaf"), GUIContent.none);
-
-            var fullPath = OutputPath.GetFullPath( (OutputPath.ERoot)property.FindPropertyRelative("m_root").intValue, property.FindPropertyRelative("m_leaf").stringValue);
-            if (GUI.Button( btnRect, new GUIContent("...", fullPath)))
+            using (new EditorGUI.DisabledScope(target.forceAssetsFolder))
             {
-                var newPath = EditorUtility.OpenFolderPanel("Select output location", fullPath, "");
-                if (!string.IsNullOrEmpty(newPath))
+                EditorGUI.PropertyField(rootRect, m_RootProperty, GUIContent.none);
+            }
+
+            EditorGUI.PropertyField(leafRect, m_LeafProperty, GUIContent.none);
+
+            var fullPath = OutputPath.GetFullPath((OutputPath.Root)m_RootProperty.intValue, m_LeafProperty.stringValue);
+
+            if (!target.forceAssetsFolder)
+            {
+                if (GUI.Button(btnRect, new GUIContent("...", fullPath)))
                 {
-                    var newValue = OutputPath.FromPath(newPath);
-                    property.FindPropertyRelative("m_root").intValue = (int)newValue.root;
-                    property.FindPropertyRelative("m_leaf").stringValue = newValue.leaf;
+                    var newPath = EditorUtility.OpenFolderPanel("Select output location", fullPath, "");
+                    if (!string.IsNullOrEmpty(newPath))
+                    {
+                        var newValue = OutputPath.FromPath(newPath);
+                        m_RootProperty.intValue = (int) newValue.root;
+                        m_LeafProperty.stringValue = newValue.leaf;
+                    }
                 }
             }
 

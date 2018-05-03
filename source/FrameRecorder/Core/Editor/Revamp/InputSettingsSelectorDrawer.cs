@@ -49,7 +49,9 @@ namespace UnityEditor.Recorder
             var sp = m_IndexToProperty[newIndex];
             selected.stringValue = sp.name;
 
+            ++EditorGUI.indentLevel;
             EditorGUILayout.PropertyField(sp, true);
+            --EditorGUI.indentLevel;
         }
 
         protected override void Initialize(SerializedProperty property)

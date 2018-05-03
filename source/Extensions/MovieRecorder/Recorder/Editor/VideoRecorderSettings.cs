@@ -48,21 +48,15 @@ namespace UnityEditor.Recorder
         
         public VideoRecorderSettings()
         {
-            fileNameGenerator.pattern = "movie";
+            fileNameGenerator.fileName = "movie";
             ((ImageInputSettings)m_VideoSelector.selected).maxSupportedSize = ImageDimension.x2160p_4K;
         }
 
         public override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
-
-            if(string.IsNullOrEmpty(fileNameGenerator.path.GetFullPath()))
-            {
-                errors.Add("Missing destination path");
-                ok = false;
-            } 
             
-            if( string.IsNullOrEmpty(fileNameGenerator.pattern))
+            if( string.IsNullOrEmpty(fileNameGenerator.fileName))
             {
                 errors.Add("Missing file name");
                 ok = false;

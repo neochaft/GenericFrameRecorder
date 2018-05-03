@@ -9,7 +9,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public PNGRecorderSettings()
         {
-            fileNameGenerator.pattern = "image_" + FileNameGenerator.DefaultWildcard.Frame;
+            fileNameGenerator.fileName = "image_" + FileNameGenerator.DefaultWildcard.Frame;
         }
         
         public override string extension
