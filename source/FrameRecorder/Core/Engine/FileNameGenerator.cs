@@ -152,7 +152,7 @@ namespace UnityEngine.Recorder
                 var parts = Application.dataPath.Split('/');
                 s_ProjectName = parts[parts.Length - 2];
 #else
-                s_projectName = "N/A";
+                s_ProjectName = "N/A";
 #endif
             }
             

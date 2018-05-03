@@ -76,7 +76,7 @@ namespace UnityEngine.Recorder
         static readonly string s_Name = "recorder";
         static readonly string s_Extension = ".pref";
         
-        public static RecorderSettingsPrefs LoadOrCreate()
+        static RecorderSettingsPrefs LoadOrCreate()
         {
             var prefPath = GetRelativePath(s_Name);
             RecorderSettingsPrefs prefs;

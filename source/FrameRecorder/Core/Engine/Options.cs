@@ -2,16 +2,14 @@
 
 namespace UnityEngine.Recorder
 {
-    public class Options
-    {
-        const string s_DebugModeMenuItem = "Tools/Recorder/Debug mode";
-        const string s_ShowLegacyModeMenuItem = "Tools/Recorder/Show Legacy Recorders";
-        
+    public static class Options
+    {   
         static bool s_debugMode;
 
         public static bool debugMode
         {
             get { return s_debugMode; }
+#if UNITY_EDITOR
             private set
             {
                 EditorPrefs.SetBool(s_DebugModeMenuItem, value);
@@ -22,7 +20,12 @@ namespace UnityEngine.Recorder
                     go.hideFlags = value ? HideFlags.None : HideFlags.HideInHierarchy;
                 }
             }
+#endif
         }
+    
+#if UNITY_EDITOR
+        const string s_DebugModeMenuItem = "Tools/Recorder/Debug mode";
+        const string s_ShowLegacyModeMenuItem = "Tools/Recorder/Show Legacy Recorders";
         
         public static bool showLegacyRecorders { get; private set; }
 
@@ -31,7 +34,7 @@ namespace UnityEngine.Recorder
             debugMode = EditorPrefs.GetBool(s_DebugModeMenuItem, false);
             showLegacyRecorders = EditorPrefs.GetBool(s_ShowLegacyModeMenuItem, false);
 
-            // Delaying until first editor tick so that the menu  will be populated before setting check state, and  re-apply correct action
+            // Delaying until first editor tick so that the menu will be populated before setting check state, and  re-apply correct action
             EditorApplication.delayCall += UpdateMenus;
         }
 
@@ -56,6 +59,6 @@ namespace UnityEngine.Recorder
             Menu.SetChecked(s_ShowLegacyModeMenuItem, value);
             showLegacyRecorders = value;
         }
-
+#endif
     }
 }
