@@ -33,10 +33,12 @@ namespace UnityEditor.Recorder
             var txtRect = new Rect(position.x, position.y, txtWidth, position.height);
             var tagRect = new Rect(position.x + txtWidth + 5, position.y, tagWidth, position.height);
             
+            GUI.SetNextControlName("FileNameField");
             m_FileName.stringValue = GUI.TextField(txtRect, m_FileName.stringValue);
             var editor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
             
-            if (Event.current.type == EventType.KeyUp && (Event.current.modifiers == EventModifiers.Control || Event.current.modifiers == EventModifiers.Command))
+            if (GUI.GetNameOfFocusedControl().Equals("FileNameField") && 
+                Event.current.type == EventType.KeyUp && (Event.current.modifiers == EventModifiers.Control || Event.current.modifiers == EventModifiers.Command))
             {
                 if (Event.current.keyCode == KeyCode.C)
                 {
