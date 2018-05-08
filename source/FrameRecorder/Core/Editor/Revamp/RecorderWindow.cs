@@ -43,7 +43,7 @@ namespace Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         RecorderSettingsPrefs m_Prefs;
-        RecorderState m_RecorderState = new RecorderState();
+        RecorderController m_RecorderController = new RecorderController();
         
         static List<RecorderInfo> s_BuiltInRecorderInfos;
         static List<RecorderInfo> s_LegacyRecorderInfos;
@@ -549,7 +549,7 @@ namespace Recorder
             if (Options.debugMode)
                 Debug.Log("Start Recording.");
             
-            var success = m_RecorderState.StartRecording(m_Prefs, Options.debugMode);
+            var success = m_RecorderController.StartRecording(m_Prefs, Options.debugMode);
             
             if (success)
             {
@@ -615,7 +615,7 @@ namespace Recorder
             if (Options.debugMode)
                 Debug.Log("Stop Recording.");
             
-            m_RecorderState.StopRecording();
+            m_RecorderController.StopRecording();
             
             m_State = State.Idle;
             m_FrameCount = 0;
@@ -890,7 +890,7 @@ namespace Recorder
                 return;
             }
             
-            var recordingSessions = m_RecorderState.GetRecordingSessions();
+            var recordingSessions = m_RecorderController.GetRecordingSessions();
 
             var session = recordingSessions.FirstOrDefault(); // Hack. We know each session uses the same global settings so take the first one...
 

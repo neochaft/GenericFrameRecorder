@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public class RecorderState
+    public class RecorderController
     {
         readonly SceneHook m_SceneHook;
         
         List<RecordingSession> m_RecordingSessions;
         
-        public RecorderState()
+        public RecorderController()
         {
             m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
         }
