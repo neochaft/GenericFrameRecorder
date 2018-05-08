@@ -460,12 +460,7 @@ namespace Recorder
                 newRecordMenu.AddSeparator(string.Empty);
                 
                 foreach (var info in recorderList)
-                {
-                    if (ShouldDisableRecordSettings())
-                        newRecordMenu.AddDisabledItem(new GUIContent(info.displayName));
-                    else
-                        newRecordMenu.AddItem(new GUIContent(info.displayName), false, data => OnAddNewRecorder((RecorderInfo) data), info);
-                }
+                    AddRecorderInfoToMenu(info, newRecordMenu);
             }
             
             newRecordMenu.ShowAsContext();
