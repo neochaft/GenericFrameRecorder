@@ -91,7 +91,7 @@ namespace Recorder.Input
                 {
                     int screenWidth = Screen.width;
                     int screenHeight = Screen.height;
-#if UNITY_EDITOR
+
                     switch (cbSettings.outputResolution)
                     {
                         case ImageResolution.Window:
@@ -139,7 +139,6 @@ namespace Recorder.Input
                             break;
                         }
                     }
-#endif
                     break;
                 }
                 default:
@@ -302,14 +301,14 @@ namespace Recorder.Input
             {
                 ReleaseCamera();
                 UnityHelpers.Destroy(m_UICamera);
-#if UNITY_EDITOR
+
                 if (m_ModifiedResolution)
                 {
                     GameViewSize.m_ModifiedResolutionCount --;
                     if(GameViewSize.m_ModifiedResolutionCount == 0 )
                         GameViewSize.RestoreSize();
                 }
-#endif
+                
                 if( m_VFlipper!=null )
                     m_VFlipper.Dispose();
             }

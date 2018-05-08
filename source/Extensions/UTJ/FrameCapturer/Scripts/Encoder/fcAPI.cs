@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace UTJ.FrameCapturer
 {
@@ -641,23 +639,9 @@ namespace UTJ.FrameCapturer
             return r;
         }
 
-#if UNITY_EDITOR
-        //public static bool IsRenderingPathDeferred(Camera cam)
-        //{
-        //    if (cam.renderingPath == RenderingPath.DeferredShading ||
-        //        (cam.renderingPath == RenderingPath.UsePlayerSettings &&
-        //        UnityEditor.Rendering.EditorGraphicsSettings.GetTierSettings(EditorUserBuildSettings.selectedBuildTargetGroup, Graphics.activeTier).renderingPath == RenderingPath.DeferredShading))
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
         public static Shader GetFrameBufferCopyShader()
         {
             return AssetDatabase.LoadAssetAtPath<Shader>(AssetDatabase.GUIDToAssetPath("2283fb92223c7914c9096670e29202c8"));
         }
-#endif
-
     }
 }

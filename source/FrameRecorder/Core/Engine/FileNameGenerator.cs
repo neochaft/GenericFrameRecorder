@@ -149,12 +149,8 @@ namespace Recorder
         {
             if (string.IsNullOrEmpty(s_ProjectName))
             {
-#if UNITY_EDITOR
                 var parts = Application.dataPath.Split('/');
                 s_ProjectName = parts[parts.Length - 2];
-#else
-                s_ProjectName = "N/A";
-#endif
             }
             
             return s_ProjectName;
@@ -162,11 +158,7 @@ namespace Recorder
 
         static string ProductNameResolver(RecordingSession session)
         {
-#if UNITY_EDITOR
             return UnityEditor.PlayerSettings.productName;
-#else
-            return "(prd-NA)";
-#endif
         }
 
         public string BuildAbsolutePath(RecordingSession session)

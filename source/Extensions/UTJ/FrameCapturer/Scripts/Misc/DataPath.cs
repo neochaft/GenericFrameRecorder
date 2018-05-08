@@ -19,9 +19,7 @@ namespace UTJ.FrameCapturer
 
         [SerializeField] Root m_root = Root.Current;
         [SerializeField] string m_leaf = string.Empty;
-#if UNITY_EDITOR
         [SerializeField] bool m_readOnly = false; // just for inspector
-#endif
 
         public Root root
         {
@@ -35,13 +33,8 @@ namespace UTJ.FrameCapturer
         }
         public bool readOnly
         {
-#if UNITY_EDITOR
             get { return m_readOnly; }
             set { m_readOnly = value; }
-#else
-            get { return false; }
-            set { }
-#endif
         }
 
         public DataPath() { }

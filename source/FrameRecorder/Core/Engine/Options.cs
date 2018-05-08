@@ -9,16 +9,13 @@ namespace Recorder
         public static bool debugMode
         {
             get { return s_debugMode; }
-#if UNITY_EDITOR
             private set
             {
                 EditorPrefs.SetBool(s_DebugModeMenuItem, value);
                 s_debugMode = value;
             }
-#endif
         }
     
-#if UNITY_EDITOR
         const string s_DebugModeMenuItem = "Tools/Recorder/Debug mode";
         const string s_ShowLegacyModeMenuItem = "Tools/Recorder/Show Legacy Recorders";
         
@@ -54,6 +51,5 @@ namespace Recorder
             Menu.SetChecked(s_ShowLegacyModeMenuItem, value);
             showLegacyRecorders = value;
         }
-#endif
     }
 }

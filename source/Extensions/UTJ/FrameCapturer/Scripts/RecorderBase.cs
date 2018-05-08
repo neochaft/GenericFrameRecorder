@@ -1,9 +1,6 @@
 using System.Collections;
 using UnityEngine;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
-
 
 namespace UTJ.FrameCapturer
 {
@@ -211,7 +208,6 @@ namespace UTJ.FrameCapturer
             }
         }
 
-#if UNITY_EDITOR
         protected virtual void OnValidate()
         {
             m_targetFramerate = Mathf.Max(1, m_targetFramerate);
@@ -220,7 +216,6 @@ namespace UTJ.FrameCapturer
             m_startTime = Mathf.Max(0.0f, m_startTime);
             m_endTime = Mathf.Max(m_startTime, m_endTime);
         }
-#endif // UNITY_EDITOR
 
         protected virtual void Start()
         {
@@ -228,9 +223,7 @@ namespace UTJ.FrameCapturer
             m_initialTime = Time.unscaledTime;
             m_initialRealTime = Time.realtimeSinceStartup;
 
-#if UNITY_EDITOR
             if (EditorApplication.isPlaying)
-#endif
             {
                 if (m_recordOnStart)
                 {
@@ -242,9 +235,7 @@ namespace UTJ.FrameCapturer
 
         protected virtual void OnDisable()
         {
-#if UNITY_EDITOR
             if (EditorApplication.isPlaying)
-#endif
             {
                 EndRecording();
             }
@@ -252,9 +243,7 @@ namespace UTJ.FrameCapturer
 
         protected virtual void Update()
         {
-#if UNITY_EDITOR
             if (EditorApplication.isPlaying)
-#endif
             {
                 if (m_captureControl == CaptureControl.FrameRange)
                 {

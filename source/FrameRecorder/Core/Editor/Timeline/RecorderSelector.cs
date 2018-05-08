@@ -22,8 +22,8 @@ namespace Recorder
 
         public void Init(RecorderSettings settings)
         {
-//            if(settings != null)
-//                SelectRecorder(settings.recorderType);
+            //if(settings != null)
+            //    SelectRecorder(settings);
         }
 
         int GetRecorderIndex()
@@ -50,9 +50,9 @@ namespace Recorder
         {
             // Recorder in group selection
             EditorGUILayout.BeginHorizontal();
-            var oldIndex = GetRecorderIndex();
-            var newIndex = EditorGUILayout.Popup("Selected recorder:", oldIndex, m_RecorderNames);
-            SelectRecorder(GetRecorderFromIndex(newIndex));
+            //var oldIndex = GetRecorderIndex();
+            //var newIndex = EditorGUILayout.Popup("Selected recorder:", oldIndex, m_RecorderNames);
+            //SelectRecorder(GetRecorderFromIndex(newIndex));
 
             EditorGUILayout.EndHorizontal();
         }

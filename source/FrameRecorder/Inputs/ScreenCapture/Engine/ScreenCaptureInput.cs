@@ -27,7 +27,7 @@ namespace Recorder.Input
         {
             int screenWidth = Screen.width;
             int screenHeight = Screen.height;
-#if UNITY_EDITOR
+
             switch (scSettings.outputResolution)
             {
                 case ImageResolution.Window:
@@ -77,8 +77,6 @@ namespace Recorder.Input
                 m_ModifiedResolution = true;
                 GameViewSize.SelectSize(size);
             }
-#endif
-
         }
 
         public override void FrameDone(RecordingSession session)
@@ -91,14 +89,12 @@ namespace Recorder.Input
         {
             if (disposing)
             {
-#if UNITY_EDITOR
                 if (m_ModifiedResolution)
                 {
                     GameViewSize.m_ModifiedResolutionCount--;
                     if (GameViewSize.m_ModifiedResolutionCount == 0)
                         GameViewSize.RestoreSize();
                 }
-#endif
             }
 
             base.Dispose(disposing);

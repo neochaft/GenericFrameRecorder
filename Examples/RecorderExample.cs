@@ -1,11 +1,15 @@
 ﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using Recorder;
 using Recorder.Input;
+#endif
 
 public class RecorderExample : MonoBehaviour
 {
+#if UNITY_EDITOR
     readonly RecorderController m_RecorderController = new RecorderController();
     RecorderSettingsPrefs m_Prefs;
     float m_Time;
@@ -74,4 +78,5 @@ public class RecorderExample : MonoBehaviour
     {
         //m_RecorderState.StopRecording();
     }
+#endif
 }

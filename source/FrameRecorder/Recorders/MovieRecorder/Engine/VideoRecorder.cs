@@ -7,67 +7,9 @@ using UnityEditor;
 
 namespace Recorder
 {
-#if RECORD_AUDIO_MIXERS
-    class WavWriter
-    {
-        BinaryWriter binwriter;
-
-        // Use this for initialization
-        public void Start (string filename)
-        {
-            var stream = new FileStream (filename, FileMode.Create);
-            binwriter = new BinaryWriter (stream);
-            for(int n = 0; n < 44; n++)
-                binwriter.Write ((byte)0);
-        }
-
-        public void Stop()
-        {
-            var closewriter = binwriter;
-            binwriter = null;
-            int subformat = 3; // float
-            int numchannels = 2;
-            int numbits = 32;
-            int samplerate = AudioSettings.outputSampleRate;
-            Debug.Log ("Closing file");
-            long pos = closewriter.BaseStream.Length;
-            closewriter.Seek (0, SeekOrigin.Begin);
-            closewriter.Write ((byte)'R'); closewriter.Write ((byte)'I'); closewriter.Write ((byte)'F'); closewriter.Write ((byte)'F');
-            closewriter.Write ((uint)(pos - 8));
-            closewriter.Write ((byte)'W'); closewriter.Write ((byte)'A'); closewriter.Write ((byte)'V'); closewriter.Write ((byte)'E');
-            closewriter.Write ((byte)'f'); closewriter.Write ((byte)'m'); closewriter.Write ((byte)'t'); closewriter.Write ((byte)' ');
-            closewriter.Write ((uint)16);
-            closewriter.Write ((ushort)subformat);
-            closewriter.Write ((ushort)numchannels);
-            closewriter.Write ((uint)samplerate);
-            closewriter.Write ((uint)((samplerate * numchannels * numbits) / 8));
-            closewriter.Write ((ushort)((numchannels * numbits) / 8));
-            closewriter.Write ((ushort)numbits);
-            closewriter.Write ((byte)'d'); closewriter.Write ((byte)'a'); closewriter.Write ((byte)'t'); closewriter.Write ((byte)'a');
-            closewriter.Write ((uint)(pos - 36));
-            closewriter.Seek ((int)pos, SeekOrigin.Begin);
-            closewriter.Flush ();
-        }
-
-        public void Feed(NativeArray<float> data)
-        {
-            Debug.Log ("Writing wav chunk " + data.Length);
-
-            if (binwriter == null)
-                return;
-
-            for(int n = 0; n < data.Length; n++)
-                binwriter.Write (data[n]);
-        }
-    }
-#endif
-
     public class VideoRecorder : GenericRecorder<VideoRecorderSettings> // TODO Remove UTJ/MovieRecorder and rename to MovieRecorder
     {
         private MediaEncoder m_Encoder;
-#if RECORD_AUDIO_MIXERS
-        private WavWriter[]  m_WavWriters;
-#endif
         private Texture2D m_ReadBackTexture;
 
         public override bool BeginRecording(RecordingSession session)
@@ -162,24 +104,6 @@ namespace Recorder
             if (Options.debugMode)
                 Debug.Log( string.Format( "MovieRecorder starting to write audio {0}ch @ {1}Hz", audioAttrs.channelCount, audioAttrs.sampleRate.numerator));
 
-#if RECORD_AUDIO_MIXERS
-            var audioSettings = input.audioSettings;
-            m_WavWriters = new WavWriter [audioSettings.m_AudioMixerGroups.Length];
-
-            for (int n = 0; n < m_WavWriters.Length; n++)
-            {
-                if (audioSettings.m_AudioMixerGroups[n].m_MixerGroup == null)
-                    continue;
-
-                var path = Path.Combine(
-                    m_Settings.m_DestinationPath,
-                    "recording of " + audioSettings.m_AudioMixerGroups[n].m_MixerGroup.name + ".wav");
-                if (Verbose.enabled)
-                    Debug.Log("Starting wav recording into file " + path);
-                m_WavWriters[n].Start(path);
-            }
-#endif
-
             try
             {
                 var path =  m_Settings.fileNameGenerator.BuildAbsolutePath(session);
@@ -224,12 +148,6 @@ namespace Recorder
             var audioInput = (AudioInput)m_Inputs[1];
             if (!audioInput.audioSettings.preserveAudio)
                 return;
-
-#if RECORD_AUDIO_MIXERS
-            for (int n = 0; n < m_WavWriters.Length; n++)
-                if (m_WavWriters[n] != null)
-                    m_WavWriters[n].Feed(audioInput.mixerGroupAudioBuffer(n));
-#endif
 
             m_Encoder.AddSamples(audioInput.mainBuffer);
         }

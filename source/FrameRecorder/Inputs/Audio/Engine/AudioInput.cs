@@ -1,23 +1,16 @@
-#if UNITY_2017_3_OR_NEWER
 using System;
 using UnityEngine;
-#if UNITY_EDITOR
 using System.Reflection;
-#endif
-#if UNITY_2018_1_OR_NEWER
-    using Unity.Collections;
-#else
-    using UnityEngine.Collections;
-#endif
+using Unity.Collections;
 
 namespace Recorder.Input
 {
     class AudioRenderer
     {
-        private static MethodInfo m_StartMethod;
-        private static MethodInfo m_StopMethod;
-        private static MethodInfo m_GetSampleCountForCaptureFrameMethod;
-        private static MethodInfo m_RenderMethod;
+        static MethodInfo m_StartMethod;
+        static MethodInfo m_StopMethod;
+        static MethodInfo m_GetSampleCountForCaptureFrameMethod;
+        static MethodInfo m_RenderMethod;
 
         static AudioRenderer()
         {
@@ -36,23 +29,23 @@ namespace Recorder.Input
             m_RenderMethod = audioRecorderType.GetMethod("Render");
         }
 
-        static public void Start()
+        public static void Start()
         {
             m_StartMethod.Invoke(null, null);
         }
 
-        static public void Stop()
+        public static void Stop()
         {
             m_StopMethod.Invoke(null, null);
         }
 
-        static public uint GetSampleCountForCaptureFrame()
+        public static uint GetSampleCountForCaptureFrame()
         {
             var count = (int)m_GetSampleCountForCaptureFrameMethod.Invoke(null, null);
             return (uint)count;
         }
 
-        static public void Render(NativeArray<float> buffer)
+        public static void Render(NativeArray<float> buffer)
         {
             m_RenderMethod.Invoke(null, new object[] { buffer });
         }
@@ -60,9 +53,9 @@ namespace Recorder.Input
 
     public class AudioInput : RecorderInput
     {
-        private class BufferManager : IDisposable
+        class BufferManager : IDisposable
         {
-            private NativeArray<float>[] m_Buffers;
+            readonly NativeArray<float>[] m_Buffers;
 
             public BufferManager(ushort bufferCount, uint sampleFrameCount, ushort channelCount)
             {
@@ -84,12 +77,13 @@ namespace Recorder.Input
         }
 
         public ushort channelCount { get { return m_ChannelCount; } }
-        private ushort m_ChannelCount;
+        ushort m_ChannelCount;
         public int sampleRate { get { return AudioSettings.outputSampleRate; } }
         public NativeArray<float> mainBuffer { get { return m_BufferManager.GetBuffer(0); } }
         public NativeArray<float> GetMixerGroupBuffer(int n)
         { return m_BufferManager.GetBuffer(n + 1); }
-        private BufferManager m_BufferManager;
+
+        BufferManager m_BufferManager;
 
         public AudioInputSettings audioSettings
         { get { return (AudioInputSettings)settings; } }
@@ -128,28 +122,10 @@ namespace Recorder.Input
                 Debug.Log(string.Format("AudioInput.NewFrameReady {0} audio sample frames @ {1} ch",
                                         sampleFrameCount, m_ChannelCount));
 
-            ushort bufferCount =
-#if RECORD_AUDIO_MIXERS
-                (ushort)(audioSettings.m_AudioMixerGroups.Length + 1)
-#else
-                1
-#endif
-            ;
+            const ushort bufferCount = 1;
 
             m_BufferManager = new BufferManager(bufferCount, sampleFrameCount, m_ChannelCount);
             var mainBuffer = m_BufferManager.GetBuffer(0);
-
-#if RECORD_AUDIO_MIXERS
-            for (int n = 1; n < bufferCount; n++)
-            {
-                var group = audioSettings.m_AudioMixerGroups[n - 1];
-                if (group.m_MixerGroup == null)
-                    continue;
-
-                var buffer = m_BufferManager.GetBuffer(n);
-                AudioRenderer.AddMixerGroupRecorder(group.m_MixerGroup, buffer, group.m_Isolate);
-            }
-#endif
 
             AudioRenderer.Render(mainBuffer);
         }
@@ -170,4 +146,3 @@ namespace Recorder.Input
         }
     }
 }
-#endif

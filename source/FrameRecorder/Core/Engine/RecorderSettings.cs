@@ -34,83 +34,35 @@ namespace Recorder
         public FileNameGenerator fileNameGenerator;
         
         public int captureEveryNthFrame = 1;
-        
-        [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
-        [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
-        [SerializeField] FrameRateType m_FrameRateType = FrameRateType.FR_30;
-        [SerializeField] [Range(1.0f, 120.0f)] float m_CustomFrameRateValue = 30.0f;
-        
-        [SerializeField] int m_StartFrame;
-        [SerializeField] int m_EndFrame;
-        
-        [SerializeField] float m_StartTime;
-        [SerializeField] float m_EndTime;
-        
-        [SerializeField] bool m_SynchFrameRate;
 
-        public RecordMode recordMode
-        {
-            get { return m_RecordMode; }
-            set { m_RecordMode = value; }
-        }
+        public RecordMode recordMode { get; set; }
 
-        public FrameRatePlayback frameRatePlayback
-        {
-            get { return m_FrameRatePlayback; }
-            set { m_FrameRatePlayback = value; }
-        }
+        public FrameRatePlayback frameRatePlayback { get; set; }
 
         public float frameRate
         {
-            get { return FrameRateHelper.ToFloat(m_FrameRateType, m_CustomFrameRateValue); }
+            get { return FrameRateHelper.ToFloat(frameRateType, customFrameRateValue); }
             set
             {
-                m_FrameRateType = FrameRateType.FR_CUSTOM;
-                m_CustomFrameRateValue = value;
+                frameRateType = FrameRateType.FR_CUSTOM;
+                customFrameRateValue = value;
             }
         }
 
-        public FrameRateType frameRateType
-        {
-            get { return m_FrameRateType; }
-            set { m_FrameRateType = value; }
-        }
+        public FrameRateType frameRateType { get; set; }
 
-        public float customFrameRateValue
-        {
-            get { return m_CustomFrameRateValue; }
-            set { m_CustomFrameRateValue = value; }
-        }
+        public float customFrameRateValue { get; set; }
 
-        public int startFrame
-        {
-            get { return m_StartFrame; }
-            set { m_StartFrame = value; }
-        }
+        public int startFrame { get; set; }
 
-        public int endFrame
-        {
-            get { return m_EndFrame; }
-            set { m_EndFrame = value; }
-        }
+        public int endFrame { get; set; }
 
-        public float startTime
-        {
-            get { return m_StartTime; }
-            set { m_StartTime = value; }
-        }
+        public float startTime { get; set; }
 
-        public float endTime
-        {
-            get { return m_EndTime; }
-            set { m_EndTime = value; }
-        }
+        public float endTime { get; set; }
 
-        public bool synchFrameRate
-        {
-            get { return m_SynchFrameRate; }
-            set { m_SynchFrameRate = value; }
-        }
+        public bool synchFrameRate { get; set; }
+        
         
         protected RecorderSettings()
         {
@@ -120,8 +72,6 @@ namespace Recorder
                 leaf = "Recordings"
             };
         }
-
-        
 
         public virtual bool ValidityCheck(List<string> errors)
         {

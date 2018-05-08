@@ -70,10 +70,8 @@ namespace Recorder
                 session.Dispose();
                 session = null;
 
-#if UNITY_EDITOR
                 if (autoExitPlayMode)
                     UnityEditor.EditorApplication.isPlaying = false;
-#endif
             }
         }
 

@@ -311,12 +311,10 @@ namespace UTJ.FrameCapturer
 
 
         #region impl
-#if UNITY_EDITOR
         void Reset()
         {
             m_shCopy = fcAPI.GetFrameBufferCopyShader();
         }
-#endif // UNITY_EDITOR
 
         IEnumerator OnPostRender()
         {

@@ -10,19 +10,6 @@ namespace Recorder.Input
     {
         public bool preserveAudio = true;
 
-#if RECORD_AUDIO_MIXERS
-        [System.Serializable]
-        public struct MixerGroupRecorderListItem
-        {
-            [SerializeField]
-            public AudioMixerGroup m_MixerGroup;
-            
-            [SerializeField]
-            public bool m_Isolate;
-        }
-        public MixerGroupRecorderListItem[] m_AudioMixerGroups;
-#endif
-
         public override Type inputType
         {
             get { return typeof(AudioInput); }

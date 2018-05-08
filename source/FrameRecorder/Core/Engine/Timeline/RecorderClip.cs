@@ -24,25 +24,27 @@ namespace Recorder.Timeline
         {
             var playable = ScriptPlayable<RecorderPlayableBehaviour>.Create(graph);
             var behaviour = playable.GetBehaviour();
-            if (/*recorderType != null &&*/ UnityHelpers.IsPlaying())
+            if (m_Settings != null && UnityHelpers.IsPlaying())
             {
-//                behaviour.session = new RecordingSession()
-//                {
-//                    m_Recorder = RecordersInventory.GenerateNewRecorder(recorderType, m_Settings),
-//                    //m_RecorderGO = SceneHook.GetRecorderHost(true),
-//                };
-//                behaviour.OnEnd = () =>
-//                {
-//                    try
-//                    {
-//                        if (OnClipDone != null) OnClipDone(this);     
-//                    }
-//                    catch (Exception ex)
-//                    {
-//                        Debug.Log("OnClipDone call back generated an exception: " + ex.Message );
-//                        Debug.LogException(ex);
-//                    }
-//                };
+                
+                //var RecordersInventory.CreateDefaultRecorderSettings(m_Settings.GetType());
+                behaviour.session = new RecordingSession()
+                {
+                    //m_Recorder = RecordersInventory.CreateDefaultRecorderSettings(m_Settings.GetType()),
+                    //m_RecorderGO = SceneHook.GetRecorderHost(true),
+                };
+                behaviour.OnEnd = () =>
+                {
+                    try
+                    {
+                        if (OnClipDone != null) OnClipDone(this);     
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log("OnClipDone call back generated an exception: " + ex.Message );
+                        Debug.LogException(ex);
+                    }
+                };
             }
             return playable;
         }

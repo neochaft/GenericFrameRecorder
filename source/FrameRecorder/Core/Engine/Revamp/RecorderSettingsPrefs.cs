@@ -22,6 +22,70 @@ namespace Recorder
         [SerializeField] float m_EndTime;
         
         [SerializeField] bool m_SynchFrameRate;
+        
+        public RecordMode recordMode
+        {
+            get { return m_RecordMode; }
+            set { m_RecordMode = value; }
+        }
+
+        public FrameRatePlayback frameRatePlayback
+        {
+            get { return m_FrameRatePlayback; }
+            set { m_FrameRatePlayback = value; }
+        }
+
+        public float frameRate
+        {
+            get { return FrameRateHelper.ToFloat(m_FrameRateType, m_CustomFrameRateValue); }
+            set
+            {
+                m_FrameRateType = FrameRateType.FR_CUSTOM;
+                m_CustomFrameRateValue = value;
+            }
+        }
+
+        public FrameRateType frameRateType
+        {
+            get { return m_FrameRateType; }
+            set { m_FrameRateType = value; }
+        }
+
+        public float customFrameRateValue
+        {
+            get { return m_CustomFrameRateValue; }
+            set { m_CustomFrameRateValue = value; }
+        }
+
+        public int startFrame
+        {
+            get { return m_StartFrame; }
+            set { m_StartFrame = value; }
+        }
+
+        public int endFrame
+        {
+            get { return m_EndFrame; }
+            set { m_EndFrame = value; }
+        }
+
+        public float startTime
+        {
+            get { return m_StartTime; }
+            set { m_StartTime = value; }
+        }
+
+        public float endTime
+        {
+            get { return m_EndTime; }
+            set { m_EndTime = value; }
+        }
+
+        public bool synchFrameRate
+        {
+            get { return m_SynchFrameRate; }
+            set { m_SynchFrameRate = value; }
+        }
 
         [Serializable]
         class RecorderInfo

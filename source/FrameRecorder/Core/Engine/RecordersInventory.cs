@@ -107,9 +107,7 @@ namespace Recorder
             
             throw new ArgumentException("No factory was registered for " + recorderSettings.GetType().Name);
         }
-
-#if UNITY_EDITOR
-        
+       
         public static T CreateDefaultRecorderSettings<T>() where T : RecorderSettings
         {
             return CreateDefaultRecorderSettings(typeof(T)) as T;
@@ -129,7 +127,5 @@ namespace Recorder
             
             throw new ArgumentException("No factory was registered for " + settingsType.Name);            
         }
-#endif
-
     }
 }
