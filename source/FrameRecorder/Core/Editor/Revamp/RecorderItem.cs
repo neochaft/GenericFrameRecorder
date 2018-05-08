@@ -1,12 +1,11 @@
-using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
-using UnityEngine.Recorder;
 using UnityObject = UnityEngine.Object;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     class RecorderItem : VisualElement
     {

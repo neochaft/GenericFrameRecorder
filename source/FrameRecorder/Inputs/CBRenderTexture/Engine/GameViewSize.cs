@@ -1,11 +1,10 @@
-﻿#if UNITY_EDITOR
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
 
     public class GameViewSize
@@ -166,5 +165,3 @@ namespace UnityEngine.Recorder.Input
         }
     }
 }
-
-#endif

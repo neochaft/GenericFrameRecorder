@@ -1,22 +1,24 @@
 ﻿using System;
+using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {     
     public class RecorderBindings : MonoBehaviour, IExposedPropertyTable
     {
         [Serializable]
-        class PropertyObjects : SerializedDictionary<PropertyName, Object> { }
+        class PropertyObjects : SerializedDictionary<PropertyName, UnityObject> { }
         
         [SerializeField] PropertyObjects m_References = new PropertyObjects();
         
-        public void SetReferenceValue(PropertyName id, Object value)
+        public void SetReferenceValue(PropertyName id, UnityObject value)
         {
             m_References.dictionary[id] = value;
         }
         
-        public Object GetReferenceValue(PropertyName id, out bool idValid)
+        public UnityObject GetReferenceValue(PropertyName id, out bool idValid)
         {
-            Object value = null;
+            UnityObject value;
             if (m_References.dictionary.TryGetValue(id, out value))
             {
                 idValid = true;

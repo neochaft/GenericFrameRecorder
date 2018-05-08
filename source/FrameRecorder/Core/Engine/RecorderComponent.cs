@@ -1,14 +1,8 @@
-using System;
 using System.Collections;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
-
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
     [ExecuteInEditMode]
     public class RecorderComponent : MonoBehaviour
     {

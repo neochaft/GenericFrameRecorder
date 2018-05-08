@@ -1,8 +1,8 @@
-using System;
-using UnityEngine.Recorder;
+using Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
+    [RecorderSettings(typeof(GIFRecorder), "GIF" )]
     public class GIFRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcGifConfig m_GifEncoderSettings = fcAPI.fcGifConfig.default_value;

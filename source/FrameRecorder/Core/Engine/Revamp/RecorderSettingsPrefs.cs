@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditorInternal;
+using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     public class RecorderSettingsPrefs : ScriptableObject
     {
@@ -21,19 +22,6 @@ namespace UnityEngine.Recorder
         [SerializeField] float m_EndTime;
         
         [SerializeField] bool m_SynchFrameRate;
-
-        static RecorderSettingsPrefs s_Instance;
-
-        public static RecorderSettingsPrefs instance
-        {
-            get
-            {
-                if (s_Instance == null)
-                    s_Instance = LoadOrCreate();
-
-                return s_Instance;
-            }
-        }
 
         [Serializable]
         class RecorderInfo
@@ -72,17 +60,14 @@ namespace UnityEngine.Recorder
         
         [SerializeField] RecorderInfos m_RecorderInfos = new RecorderInfos();
 
-        static readonly string s_Folder = "Library/Recorder";
-        static readonly string s_Name = "recorder";
-        static readonly string s_Extension = ".pref";
+        string m_Path;
         
-        static RecorderSettingsPrefs LoadOrCreate()
+        public static RecorderSettingsPrefs LoadOrCreate(string path)
         {
-            var prefPath = GetRelativePath(s_Name);
             RecorderSettingsPrefs prefs;
             try
             {
-                var objs = InternalEditorUtility.LoadSerializedFileAndForget(prefPath);
+                var objs = InternalEditorUtility.LoadSerializedFileAndForget(path);
                 prefs = objs.FirstOrDefault(p => p is RecorderSettingsPrefs) as RecorderSettingsPrefs;
             }
             catch (Exception e)
@@ -99,13 +84,9 @@ namespace UnityEngine.Recorder
                 prefs.Save();
             }
             
+            prefs.m_Path = path;
+            
             return prefs;
-        }
-
-        public void Release()
-        {
-            ReleaseRecorderSettings();
-            File.Delete(GetRelativePath(s_Name));
         }
 
         public void ReleaseRecorderSettings()
@@ -128,7 +109,7 @@ namespace UnityEngine.Recorder
             get { return m_RecorderInfos.dictionary.Keys; }
         }
      
-        public void AddRecorder(RecorderSettings recorder, string displayName, bool enabled)
+        public void AddRecorder(RecorderSettings recorder, string displayName, bool enabled = true)
         {
             var info = new RecorderInfo(recorder, displayName, enabled);
             
@@ -150,11 +131,14 @@ namespace UnityEngine.Recorder
         
         public void Save()
         {
+            if (string.IsNullOrEmpty(m_Path))
+                return;
+            
             try
             {
-                var fullPath = GetAbsolutePath(s_Folder);
-                if (!Directory.Exists(fullPath))
-                    Directory.CreateDirectory(fullPath);
+                var directory = Path.GetDirectoryName(m_Path);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
 
                 var recordersCopy = recorderSettings.ToArray();
 
@@ -164,7 +148,7 @@ namespace UnityEngine.Recorder
                 for (int i = 0; i < recordersCopy.Length; ++i)
                     objs[i + 1] = recordersCopy[i];
 
-                InternalEditorUtility.SaveToSerializedFileAndForget(objs, GetRelativePath(s_Name), true);
+                InternalEditorUtility.SaveToSerializedFileAndForget(objs, m_Path, true);
                 
                 if (Options.debugMode)
                     Debug.Log("Recorder settings saved");
@@ -233,16 +217,6 @@ namespace UnityEngine.Recorder
         {
             ApplyGlobalSetting(info.recorder);
             m_RecorderInfos.dictionary[info.recorder] = info;
-        }
-
-        static string GetAbsolutePath(string relativePath)
-        {
-            return Application.dataPath + "/../" + relativePath;
-        }
-        
-        static string GetRelativePath(string fileName)
-        {
-            return s_Folder + "/" + fileName + s_Extension;
         }
     }
 }

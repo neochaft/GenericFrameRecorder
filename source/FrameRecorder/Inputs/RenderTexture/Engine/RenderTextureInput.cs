@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
-using UnityEngine.Rendering;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public class RenderTextureInput : BaseRenderTextureInput
     {

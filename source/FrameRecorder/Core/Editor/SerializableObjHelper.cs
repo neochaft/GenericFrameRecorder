@@ -1,7 +1,8 @@
 using System;
 using System.Linq.Expressions;
+using UnityEditor;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     public static class SerializableObjHelper
     {

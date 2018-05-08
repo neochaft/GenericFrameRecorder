@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Recorder;
-using UnityEngine.Recorder.Input;
+using Recorder.Input;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {   
     public enum ImageRecorderOutputFormat
     {
@@ -22,11 +22,12 @@ namespace UnityEngine.Recorder
         [SerializeField] public RenderTextureSamplerSettings renderTextureSamplerSettings = new RenderTextureSamplerSettings();
     }
     
+    [RecorderSettings(typeof(ImageRecorder), "Image Sequence", "image_seq_recorder")]
     public class ImageRecorderSettings : RecorderSettings
     {
         public ImageRecorderOutputFormat outputFormat = ImageRecorderOutputFormat.JPEG;
 
-        [SerializeField] VideoSelector m_VideoSelector = new VideoSelector();
+        [SerializeField] VideoSelector m_VideoInputSelector = new VideoSelector();
 
         public ImageRecorderSettings()
         {
@@ -55,9 +56,9 @@ namespace UnityEngine.Recorder
         {
             get
             {
-                var inputSettings = (ImageInputSettings)m_VideoSelector.selected;
+                var inputSettings = (ImageInputSettings)m_VideoInputSelector.selected;
                 
-                var h = (int)inputSettings.outputSize;
+                var h = (int)inputSettings.outputResolution;
                 var w = (int)(h * AspectRatioHelper.GetRealAspect(inputSettings.aspectRatio));
 
                 return new Vector2(w, h);
@@ -79,12 +80,12 @@ namespace UnityEngine.Recorder
 
         public override IEnumerable<RecorderInputSetting> inputsSettings
         {
-            get { yield return m_VideoSelector.selected; }
+            get { yield return m_VideoInputSelector.selected; }
         }
 
         public override void SelfAdjustSettings()
         {
-            var input = m_VideoSelector.selected;
+            var input = m_VideoInputSelector.selected;
             
             if (input == null)
                 return;

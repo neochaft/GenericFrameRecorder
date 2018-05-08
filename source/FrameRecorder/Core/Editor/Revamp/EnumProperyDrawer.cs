@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     abstract class EnumProperyDrawer<T> : PropertyDrawer
     {

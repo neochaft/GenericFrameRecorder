@@ -1,11 +1,9 @@
 using System;
-using System.IO;
+using Recorder;
 using UnityEngine;
-using UnityEngine.Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
-    [Recorder(typeof(GIFRecorderSettings), "GIF" )]
     public class GIFRecorder : GenericRecorder<GIFRecorderSettings>
     {
         fcAPI.fcGifContext m_ctx;

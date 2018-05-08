@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(Camera360InputSettings))]
     public class Camera360InputPropertyDrawer : InputPropertyDrawer<Camera360InputSettings>

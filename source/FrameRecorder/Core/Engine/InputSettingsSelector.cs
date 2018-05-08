@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     [Serializable]
     public abstract class InputSettingsSelector
@@ -22,6 +21,21 @@ namespace UnityEditor.Recorder
                     m_Selected = m_RecorderInputSettings.Keys.First();
                 
                 return m_RecorderInputSettings[m_Selected];
+            }
+
+            set
+            {
+                foreach (var field in InputSettingFields()) // TODO This is bad
+                {
+                    var input = (RecorderInputSetting)field.GetValue(this);
+
+                    if (input.GetType() == value.GetType())
+                    {
+                        field.SetValue(this, value);
+                        m_Selected = field.Name;
+                        break;
+                    }
+                }
             }
         }
 

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     class RecorderSelector
     {
@@ -22,8 +22,8 @@ namespace UnityEditor.Recorder
 
         public void Init(RecorderSettings settings)
         {
-            if(settings != null)
-                SelectRecorder(settings.recorderType);
+//            if(settings != null)
+//                SelectRecorder(settings.recorderType);
         }
 
         int GetRecorderIndex()

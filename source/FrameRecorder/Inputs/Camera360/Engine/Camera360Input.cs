@@ -1,12 +1,8 @@
-﻿#if UNITY_2018_1_OR_NEWER
-
-using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public class Camera360Input : BaseRenderTextureInput
     {
@@ -171,5 +167,3 @@ namespace UnityEngine.Recorder.Input
 
     }
 }
-
-#endif

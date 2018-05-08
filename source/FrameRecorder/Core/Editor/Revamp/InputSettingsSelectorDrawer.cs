@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     [CustomPropertyDrawer(typeof(InputSettingsSelector), true)]
     class InputSettingsSelectorDrawer : TargetedPropertyDrawer<InputSettingsSelector>

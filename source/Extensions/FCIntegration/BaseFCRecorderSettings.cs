@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor.Recorder;
 using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using Recorder;
+using Recorder.Input;
 
 namespace UTJ.FrameCapturer.Recorders
 {
@@ -20,7 +19,7 @@ namespace UTJ.FrameCapturer.Recorders
             m_RenderTextureSamplerSettings.flipFinalOutput = true;
         }
 
-        public void SetMaxResolution(ImageDimension maxSupportedSize)
+        public void SetMaxResolution(ImageResolution maxSupportedSize)
         {
             m_CbRenderTextureInputSettings.maxSupportedSize = maxSupportedSize;
             m_RenderTextureSamplerSettings.maxSupportedSize = maxSupportedSize;
@@ -30,7 +29,7 @@ namespace UTJ.FrameCapturer.Recorders
     
     public abstract class BaseFCRecorderSettings : RecorderSettings
     {
-        [SerializeField] protected UTJVideoSelector m_VideoSelector = new UTJVideoSelector();
+        [SerializeField] protected UTJVideoSelector m_VideoInputSelector = new UTJVideoSelector();
 
         public override bool ValidityCheck(List<string> errors)
         {
@@ -49,9 +48,9 @@ namespace UTJ.FrameCapturer.Recorders
         {
             get
             {
-                var inputSettings = (ImageInputSettings)m_VideoSelector.selected; // TODO Refactor commun code
+                var inputSettings = (ImageInputSettings)m_VideoInputSelector.selected; // TODO Refactor commun code
                 
-                var h = (int)inputSettings.outputSize;
+                var h = (int)inputSettings.outputResolution;
                 var w = (int)(h * AspectRatioHelper.GetRealAspect(inputSettings.aspectRatio));
 
                 return new Vector2(w, h);
@@ -73,7 +72,7 @@ namespace UTJ.FrameCapturer.Recorders
 
         public override IEnumerable<RecorderInputSetting> inputsSettings
         {
-            get { yield return m_VideoSelector.selected; }
+            get { yield return m_VideoInputSelector.selected; }
         }
     }
 }

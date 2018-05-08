@@ -1,8 +1,8 @@
 using System;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
-    public enum ImageDimension
+    public enum ImageResolution
     {
         x4320p_8K = 4320,
         x2880p_5K = 2880,

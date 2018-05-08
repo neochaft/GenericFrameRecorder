@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     [Serializable]
     public class OutputPath

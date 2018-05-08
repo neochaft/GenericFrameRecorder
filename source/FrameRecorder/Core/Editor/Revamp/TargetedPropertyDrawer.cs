@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
+using UnityEditor;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     public class TargetedPropertyDrawer<T> : PropertyDrawer where T : class
     {

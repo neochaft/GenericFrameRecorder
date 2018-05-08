@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {   
     public class VisualListItem<T> : VisualElement where T : VisualElement
     {

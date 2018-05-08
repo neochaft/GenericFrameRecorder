@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public enum ESuperSamplingCount
     {
@@ -18,7 +19,7 @@ namespace UnityEngine.Recorder.Input
     public class RenderTextureSamplerSettings : ImageInputSettings
     {
         public ImageSource source = ImageSource.ActiveCameras;
-        public ImageDimension renderSize = ImageDimension.x720p_HD;
+        public ImageResolution renderSize = ImageResolution.x720p_HD;
         public ESuperSamplingCount superSampling = ESuperSamplingCount.X1;
         public float superKernelPower = 16f;
         public float superKernelScale = 1f;

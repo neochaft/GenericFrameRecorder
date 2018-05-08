@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     [Flags]
     public enum ImageSource
@@ -33,8 +34,6 @@ namespace UnityEngine.Recorder
         public FileNameGenerator fileNameGenerator;
         
         public int captureEveryNthFrame = 1;
-
-        [SerializeField] string m_RecorderTypeName;
         
         [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
         [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
@@ -122,17 +121,7 @@ namespace UnityEngine.Recorder
             };
         }
 
-        public Type recorderType
-        {
-            get
-            {
-                return string.IsNullOrEmpty(m_RecorderTypeName) ? null : Type.GetType(m_RecorderTypeName);
-            }
-            set
-            {
-                m_RecorderTypeName = value == null ? string.Empty : value.AssemblyQualifiedName;
-            }
-        }
+        
 
         public virtual bool ValidityCheck(List<string> errors)
         {
@@ -191,7 +180,7 @@ namespace UnityEngine.Recorder
 
         public virtual bool HasErrors()
         {
-            return recorderType == null; // TODO Check for other error states
+            return false;
         }
 
         public virtual bool HasWarnings()

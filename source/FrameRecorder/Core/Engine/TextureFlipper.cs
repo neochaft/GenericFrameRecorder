@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     public class TextureFlipper : IDisposable
     {

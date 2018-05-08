@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Timeline;
 using UnityEditorInternal;
 using UnityObject = UnityEngine.Object;
 

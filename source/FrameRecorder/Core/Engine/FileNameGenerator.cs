@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {   
     public class Wildcard
     {

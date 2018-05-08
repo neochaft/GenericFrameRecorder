@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     public static class EnumHelper
     {

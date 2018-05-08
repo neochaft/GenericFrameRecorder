@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     static class FRPackager
     {

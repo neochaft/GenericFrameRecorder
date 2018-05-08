@@ -3,18 +3,14 @@ using System;
 using UnityEngine;
 #if UNITY_EDITOR
 using System.Reflection;
-using UnityEditor;
-using UnityEditorInternal;
-
 #endif
 #if UNITY_2018_1_OR_NEWER
     using Unity.Collections;
 #else
     using UnityEngine.Collections;
 #endif
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     class AudioRenderer
     {

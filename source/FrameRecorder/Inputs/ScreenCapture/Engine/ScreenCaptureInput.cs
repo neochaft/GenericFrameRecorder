@@ -1,12 +1,8 @@
 ﻿#if UNITY_2017_3_OR_NEWER
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public class ScreenCaptureInput : RecorderInput
     {
@@ -32,9 +28,9 @@ namespace UnityEngine.Recorder.Input
             int screenWidth = Screen.width;
             int screenHeight = Screen.height;
 #if UNITY_EDITOR
-            switch (scSettings.outputSize)
+            switch (scSettings.outputResolution)
             {
-                case ImageDimension.Window:
+                case ImageResolution.Window:
                 {
                     GameViewSize.GetGameRenderSize(out screenWidth, out screenHeight);
                     outputWidth = screenWidth;
@@ -50,7 +46,7 @@ namespace UnityEngine.Recorder.Input
 
                 default:
                 {
-                    outputHeight = (int)scSettings.outputSize;
+                    outputHeight = (int)scSettings.outputResolution;
                     outputWidth = (int)(outputHeight * AspectRatioHelper.GetRealAspect(scSettings.aspectRatio));
 
                     if (scSettings.forceEvenSize)

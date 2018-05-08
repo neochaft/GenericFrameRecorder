@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor.Recorder.Input;
+using Recorder.Input;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     [Serializable]
+    [RecorderSettings(typeof(AnimationRecorder), "Animation", "animation_recorder")]
     public class AnimationRecorderSettings : RecorderSettings
     {
         [SerializeField] AnimationInputSettings m_AnimationInputSettings = new AnimationInputSettings();

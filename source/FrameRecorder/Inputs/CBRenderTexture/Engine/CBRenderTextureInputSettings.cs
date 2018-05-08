@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     [DisplayName("Targeted Camera(s)")]
     [Serializable]

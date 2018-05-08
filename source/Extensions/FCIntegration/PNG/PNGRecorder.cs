@@ -1,12 +1,9 @@
 using System;
-using System.IO;
-using UnityEngine;
-using UnityEngine.Recorder;
+using Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
     [Obsolete("'Legacy/PNG' is obsolete, concider using 'Image Sequence' instead", false)]
-    [Recorder(typeof(PNGRecorderSettings), "Legacy/PNG" )]
     public class PNGRecorder : GenericRecorder<PNGRecorderSettings>
     {
         fcAPI.fcPngContext m_ctx;

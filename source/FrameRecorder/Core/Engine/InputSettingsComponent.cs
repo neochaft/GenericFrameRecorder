@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     public class InputSettingsComponent : MonoBehaviour
     {

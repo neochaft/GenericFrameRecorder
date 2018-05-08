@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     public static class Options
     {   
@@ -14,11 +14,6 @@ namespace UnityEngine.Recorder
             {
                 EditorPrefs.SetBool(s_DebugModeMenuItem, value);
                 s_debugMode = value;
-                var go = SceneHook.GetRecorderHost();
-                if (go != null)
-                {
-                    go.hideFlags = value ? HideFlags.None : HideFlags.HideInHierarchy;
-                }
             }
 #endif
         }

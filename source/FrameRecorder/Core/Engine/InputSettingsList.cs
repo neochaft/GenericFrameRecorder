@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     [Serializable]
     public class InputSettingsList// : IEnumerable<RecorderInputSetting> // TODO Find a way to fix this because it's not serializable

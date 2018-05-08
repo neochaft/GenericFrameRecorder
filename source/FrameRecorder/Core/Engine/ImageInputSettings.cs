@@ -1,26 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public abstract class ImageInputSettings : RecorderInputSetting
     {
-        public ImageDimension maxSupportedSize { get; set; } // dynamic & contextual: do not save
-        public ImageDimension outputSize = ImageDimension.x720p_HD;
+        public ImageResolution maxSupportedSize { get; set; } // dynamic & contextual: do not save
+        public ImageResolution outputResolution = ImageResolution.x720p_HD;
         public ImageAspect aspectRatio = ImageAspect.x16_9;
         public bool forceEvenSize;
 
         protected ImageInputSettings()
         {
-            maxSupportedSize = ImageDimension.x4320p_8K;
+            maxSupportedSize = ImageResolution.x4320p_8K;
         }
         
         public override bool ValidityCheck(List<string> errors)
         {
             var ok = true;
 
-            if (outputSize > maxSupportedSize)
+            if (outputResolution > maxSupportedSize)
             {
                 ok = false;
                 errors.Add("Output size exceeds maximum supported size: " + (int)maxSupportedSize );

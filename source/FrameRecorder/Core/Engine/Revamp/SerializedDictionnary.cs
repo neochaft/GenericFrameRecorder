@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {     
     [Serializable]
     public class SerializedDictionary<TKey, TValue> : ISerializationCallbackReceiver

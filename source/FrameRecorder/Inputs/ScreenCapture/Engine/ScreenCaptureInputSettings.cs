@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     [DisplayName("Game View")]
     [Serializable]
@@ -16,7 +15,8 @@ namespace UnityEngine.Recorder.Input
 
         public override bool ValidityCheck(List<string> errors)
         {   
-//            var prefs = RecorderSettingsPrefs.instance;
+//            #if UNITY_EDITOR
+//            var prefs = UnityEngine.Recorder.RecorderSettingsPrefs.instance;
 //            
 //            foreach (var recorder in prefs.recorderSettings)
 //            {
@@ -26,6 +26,7 @@ namespace UnityEngine.Recorder.Input
 //                    return false;
 //                }
 //            }
+//            #endif
             
             return true;
         }

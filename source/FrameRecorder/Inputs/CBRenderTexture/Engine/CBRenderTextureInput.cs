@@ -1,10 +1,9 @@
 ﻿using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+using UnityEngine;
 using UnityEngine.Rendering;
+using UnityObject = UnityEngine.Object;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public class CBRenderTextureInput : BaseRenderTextureInput
     {
@@ -93,9 +92,9 @@ namespace UnityEngine.Recorder.Input
                     int screenWidth = Screen.width;
                     int screenHeight = Screen.height;
 #if UNITY_EDITOR
-                    switch (cbSettings.outputSize)
+                    switch (cbSettings.outputResolution)
                     {
-                        case ImageDimension.Window:
+                        case ImageResolution.Window:
                         {
                             GameViewSize.GetGameRenderSize(out screenWidth, out screenHeight);
                             outputWidth = screenWidth;
@@ -112,7 +111,7 @@ namespace UnityEngine.Recorder.Input
 
                         default:
                         {
-                            outputHeight = (int)cbSettings.outputSize;
+                            outputHeight = (int)cbSettings.outputResolution;
                             outputWidth = (int)(outputHeight * AspectRatioHelper.GetRealAspect(cbSettings.aspectRatio));
 
                             if (cbSettings.forceEvenSize)
@@ -255,7 +254,7 @@ namespace UnityEngine.Recorder.Input
             if (cbSettings.captureUI)
             {
                 // Find canvases
-                var canvases = Object.FindObjectsOfType<Canvas>();
+                var canvases = UnityObject.FindObjectsOfType<Canvas>();
                 if (m_CanvasBackups == null || m_CanvasBackups.Length != canvases.Length)
                     m_CanvasBackups = new CanvasBackup[canvases.Length];
 

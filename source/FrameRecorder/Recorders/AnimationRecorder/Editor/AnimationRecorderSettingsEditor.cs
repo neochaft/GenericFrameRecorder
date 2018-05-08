@@ -1,5 +1,7 @@
 ﻿
-namespace UnityEditor.Recorder
+using UnityEditor;
+
+namespace Recorder
 {
     [CustomEditor(typeof(AnimationRecorderSettings))]
     public class AnimationRecorderSettingsEditor: RecorderEditor

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     public class RenderTextureSampler : BaseRenderTextureInput
     {
@@ -106,7 +107,7 @@ namespace UnityEngine.Recorder.Input
                 m_VFlipper = new TextureFlipper();
 
             // Below here is considered 'void Start()', but we run it for directly "various reasons".
-            if (rtsSettings.outputSize > rtsSettings.renderSize)
+            if (rtsSettings.outputResolution > rtsSettings.renderSize)
                 throw new UnityException("Upscaling is not supported! Output dimension must be smaller or equal to render dimension.");
 
             // Calculate aspect and render/output sizes
@@ -115,7 +116,7 @@ namespace UnityEngine.Recorder.Input
             var aspect = AspectRatioHelper.GetRealAspect(rtsSettings.aspectRatio);
             m_renderHeight = (int)rtsSettings.renderSize;
             m_renderWidth = Mathf.Min(16 * 1024, Mathf.RoundToInt(m_renderHeight * aspect));
-            outputHeight = (int)rtsSettings.outputSize;
+            outputHeight = (int)rtsSettings.outputResolution;
             outputWidth = Mathf.Min(16 * 1024, Mathf.RoundToInt(outputHeight * aspect));
             if (rtsSettings.forceEvenSize)
             {
@@ -302,7 +303,7 @@ namespace UnityEngine.Recorder.Input
         {
             PerformSubSampling();
 
-            if (rtsSettings.renderSize == rtsSettings.outputSize)
+            if (rtsSettings.renderSize == rtsSettings.outputResolution)
             {
                 // Blit with normalization if sizes match.
                 m_normalizeMaterial.SetFloat("_NormalizationFactor", 1.0f / (float)rtsSettings.superSampling);

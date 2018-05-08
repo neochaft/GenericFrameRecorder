@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Recorder.Input;
+using Recorder.Input;
 using UnityEditor.Media;
-using UnityEditor.Recorder.Input;
-using UnityEngine.Recorder;
+using UnityEditor;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
 #if RECORD_AUDIO_MIXERS
     class WavWriter
@@ -63,7 +62,6 @@ namespace UnityEditor.Recorder
     }
 #endif
 
-    [Recorder(typeof(VideoRecorderSettings), "Movie", "movie_recorder")]
     public class VideoRecorder : GenericRecorder<VideoRecorderSettings> // TODO Remove UTJ/MovieRecorder and rename to MovieRecorder
     {
         private MediaEncoder m_Encoder;
@@ -116,7 +114,7 @@ namespace UnityEditor.Recorder
                 return false;
             }
 
-            if (width > 4096 || height > 2160 && m_Settings.outputFormat == MediaRecorderOutputFormat.MP4)
+            if (width > 4096 || height > 2160 && m_Settings.outputFormat == VideoRecorderOutputFormat.MP4)
             {
                 Debug.LogError("Mp4 format does not support requested resolution.");
             }
@@ -124,7 +122,7 @@ namespace UnityEditor.Recorder
             var cbRenderTextureInput = m_Inputs[0] as CBRenderTextureInput;
 
             bool includeAlphaFromTexture = cbRenderTextureInput != null && cbRenderTextureInput.cbSettings.allowTransparency;
-            if (includeAlphaFromTexture && m_Settings.outputFormat == MediaRecorderOutputFormat.MP4)
+            if (includeAlphaFromTexture && m_Settings.outputFormat == VideoRecorderOutputFormat.MP4)
             {
                 Debug.LogWarning("Mp4 format does not support alpha.");
                 includeAlphaFromTexture = false;

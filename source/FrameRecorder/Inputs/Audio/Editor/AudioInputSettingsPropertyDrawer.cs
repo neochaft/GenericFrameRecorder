@@ -1,10 +1,7 @@
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
-using UnityEngine.UI;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(AudioInputSettings))]
     public class AudioInputSettingsPropertyDrawer : InputPropertyDrawer<AudioInputSettings>

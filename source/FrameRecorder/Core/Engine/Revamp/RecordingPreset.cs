@@ -1,7 +1,4 @@
-using UnityEngine;
-using UnityEngine.Recorder;
-
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     
 //    public class RecordingPreset : RecorderPreset<RecorderSettings>

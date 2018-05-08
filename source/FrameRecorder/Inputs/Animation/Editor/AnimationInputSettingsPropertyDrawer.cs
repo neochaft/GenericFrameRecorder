@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(AnimationInputSettings))]
     public class AnimationInputSettingsPropertyDrawer : InputPropertyDrawer<AnimationInputSettings>

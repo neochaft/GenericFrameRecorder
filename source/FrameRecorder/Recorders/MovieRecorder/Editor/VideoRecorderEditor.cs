@@ -1,7 +1,7 @@
-using System;
+using UnityEditor;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     [CustomEditor(typeof(VideoRecorderSettings))]
     public class VideoRecorderEditor : RecorderEditor
@@ -31,7 +31,7 @@ namespace UnityEditor.Recorder
         {
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
 
-            if (((VideoRecorderSettings) target).outputFormat == MediaRecorderOutputFormat.WEBM)
+            if (((VideoRecorderSettings) target).outputFormat == VideoRecorderOutputFormat.WEBM)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CaptureAlpha, new GUIContent("Capture Alpha"));

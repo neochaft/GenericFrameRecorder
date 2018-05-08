@@ -1,7 +1,8 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     public class AboutBox : EditorWindow
     {

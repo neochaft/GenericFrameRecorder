@@ -1,19 +1,12 @@
 using System;
-using UnityEngine.Recorder.Input;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
-
-    /// <summary>
-    /// What is this: 
-    /// Motivation  : 
-    /// Notes: 
-    /// </summary>    
     public class RecordingSession : IDisposable
     {
         public Recorder m_Recorder;
         public GameObject m_RecorderGO;
-        public RecorderBindings m_RecorderBindings;
 
         public double m_CurrentFrameStartTS;
         public double m_RecordingStartTS;

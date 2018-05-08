@@ -1,12 +1,9 @@
 using System;
-using System.IO;
-using UnityEngine;
-using UnityEngine.Recorder;
+using Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
     [Obsolete("'Legacy/OpenEXR' is obsolete, concider using 'Image Sequence' instead", false)]
-    [Recorder(typeof(EXRRecorderSettings), "Legacy/OpenEXR")]
     public class EXRRecorder : GenericRecorder<EXRRecorderSettings>
     {
         static readonly string[] s_channelNames = { "R", "G", "B", "A" };

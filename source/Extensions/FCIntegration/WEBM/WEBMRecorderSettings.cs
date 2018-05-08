@@ -1,7 +1,8 @@
-using System;
+using Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
+    [RecorderSettings(typeof(WEBMRecorder), "Legacy/WebM" )]
     public class WEBMRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcWebMConfig m_WebmEncoderSettings = fcAPI.fcWebMConfig.default_value;

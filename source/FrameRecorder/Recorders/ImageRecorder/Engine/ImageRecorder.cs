@@ -1,10 +1,10 @@
 using System;
 using System.IO;
-using UnityEngine.Recorder.Input;
+using Recorder.Input;
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
-    [Recorder(typeof(ImageRecorderSettings), "Image Sequence", "image_seq_recorder")]
     public class ImageRecorder : GenericRecorder<ImageRecorderSettings> // TODO Rename to ImageSequenceRecorder
     {
 

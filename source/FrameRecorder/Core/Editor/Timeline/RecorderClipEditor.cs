@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Timeline;
+using UnityEditor;
 using UnityEngine.Timeline;
 
-namespace UnityEditor.Recorder.Timeline
+namespace Recorder.Timeline
 {
     [CustomEditor(typeof(RecorderClip), true)]
     public class RecorderClipEditor : Editor
@@ -96,14 +95,14 @@ namespace UnityEditor.Recorder.Timeline
             if (m_recorderSelector.selectedRecorder == null)
                 return;
 
-            if (clip.m_Settings != null && RecordersInventory.GetRecorderInfo(m_recorderSelector.selectedRecorder).settingsClass != clip.m_Settings.GetType())
+            if (clip.m_Settings != null && RecordersInventory.GetRecorderInfo(m_recorderSelector.selectedRecorder).settingsType != clip.m_Settings.GetType())
             {
                 UnityHelpers.Destroy(clip.m_Settings, true);
                 clip.m_Settings = null;
             }
 
             if(clip.m_Settings == null)
-                clip.m_Settings = RecordersInventory.CreateDefaultRecorder(m_recorderSelector.selectedRecorder);
+                clip.m_Settings = RecordersInventory.CreateDefaultRecorderSettings(m_recorderSelector.selectedRecorder.GetType());
             m_Editor = CreateEditor(clip.m_Settings) as RecorderEditor;
             AssetDatabase.Refresh();
         }

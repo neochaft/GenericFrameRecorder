@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-#if UNITY_EDITOR
-using UnityEditor.SceneManagement;
-#endif
+using UnityEngine;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {  
     public static class SceneHook
     {
@@ -60,7 +57,7 @@ namespace UnityEngine.Recorder
             
             var session = new RecordingSession
             {
-                m_Recorder = RecordersInventory.GenerateNewRecorder(settings.recorderType, settings),
+                m_Recorder = RecordersInventory.CreateDefaultRecorder(settings),
                 m_RecorderGO = component.gameObject
             };
          

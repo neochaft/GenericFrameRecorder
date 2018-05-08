@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Recorder.Input;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(RenderTextureInputSettings))]
     public class RenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<RenderTextureInputSettings>

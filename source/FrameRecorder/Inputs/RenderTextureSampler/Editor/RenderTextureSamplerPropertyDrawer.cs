@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(RenderTextureSamplerSettings))]
     public class RenderTextureSamplerPropertyDrawer : InputPropertyDrawer<RenderTextureSamplerSettings>
@@ -25,7 +24,7 @@ namespace UnityEditor.Recorder.Input
             m_RenderSize = property.FindPropertyRelative("renderSize");
             m_AspectRatio = property.FindPropertyRelative("aspectRatio");
             m_SuperSampling = property.FindPropertyRelative("superSampling");
-            m_FinalSize = property.FindPropertyRelative("outputSize");
+            m_FinalSize = property.FindPropertyRelative("outputResolution");
             m_CameraTag = property.FindPropertyRelative("cameraTag");
             m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
         }
@@ -61,7 +60,7 @@ namespace UnityEditor.Recorder.Input
 
             if (inputType != ImageSource.RenderTexture)
             {
-                m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", ImageDimension.x4320p_8K,
+                m_RenderSize.intValue = ResolutionSelector.Popup("Rendering resolution", ImageResolution.x4320p_8K,
                     m_RenderSize.intValue);
                 
                 if (m_FinalSize.intValue > renderSize.intValue)
@@ -70,8 +69,8 @@ namespace UnityEditor.Recorder.Input
 
             m_FinalSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_FinalSize.intValue);
             
-            if (m_FinalSize.intValue == (int)ImageDimension.Window)
-                m_FinalSize.intValue = (int)ImageDimension.x720p_HD;
+            if (m_FinalSize.intValue == (int)ImageResolution.Window)
+                m_FinalSize.intValue = (int)ImageResolution.x720p_HD;
             
             if (m_FinalSize.intValue > renderSize.intValue)
                 renderSize.intValue = m_FinalSize.intValue;

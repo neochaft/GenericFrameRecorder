@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     [CustomEditor(typeof(RecorderSettingsPrefs))]
     class RecorderSettingsPrefsEditor : Editor

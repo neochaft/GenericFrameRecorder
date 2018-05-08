@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 using System.Linq;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     public class RecorderInfo
     {
         public Type recorderType;
-        public Type settingsClass;
+        public Type settingsType;
         public string displayName;
         public string iconName;
     }
 
     public static class RecordersInventory
     {
-        static SortedDictionary<string, RecorderInfo> s_Recorders;
+        static Dictionary<Type, RecorderInfo> s_Recorders;
         
         static IEnumerable<KeyValuePair<Type, object[]>> FindRecorders()
         {
-            var attribType = typeof(RecorderAttribute);
+            var attribType = typeof(RecorderSettingsAttribute);
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
                 Type[] types = null;
@@ -44,55 +45,43 @@ namespace UnityEngine.Recorder
 
         static void Init()
         {
-#if UNITY_EDITOR
             if (s_Recorders != null)
                 return;
 
-            s_Recorders = new SortedDictionary<string, RecorderInfo>();
+            s_Recorders = new Dictionary<Type, RecorderInfo>();
             foreach (var recorder in FindRecorders())
-                AddRecorder(recorder.Key);
-#endif
-        }
-
-        static bool AddRecorder(Type recorderType)
-        {
-            if (recorderType == null || string.IsNullOrEmpty(recorderType.FullName))
-                return false;
-            
-            var recorderAttribs = recorderType.GetCustomAttributes(typeof(RecorderAttribute), false);
-            if (recorderAttribs.Length == 1)
             {
-                var recorderAttrib = (RecorderAttribute)recorderAttribs[0];
-            
-                if (s_Recorders == null)
-                    s_Recorders = new SortedDictionary<string, RecorderInfo>();
+                var settingsType = recorder.Key;
+                var settingsAttribs = recorder.Value;
+                    
+                if (settingsType == null || string.IsNullOrEmpty(settingsType.FullName))
+                    continue;
 
-                var info = new RecorderInfo
+                if (settingsAttribs.Length == 1)
                 {
-                    recorderType = recorderType,
-                    settingsClass = recorderAttrib.settings,
-                    displayName = recorderAttrib.displayName,
-                    iconName = recorderAttrib.iconName
-                };
+                    var settingsAttrib = (RecorderSettingsAttribute) settingsAttribs[0];
 
-                s_Recorders.Add(info.recorderType.FullName, info);
+                    var info = new RecorderInfo
+                    {
+                        settingsType = settingsType,
+                        recorderType = settingsAttrib.recorderType,
+                        displayName = settingsAttrib.displayName,
+                        iconName = settingsAttrib.iconName
+                    };
 
-                return true;
+                    s_Recorders.Add(settingsType, info);
+                }
             }
-            
-            Debug.LogError(string.Format("The class '{0}' does not have a FrameRecorderAttribute attached to it. ", recorderType.FullName));
-
-            return false;
         }
 
-        public static RecorderInfo GetRecorderInfo(Type recorderType)
+        public static RecorderInfo GetRecorderInfo(Type settingsType)
         {
             Init();
 
-            if (recorderType == null || string.IsNullOrEmpty(recorderType.FullName))
+            if (settingsType == null || string.IsNullOrEmpty(settingsType.FullName))
                 return null;
             
-            return s_Recorders.ContainsKey(recorderType.FullName) ? s_Recorders[recorderType.FullName] : null;
+            return s_Recorders.ContainsKey(settingsType) ? s_Recorders[settingsType] : null;
         }
 
         public static List<RecorderInfo> recorderInfos
@@ -104,36 +93,41 @@ namespace UnityEngine.Recorder
             }
         }
 
-        public static Recorder GenerateNewRecorder(Type recorderType, RecorderSettings settings)
+        public static Recorder CreateDefaultRecorder(RecorderSettings recorderSettings)
         {
             Init();
-            var factory = GetRecorderInfo(recorderType);
+            var factory = GetRecorderInfo(recorderSettings.GetType());
             if (factory != null)
             {
-                var recorder = (Recorder)ScriptableObject.CreateInstance(recorderType);
+                var recorder = (Recorder)ScriptableObject.CreateInstance(factory.recorderType);
                 recorder.Reset();
-                recorder.settings = settings;
+                recorder.settings = recorderSettings;
                 return recorder;
             }
             
-            throw new ArgumentException("No factory was registered for " + recorderType.Name);
+            throw new ArgumentException("No factory was registered for " + recorderSettings.GetType().Name);
         }
 
 #if UNITY_EDITOR
-        public static RecorderSettings CreateDefaultRecorder(Type recorderType)
+        
+        public static T CreateDefaultRecorderSettings<T>() where T : RecorderSettings
+        {
+            return CreateDefaultRecorderSettings(typeof(T)) as T;
+        }
+        
+        public static RecorderSettings CreateDefaultRecorderSettings(Type settingsType)
         {
             Init();
-            var recorderinfo = GetRecorderInfo(recorderType);
+            var recorderinfo = GetRecorderInfo(settingsType);
             if (recorderinfo != null)
             {
-                var settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsClass);
-                settings.name = recorderType.Name;
-                settings.recorderType = recorderType;
+                var settings = (RecorderSettings)ObjectFactory.CreateInstance(recorderinfo.settingsType);
+                settings.name = settingsType.Name;
 
                 return settings;
             }
-            else
-                throw new ArgumentException("No factory was registered for " + recorderType.Name);            
+            
+            throw new ArgumentException("No factory was registered for " + settingsType.Name);            
         }
 #endif
 

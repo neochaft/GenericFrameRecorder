@@ -1,9 +1,7 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+﻿using UnityEngine;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(CBRenderTextureInputSettings))]
     public class CBRenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<CBRenderTextureInputSettings>
@@ -30,7 +28,7 @@ namespace UnityEditor.Recorder.Input
             
             m_Source = property.FindPropertyRelative("source");
             m_CameraTag = property.FindPropertyRelative("cameraTag");
-            m_RenderSize = property.FindPropertyRelative("outputSize");
+            m_RenderSize = property.FindPropertyRelative("outputResolution");
             m_RenderAspect = property.FindPropertyRelative("aspectRatio");
             m_FlipFinalOutput = property.FindPropertyRelative("flipFinalOutput");
             m_IncludeUI = property.FindPropertyRelative("captureUI");
@@ -66,7 +64,7 @@ namespace UnityEditor.Recorder.Input
             {
                 m_RenderSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
-                if (m_RenderSize.intValue > (int)ImageDimension.Window)
+                if (m_RenderSize.intValue > (int)ImageResolution.Window)
                 {
                     EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio"));
                 }

@@ -1,8 +1,8 @@
-using System;
-using UnityEngine.Recorder;
+using Recorder;
 
 namespace UTJ.FrameCapturer.Recorders
 {
+    [RecorderSettings(typeof(PNGRecorder), "Legacy/PNG" )]
     public class PNGRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcPngConfig m_PngEncoderSettings = fcAPI.fcPngConfig.default_value;

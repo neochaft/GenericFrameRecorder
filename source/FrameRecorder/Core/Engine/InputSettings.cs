@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace UnityEngine.Recorder
+namespace Recorder
 {
     [Serializable]
     public abstract class RecorderInputSetting

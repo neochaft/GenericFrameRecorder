@@ -5,14 +5,14 @@ using System.Linq;
 using UnityEditor.Experimental.UIElements;
 using UnityEditor.Presets;
 using UnityEngine;
-using UnityEngine.Recorder;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
-using UnityEngine.Recorder.Input;
+using Recorder.Input;
+using UnityEditor;
 using UTJ.FrameCapturer.Recorders;
 using UnityObject = UnityEngine.Object;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
     public class RecorderWindow : EditorWindow
     {
@@ -43,9 +43,13 @@ namespace UnityEditor.Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         RecorderSettingsPrefs m_Prefs;
+        RecorderState m_RecorderState = new RecorderState();
         
         static List<RecorderInfo> s_BuiltInRecorderInfos;
         static List<RecorderInfo> s_LegacyRecorderInfos;
+
+        const string k_SceneHookGoName = "UnityEngine-Recorder";
+        static readonly string s_PrefsFileName = "/../Library/Recorder/recorder.pref";
         
         enum State
         {
@@ -305,7 +309,7 @@ namespace UnityEditor.Recorder
             
             m_SettingsPanel.Add(m_ParametersControl);
 
-            m_Prefs = RecorderSettingsPrefs.instance;
+            m_Prefs = RecorderSettingsPrefs.LoadOrCreate(Application.dataPath + s_PrefsFileName);
             
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
@@ -331,7 +335,7 @@ namespace UnityEditor.Recorder
                 }
                 else if (m_State == State.Recording)
                 {
-                    StopRecording();
+                    StopRecordingInternal();
                 }
             }
         }
@@ -416,9 +420,9 @@ namespace UnityEditor.Recorder
             {
                 s_BuiltInRecorderInfos = new List<RecorderInfo>
                 {
-                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorder))
+                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorderSettings))
                 };
             }
 
@@ -426,11 +430,11 @@ namespace UnityEditor.Recorder
             {
                 s_LegacyRecorderInfos = new List<RecorderInfo>
                 {
-                    RecordersInventory.GetRecorderInfo(typeof(MP4Recorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(EXRRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(GIFRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(PNGRecorder)),
-                    RecordersInventory.GetRecorderInfo(typeof(WEBMRecorder))
+                    RecordersInventory.GetRecorderInfo(typeof(MP4RecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(EXRRecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(GIFRecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(PNGRecorderSettings)),
+                    RecordersInventory.GetRecorderInfo(typeof(WEBMRecorderSettings))
                 };
             }
 
@@ -475,7 +479,7 @@ namespace UnityEditor.Recorder
         
         RecorderItem CreateRecorderItem(RecorderSettings recorderSettings)
         {
-            var info = RecordersInventory.GetRecorderInfo(recorderSettings.recorderType);
+            var info = RecordersInventory.GetRecorderInfo(recorderSettings.GetType());
            
             var hasError = info == null || string.IsNullOrEmpty(info.iconName); 
             
@@ -498,14 +502,14 @@ namespace UnityEditor.Recorder
             {
                 if (m_State == State.WaitingForPlayModeToStartRecording)
                 {
-                    DelayedStartRecording();
+                    StartRecordingInternal();
                 }
             }
             else
             {
                 if (m_State == State.Recording)
                 {
-                    StopRecording();
+                    StopRecordingInternal();
                 }
             }
             
@@ -539,60 +543,14 @@ namespace UnityEditor.Recorder
                 Repaint();
             }
         }
-        
-        void DelayedStartRecording()
-        {
-            StartRecording(true);
-        }
 
-        void StartRecording(bool autoExitPlayMode)
+        void StartRecordingInternal()
         {        
             if (Options.debugMode)
                 Debug.Log("Start Recording.");
             
-            var sessions = new List<RecordingSession>();
+            var success = m_RecorderState.StartRecording(m_Prefs, Options.debugMode);
             
-            foreach (var recorderSetting in m_Prefs.recorderSettings)
-            {
-                if (recorderSetting == null)
-                {
-                    if (Options.debugMode)
-                        Debug.Log("Ignoring unknown recorder.");
-                    
-                    continue;
-                }
-                
-                m_Prefs.ApplyGlobalSetting(recorderSetting);
-
-                if (recorderSetting.HasErrors())
-                {
-                    if (Options.debugMode)
-                        Debug.Log("Ignoring invalid recorder '" + recorderSetting.name + "'");
-                    
-                    continue;
-                }
-                
-                if (recorderSetting.HasWarnings())
-                {
-                    if (Options.debugMode)
-                        Debug.LogWarning("Recorder '" + recorderSetting.name + "' has warnings and may not record properly.");
-                }
-                
-                if (!m_Prefs.IsRecorderEnabled(recorderSetting))
-                {
-                    if (Options.debugMode)
-                        Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");
-                    
-                    continue;
-                }
-
-                var session = SceneHook.CreateRecorderSession(recorderSetting, autoExitPlayMode);
-                
-                sessions.Add(session);
-            }
-            
-            var success = sessions.All(s => s.SessionCreated() && s.BeginRecording());
-
             if (success)
             {
                 m_State = State.Recording;
@@ -600,7 +558,26 @@ namespace UnityEditor.Recorder
             }
             else
             {
-                StopRecording();
+                StopRecordingInternal();
+            }
+        }
+
+        public void StartRecording()
+        {
+            if (m_State == State.Idle)
+            {
+                m_State = State.WaitingForPlayModeToStartRecording;
+                GameViewSize.DisableMaxOnPlay();
+                EditorApplication.isPlaying = true;
+                m_FrameCount = Time.frameCount;
+            }
+        }
+        
+        public void StopRecording()
+        {
+            if (m_State != State.Idle)
+            {
+                StopRecordingInternal();
             }
         }
 
@@ -610,19 +587,14 @@ namespace UnityEditor.Recorder
             {
                 case State.Idle:
                 {             
-                    m_State = State.WaitingForPlayModeToStartRecording;
-                    GameViewSize.DisableMaxOnPlay();
-                    EditorApplication.isPlaying = true;
-                    m_FrameCount = Time.frameCount;
-                    
+                    StartRecording();
                     break;
                 }
 
                 case State.WaitingForPlayModeToStartRecording:
                 case State.Recording:
-                {   
+                {
                     StopRecording();
-
                     break;
                 }
 
@@ -637,17 +609,13 @@ namespace UnityEditor.Recorder
         {
             m_RecordButton.text = m_State == State.Recording ? "STOP RECORDING" : "START RECORDING";
         }
-              
-        void StopRecording()
+        
+        void StopRecordingInternal()
         {
             if (Options.debugMode)
                 Debug.Log("Stop Recording.");
             
-            var recorderGO = SceneHook.GetRecorderHost();
-            if (recorderGO != null)
-            {
-                UnityHelpers.Destroy(recorderGO);
-            }
+            m_RecorderState.StopRecording();
             
             m_State = State.Idle;
             m_FrameCount = 0;
@@ -849,7 +817,7 @@ namespace UnityEditor.Recorder
 
         void OnAddNewRecorder(RecorderInfo info)
         {           
-            var recorder = RecordersInventory.CreateDefaultRecorder(info.recorderType);  
+            var recorder = RecordersInventory.CreateDefaultRecorderSettings(info.settingsType);  
             AddLastAndSelect(recorder, ObjectNames.NicifyVariableName(info.displayName), true);
             
             m_RecorderSettingPanel.Dirty(ChangeType.All);
@@ -922,7 +890,7 @@ namespace UnityEditor.Recorder
                 return;
             }
             
-            var recordingSessions = SceneHook.GetCurrentRecordingSessions();
+            var recordingSessions = m_RecorderState.GetRecordingSessions();
 
             var session = recordingSessions.FirstOrDefault(); // Hack. We know each session uses the same global settings so take the first one...
 

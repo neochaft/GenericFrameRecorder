@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
-namespace UnityEngine.Recorder.Input
+namespace Recorder.Input
 {
     [DisplayName("Render Texture Asset")]
     [Serializable]

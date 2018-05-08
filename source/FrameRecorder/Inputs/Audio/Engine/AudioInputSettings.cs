@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [DisplayName("Audio")]
     [Serializable]

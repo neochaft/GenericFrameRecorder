@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Recorder;
-using UnityEngine.Recorder.Input;
+using UnityEditor;
 
-namespace UnityEditor.Recorder.Input
+namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(ScreenCaptureInputSettings))]
     public class ScreenCaptureInputPropertyDrawer : InputPropertyDrawer<ScreenCaptureInputSettings>
@@ -14,7 +13,7 @@ namespace UnityEditor.Recorder.Input
         {
             base.Initialize(property);
             
-            m_RenderSize = property.FindPropertyRelative("outputSize");
+            m_RenderSize = property.FindPropertyRelative("outputResolution");
             m_RenderAspect = property.FindPropertyRelative("aspectRatio");
         }
 
@@ -24,7 +23,7 @@ namespace UnityEditor.Recorder.Input
             
             m_RenderSize.intValue = ResolutionSelector.Popup("Output Resolution", target.maxSupportedSize, m_RenderSize.intValue);
 
-            if (m_RenderSize.intValue > (int)ImageDimension.Window)
+            if (m_RenderSize.intValue > (int)ImageResolution.Window)
                 EditorGUILayout.PropertyField(m_RenderAspect, new GUIContent("Aspect Ratio"));
         }
     }

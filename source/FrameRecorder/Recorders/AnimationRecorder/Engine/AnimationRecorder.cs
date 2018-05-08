@@ -1,10 +1,9 @@
-﻿using UnityEditor.Recorder.Input;
+﻿using Recorder.Input;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Recorder;
 
-namespace UnityEditor.Recorder
+namespace Recorder
 {
-    [Recorder(typeof(AnimationRecorderSettings), "Animation", "animation_recorder")]
     public class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
     {
         public override void RecordFrame(RecordingSession session)
@@ -18,6 +17,10 @@ namespace UnityEditor.Recorder
             foreach (var input in m_Inputs)
             {
                 var aInput = (AnimationInput)input;
+
+                if (aInput.gameObjectRecorder == null)
+                    continue;
+                
                 var clip = new AnimationClip();
                 
                 ars.fileNameGenerator.CreateDirectory(session);
