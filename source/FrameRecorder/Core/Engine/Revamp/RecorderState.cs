@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,12 +7,14 @@ namespace Recorder
 {
     public class RecorderState
     {
-        //SceneHook m_SceneHook;
-
-//        public RecorderState()
-//        {
-//            m_SceneHook = new SceneHook(ObjectNames.GetUniqueName(new [] { "Recorder SceneHook" } , "Recorder SceneHook"));
-//        }
+        readonly SceneHook m_SceneHook;
+        
+        List<RecordingSession> m_RecordingSessions;
+        
+        public RecorderState()
+        {
+            m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
+        }
         
         public bool StartRecording(RecorderSettingsPrefs prefs, bool debugMode = false)
         {           
@@ -20,7 +23,7 @@ namespace Recorder
             if (debugMode)
                 Debug.Log("Start Recording.");
             
-            var sessions = new List<RecordingSession>();
+            m_RecordingSessions = new List<RecordingSession>();
 
             foreach (var recorderSetting in prefs.recorderSettings)
             {
@@ -65,30 +68,35 @@ namespace Recorder
                     continue;
                 }
 
-                var session = SceneHook.CreateRecorderSession(recorderSetting, true);
+                var session = m_SceneHook.CreateRecorderSession(recorderSetting, true);
 
-                sessions.Add(session);
+                m_RecordingSessions.Add(session);
             }
             
-            var success = sessions.All(s => s.SessionCreated() && s.BeginRecording());
+            var success = m_RecordingSessions.All(r => r.SessionCreated() && r.BeginRecording());
 
             return success;
+        }
+
+        public bool IsRecording()
+        {
+            return m_RecordingSessions != null && m_RecordingSessions.Any(r => r.recording);
         }
 
         public void StopRecording()
         {
             Debug.Assert(Application.isPlaying);
-            
-            var recorderGO = SceneHook.GetRecorderHost();
-            if (recorderGO != null)
+
+            if (m_RecordingSessions != null)
             {
-                UnityHelpers.Destroy(recorderGO);
+                foreach (var recordingSession in m_RecordingSessions)
+                    recordingSession.EndRecording();
             }
         }
         
         public IEnumerable<RecordingSession> GetRecordingSessions()
         {
-            return SceneHook.GetCurrentRecordingSessions();
+            return m_SceneHook.GetRecordingSessions();
         }
     }
 }

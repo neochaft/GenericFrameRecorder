@@ -4,33 +4,39 @@ using UnityEngine;
 
 namespace Recorder
 {  
-    public static class SceneHook
+    public class SceneHook
     {
         const string k_HostGoName = "UnityEngine-Recorder";
+        
+        static GameObject s_SessionHooksRoot;
 
-        public static GameObject GetRecorderHost(bool createIfAbsent = false)
+        readonly string m_SessionId;
+        GameObject m_SessionHook;
+        
+        public SceneHook(string sessionId)
         {
-            var go = GameObject.Find(k_HostGoName);
-            /*if (go != null && go.scene != SceneManager.GetActiveScene())
-                go = null;*/
+            m_SessionId = sessionId;
+        }
 
-            if (go == null && createIfAbsent)
+        static GameObject GetSessionHooksRoot()
+        {
+            if (s_SessionHooksRoot == null)
             {
-                go = new GameObject(k_HostGoName);
-                //if (!Verbose.enabled)
-                //    go.hideFlags = HideFlags.HideInHierarchy;
-            }
-            else if (go != null)
-            {
-                go.hideFlags = HideFlags.None; //HideInHierarchy;
+                s_SessionHooksRoot = GameObject.Find(k_HostGoName);
+
+                if (s_SessionHooksRoot == null)
+                    s_SessionHooksRoot = new GameObject(k_HostGoName);
+                
+                s_SessionHooksRoot.hideFlags = HideFlags.None;
+                s_SessionHooksRoot.tag = "EditorOnly";
             }
 
-            return go;
+            return s_SessionHooksRoot;
         }
 
         public static RecorderBindings GetRecorderBindings()
         {
-            var go = GetRecorderHost(true);
+            var go = GetSessionHooksRoot();
             var rb = go.GetComponent<RecorderBindings>();
             if (rb == null)
                 rb = go.AddComponent<RecorderBindings>();
@@ -38,12 +44,31 @@ namespace Recorder
             return rb;
         }
 
-        public static IEnumerable<RecordingSession> GetCurrentRecordingSessions()
+        GameObject GetSessionHook()
         {
-            var host = GetRecorderHost();
-            if (host != null)
+            if (m_SessionHook != null)
+                return m_SessionHook;
+            
+            var host = GetSessionHooksRoot();
+            if (host == null)
+                return null;
+            
+            m_SessionHook = GameObject.Find(m_SessionId);
+            if (m_SessionHook == null)
             {
-                var components = host.GetComponents<RecorderComponent>();
+                m_SessionHook = new GameObject(m_SessionId);
+                m_SessionHook.transform.parent = host.transform;   
+            }
+
+            return m_SessionHook;
+        }
+
+        public IEnumerable<RecordingSession> GetRecordingSessions()
+        {
+            var sessionHook = GetSessionHook();
+            if (sessionHook != null)
+            {
+                var components = sessionHook.GetComponents<RecorderComponent>();
                 foreach (var component in components)
                 {
                     yield return component.session;
@@ -51,9 +76,9 @@ namespace Recorder
             }
         }
         
-        public static RecordingSession CreateRecorderSession(RecorderSettings settings, bool autoExitPlayMode)
+        public RecordingSession CreateRecorderSession(RecorderSettings settings, bool autoExitPlayMode)
         {
-            var component = GetRecorderComponent(settings, true);
+            var component = GetRecorderComponent(settings);
             
             var session = new RecordingSession
             {
@@ -67,16 +92,16 @@ namespace Recorder
             return session;
         }
         
-        static RecorderComponent GetRecorderComponent(RecorderSettings settings, bool createIfAbsent)
+        RecorderComponent GetRecorderComponent(RecorderSettings settings)
         {
-            var host = GetRecorderHost(createIfAbsent);
-            if (host == null)
+            var sceneHook = GetSessionHook();
+            if (sceneHook == null)
                 return null;
 
-            var component = host.GetComponentsInChildren<RecorderComponent>().FirstOrDefault(r => r.session.settings == settings);
+            var component = sceneHook.GetComponentsInChildren<RecorderComponent>().FirstOrDefault(r => r.session.settings == settings);
 
-            if (component == null && createIfAbsent)
-                component = host.AddComponent<RecorderComponent>();
+            if (component == null)
+                component = sceneHook.AddComponent<RecorderComponent>();
 
             return component;
         }
