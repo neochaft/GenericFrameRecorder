@@ -35,7 +35,9 @@ namespace Recorder
         
         VisualElement m_ParametersControl;
         VisualElement m_RecorderSettingPanel;
+        
         Button m_RecordButton;
+        
         PanelSplitter m_PanelSplitter;
         VisualElement m_AddNewRecordPanel;
         
@@ -491,6 +493,17 @@ namespace Recorder
             return recorderItem;
         }
 
+        string CheckRecordersInCompatibility()
+        {
+            var ii = m_Prefs.recorderSettings.SelectMany(r =>
+                r.inputsSettings.Where(i => i is ScreenCaptureInputSettings)).ToList();
+            
+            if (ii.Count >= 2)
+                return "Using Game View on multiple recorders can lead to unespected behaviour";
+
+            return null;
+        }
+
         bool ShouldDisableRecordSettings()
         {
             return m_State != State.Idle || EditorApplication.isPlaying;
@@ -880,7 +893,28 @@ namespace Recorder
         {
             if (m_State == State.Idle)
             {
-                EditorGUILayout.LabelField(HaveActiveRecordings() ? new GUIContent("Ready to start recording") : new GUIContent("No active recorder"));
+                if (!HaveActiveRecordings())
+                {
+                    EditorGUILayout.LabelField(new GUIContent("No active recorder"));
+                }
+                else
+                {
+                    var msg = CheckRecordersInCompatibility();
+                    if (string.IsNullOrEmpty(msg))
+                    {
+                        EditorGUILayout.LabelField(new GUIContent("Ready to start recording"));
+                    }
+                    else
+                    {
+                        var c = GUI.color;
+                        
+                        GUI.color = Color.yellow;
+                        EditorGUILayout.LabelField(new GUIContent(msg));
+                        
+                        GUI.color = c;
+                    }
+                }
+                
                 return;
             }
 
