@@ -95,7 +95,7 @@ namespace Recorder
             foreach (var rp in m_RecorderPresetInfos)
             {
                 var r = (RecorderSettings) CreateFromPreset(rp.preset);
-                prefs.AddRecorder(r, rp.displayName, rp.enabled);
+                prefs.AddRecorderSettings(r, rp.displayName, rp.enabled);
             }
             
             prefs.Save();

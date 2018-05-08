@@ -788,7 +788,7 @@ namespace Recorder
         void AddLastAndSelect(RecorderSettings recorder, string desiredName, bool enabled)
         {
             recorder.name = GetUniqueRecorderName(desiredName);
-            m_Prefs.AddRecorder(recorder, recorder.name, enabled);
+            m_Prefs.AddRecorderSettings(recorder, recorder.name, enabled);
 
             m_RecordingListItem.AddAndSelect(CreateRecorderItem(recorder));
         }

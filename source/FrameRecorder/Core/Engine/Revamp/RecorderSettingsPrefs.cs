@@ -109,7 +109,7 @@ namespace Recorder
             get { return m_RecorderInfos.dictionary.Keys; }
         }
      
-        public void AddRecorder(RecorderSettings recorder, string displayName, bool enabled = true)
+        public void AddRecorderSettings(RecorderSettings recorder, string displayName, bool enabled = true)
         {
             var info = new RecorderInfo(recorder, displayName, enabled);
             
