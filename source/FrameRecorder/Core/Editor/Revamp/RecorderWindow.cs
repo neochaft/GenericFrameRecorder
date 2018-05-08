@@ -495,7 +495,7 @@ namespace Recorder
 
         string CheckRecordersInCompatibility()
         {
-            var ii = m_Prefs.recorderSettings.SelectMany(r =>
+            var ii = m_Prefs.recorderSettings.Where(r => m_Prefs.IsRecorderEnabled(r)).SelectMany(r =>
                 r.inputsSettings.Where(i => i is ScreenCaptureInputSettings)).ToList();
             
             if (ii.Count >= 2)
