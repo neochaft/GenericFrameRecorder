@@ -16,10 +16,27 @@ namespace Recorder
 {
     public class RecorderWindow : EditorWindow
     {
+        static string s_WindowTitle = "Recorder";
+        
         [MenuItem("Tools/Media Recorder")]
-        public static void ShowRecorderWindow()
+        static void ShowRecorderWindow()
         {
-            GetWindow(typeof(RecorderWindow), false, "Recorder");
+            GetWindow(typeof(RecorderWindow), false, s_WindowTitle);
+        }
+        
+        [MenuItem("Tools/Toggle Recording _F10")]
+        static void ToggleRecording()
+        {
+            var recorderWindow = (RecorderWindow) GetWindow(typeof(RecorderWindow), false, s_WindowTitle, false);
+
+            if (!recorderWindow.IsRecording())
+            {
+                recorderWindow.StartRecording();
+            }
+            else
+            {
+                recorderWindow.StopRecording();
+            }
         }
 
         class RicorderItemList : VisualListItem<RecorderItem>
@@ -517,7 +534,7 @@ namespace Recorder
 
         bool ShouldDisableRecordSettings()
         {
-            return m_State != State.Idle || EditorApplication.isPlaying;
+            return IsRecording() || EditorApplication.isPlaying;
         }
 
         void Update()
@@ -546,7 +563,7 @@ namespace Recorder
 
             if (HaveActiveRecordings())
             {
-                if (m_State != State.Idle)
+                if (IsRecording())
                 {
                     m_RecordButton.SetEnabled(EditorApplication.isPlaying && Time.frameCount - m_FrameCount > 5.0f);
                 }
@@ -596,13 +613,16 @@ namespace Recorder
                 m_FrameCount = Time.frameCount;
             }
         }
+
+        public bool IsRecording()
+        {
+            return m_State != State.Idle;
+        }
         
         public void StopRecording()
         {
-            if (m_State != State.Idle)
-            {
+            if (IsRecording())
                 StopRecordingInternal();
-            }
         }
 
         void OnRecordButtonClick()
