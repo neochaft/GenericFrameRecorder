@@ -1,6 +1,8 @@
 {
-    "name": "recorder.Editor",
-    "references": [],
+    "name": "com.unity.recorder.Editor",
+    "references": [
+        "com.unity.recorder.Runtime"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
