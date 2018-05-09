@@ -1,8 +1,0 @@
-{
-    "name": "com.unity.recorder.Runtime",
-    "references": [],
-    "optionalUnityReferences": [],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false
-}
