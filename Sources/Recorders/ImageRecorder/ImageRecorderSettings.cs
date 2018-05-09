@@ -26,6 +26,7 @@ namespace Recorder
     public class ImageRecorderSettings : RecorderSettings
     {
         public ImageRecorderOutputFormat outputFormat = ImageRecorderOutputFormat.JPEG;
+        public bool captureAlpha;
 
         [SerializeField] VideoSelector m_VideoInputSelector = new VideoSelector();
 
@@ -95,6 +96,12 @@ namespace Recorder
             {
                 var colorSpace = outputFormat == ImageRecorderOutputFormat.EXR ? ColorSpace.Linear : ColorSpace.Gamma;
                 renderTextureSamplerSettings.colorSpace = colorSpace;
+            }
+            
+            var cbis = input as CBRenderTextureInputSettings;
+            if (cbis != null)
+            {
+                cbis.allowTransparency = (outputFormat == ImageRecorderOutputFormat.PNG || outputFormat == ImageRecorderOutputFormat.EXR) && captureAlpha;
             }
         }
     }
