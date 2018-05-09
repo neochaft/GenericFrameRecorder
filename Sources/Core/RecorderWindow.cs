@@ -488,13 +488,29 @@ namespace Recorder
             return recorderItem;
         }
 
-        string CheckRecordersInCompatibility()
+        string CheckRecordersIncompatibility()
         {
+            var activeRecorders = m_Prefs.recorderSettings.Where(r => m_Prefs.IsRecorderEnabled(r)).ToArray();
+
+            if (activeRecorders.Length == 0)
+                return null;
+
+            var outputPaths = new HashSet<string>();
+
+            foreach (var recorder in activeRecorders)
+            {
+                var path = recorder.fileNameGenerator.BuildAbsolutePath(null); // This will not detect all conflict or might have false positives but still better than nothing
+                if (outputPaths.Contains(path))
+                    return "Some recorders might try to save into the same output file.";
+                
+                outputPaths.Add(path);
+            }
+            
             var ii = m_Prefs.recorderSettings.Where(r => m_Prefs.IsRecorderEnabled(r)).SelectMany(r =>
                 r.inputsSettings.Where(i => i is ScreenCaptureInputSettings)).ToList();
             
             if (ii.Count >= 2)
-                return "Using Game View on multiple recorders can lead to unespected behaviour";
+                return "Using Game View on multiple recorders can lead to unespected behaviour.";
 
             return null;
         }
@@ -894,7 +910,7 @@ namespace Recorder
                 }
                 else
                 {
-                    var msg = CheckRecordersInCompatibility();
+                    var msg = CheckRecordersIncompatibility();
                     if (string.IsNullOrEmpty(msg))
                     {
                         EditorGUILayout.LabelField(new GUIContent("Ready to start recording"));
