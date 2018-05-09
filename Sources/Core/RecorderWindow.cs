@@ -499,7 +499,7 @@ namespace Recorder
 
             foreach (var recorder in activeRecorders)
             {
-                var path = recorder.fileNameGenerator.BuildAbsolutePath(null); // This will not detect all conflict or might have false positives but still better than nothing
+                var path = recorder.fileNameGenerator.BuildAbsolutePath(null); // Does not detect all conflict or might have false positives
                 if (outputPaths.Contains(path))
                     return "Some recorders might try to save into the same output file.";
                 
@@ -552,7 +552,7 @@ namespace Recorder
                 }
                 else
                 {
-                    m_RecordButton.SetEnabled(!EditorApplication.isPlaying);
+                    m_RecordButton.SetEnabled(true);
                 }
             }
             else
