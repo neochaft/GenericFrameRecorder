@@ -18,14 +18,14 @@ namespace Recorder
     {
         static string s_WindowTitle = "Recorder";
         
-        [MenuItem("Tools/Media Recorder")]
+        [MenuItem("Recorder/Recorder Window", false, 1)]
         static void ShowRecorderWindow()
         {
             GetWindow(typeof(RecorderWindow), false, s_WindowTitle);
         }
         
-        [MenuItem("Tools/Toggle Recording _F10")]
-        static void ToggleRecording()
+        [MenuItem("Recorder/Quick Recording _F10", false, 2)]
+        static void QuickRecording()
         {
             var recorderWindow = (RecorderWindow) GetWindow(typeof(RecorderWindow), false, s_WindowTitle, false);
 

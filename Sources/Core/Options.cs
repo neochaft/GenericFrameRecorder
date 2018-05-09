@@ -16,8 +16,8 @@ namespace Recorder
             }
         }
     
-        const string s_DebugModeMenuItem = "Tools/Recorder/Debug mode";
-        const string s_ShowLegacyModeMenuItem = "Tools/Recorder/Show Legacy Recorders";
+        const string s_DebugModeMenuItem = "Recorder/Options/Debug mode";
+        const string s_ShowLegacyModeMenuItem = "Recorder/Options/Show Legacy Recorders";
         
         public static bool showLegacyRecorders { get; private set; }
 

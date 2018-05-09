@@ -5,7 +5,7 @@ namespace Recorder.Examples
 {
     public static class RecorderEditorExample
     {
-        const string k_MenuRoot = "Tools/Recorder Examples/Recorder Window/";
+        const string k_MenuRoot = "Recorder/Examples/";
         
         [MenuItem(k_MenuRoot + "Start Recording")]
         static void StartRecording()
