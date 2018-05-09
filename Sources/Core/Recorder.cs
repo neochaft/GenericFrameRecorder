@@ -96,6 +96,7 @@ namespace Recorder
         {
             if (!recording)
                 return;
+            
             recording = false;
 
             if (m_ModifiedCaptureFR )
@@ -118,6 +119,8 @@ namespace Recorder
 
             if(Options.debugMode)
                 Debug.Log(string.Format("{0} recording stopped, total frame count: {1}", GetType().Name, recordedFramesCount));
+
+            ++settings.take;
         }
         
         public abstract void RecordFrame(RecordingSession ctx);

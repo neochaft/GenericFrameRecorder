@@ -32,7 +32,6 @@ namespace Recorder
                 aInput.gameObjectRecorder.ResetRecording();
             }
 
-            ++ars.take;
             base.EndRecording(session);
         }
     }

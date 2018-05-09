@@ -77,6 +77,7 @@ namespace Recorder
         public static class DefaultWildcard
         {
             public static readonly string Time = GeneratePattern("Time");
+            public static readonly string Take = GeneratePattern("Take");
             public static readonly string Date = GeneratePattern("Date");
             public static readonly string Project = GeneratePattern("Project");
             public static readonly string Product = GeneratePattern("Product");
@@ -93,6 +94,7 @@ namespace Recorder
             m_Wildcards = new List<Wildcard>
             {
                 new Wildcard(DefaultWildcard.Time, TimeResolver),
+                new Wildcard(DefaultWildcard.Take, TakeResolver),
                 new Wildcard(DefaultWildcard.Date, DateResolver),
                 new Wildcard(DefaultWildcard.Project, ProjectNameResolver),
                 new Wildcard(DefaultWildcard.Product, ProductNameResolver,"(editor only)"),
@@ -117,6 +119,11 @@ namespace Recorder
         {
             var date = session != null ? session.m_SessionStartTS : DateTime.Now;
             return string.Format("{0:HH}h{1:mm}m", date, date);
+        }
+        
+        string TakeResolver(RecordingSession session)
+        {
+            return m_RecorderSettings.take.ToString("000");
         }
 
         static string DateResolver(RecordingSession session)
@@ -164,11 +171,6 @@ namespace Recorder
         public string BuildAbsolutePath(RecordingSession session)
         {
             return BuildPath(m_Path.GetFullPath(), session);
-        }
-        
-        public string BuildRelativePath(RecordingSession session)
-        {
-            return BuildPath(m_Path.leaf, session);
         }
 
         public void CreateDirectory(RecordingSession session)

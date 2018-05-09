@@ -63,9 +63,6 @@ namespace Recorder
         
         RecorderSettingsPrefs m_Prefs;
         readonly RecorderController m_RecorderController = new RecorderController();
-        
-        static List<RecorderInfo> s_BuiltInRecorderInfos;
-        static List<RecorderInfo> s_LegacyRecorderInfos;
 
         static readonly string s_PrefsFileName = "/../Library/Recorder/recorder.pref";
         static readonly string s_StylesFolder = "Styles/";
@@ -435,42 +432,20 @@ namespace Recorder
 
         void ShowNewRecorderMenu()
         {
-            if (s_BuiltInRecorderInfos == null)
-            {
-                s_BuiltInRecorderInfos = new List<RecorderInfo>
-                {
-                    RecordersInventory.GetRecorderInfo(typeof(AnimationRecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(VideoRecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(ImageRecorderSettings))
-                };
-            }
-
-            if (s_LegacyRecorderInfos == null)
-            {
-                s_LegacyRecorderInfos = new List<RecorderInfo>
-                {
-                    RecordersInventory.GetRecorderInfo(typeof(MP4RecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(EXRRecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(GIFRecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(PNGRecorderSettings)),
-                    RecordersInventory.GetRecorderInfo(typeof(WEBMRecorderSettings))
-                };
-            }
-
             var newRecordMenu = new GenericMenu();
                 
-            foreach (var info in s_BuiltInRecorderInfos)
+            foreach (var info in RecordersInventory.builtInRecorderInfos)
                 AddRecorderInfoToMenu(info, newRecordMenu);
 
             if (Options.showLegacyRecorders)
             {
                 newRecordMenu.AddSeparator(string.Empty);
                 
-                foreach (var info in s_LegacyRecorderInfos)
+                foreach (var info in RecordersInventory.legacyRecorderInfos)
                     AddRecorderInfoToMenu(info, newRecordMenu);
             }
                 
-            var recorderList = RecordersInventory.recorderInfos.Where(r => !s_BuiltInRecorderInfos.Contains(r) && !s_LegacyRecorderInfos.Contains(r));
+            var recorderList = RecordersInventory.customRecorderInfos.ToList();
 
             if (recorderList.Any())
             {

@@ -6,25 +6,20 @@ using UnityEngine;
 namespace Recorder
 {
     [Serializable]
-    [RecorderSettings(typeof(AnimationRecorder), "Animation", "animation_recorder")]
+    [RecorderSettings(typeof(AnimationRecorder), "Animation Clip", "animation_recorder")]
     public class AnimationRecorderSettings : RecorderSettings
     {
         [SerializeField] AnimationInputSettings m_AnimationInputSettings = new AnimationInputSettings();
-        
-        public int take = 1;
    
         public AnimationRecorderSettings()
         {
             var goWildcard = FileNameGenerator.GeneratePattern("GameObject");
-            var takeWildcard = FileNameGenerator.GeneratePattern("Take");
-            
+           
             fileNameGenerator.AddWildcard(goWildcard, GameObjectNameResolver);
-            fileNameGenerator.AddWildcard(takeWildcard, session => take.ToString("000"));
 
             fileNameGenerator.forceAssetsFolder = true;
             fileNameGenerator.root = OutputPath.Root.AssetsFolder;
-            fileNameGenerator.fileName = "animation_" + goWildcard + "_" + takeWildcard;
-            
+            fileNameGenerator.fileName = "animation_" + goWildcard + "_" + FileNameGenerator.DefaultWildcard.Take;            
         }
 
         string GameObjectNameResolver(RecordingSession session)

@@ -1,8 +1,7 @@
-using Recorder;
 using UnityEditor;
 using UnityEngine;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace Recorder
 {
     [CustomEditor(typeof(GIFRecorderSettings))]
     public class GIFRecorderSettingsEditor : RecorderEditor

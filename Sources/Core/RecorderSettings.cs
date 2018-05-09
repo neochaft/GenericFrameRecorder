@@ -33,6 +33,8 @@ namespace Recorder
     {
         public FileNameGenerator fileNameGenerator;
         
+        public int take = 1;
+        
         public int captureEveryNthFrame = 1;
 
         public RecordMode recordMode { get; set; }

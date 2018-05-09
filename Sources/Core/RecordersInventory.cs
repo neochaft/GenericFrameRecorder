@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
+using UTJ.FrameCapturer.Recorders;
 
 namespace Recorder
 {
-    public class RecorderInfo
+    class RecorderInfo
     {
         public Type recorderType;
         public Type settingsType;
@@ -14,9 +15,11 @@ namespace Recorder
         public string iconName;
     }
 
-    public static class RecordersInventory
+    static class RecordersInventory
     {
         static Dictionary<Type, RecorderInfo> s_Recorders;
+        static HashSet<RecorderInfo> s_BuiltInRecorderInfos;
+        static HashSet<RecorderInfo> s_LegacyRecorderInfos;
         
         static IEnumerable<KeyValuePair<Type, object[]>> FindRecorders()
         {
@@ -45,35 +48,60 @@ namespace Recorder
 
         static void Init()
         {
-            if (s_Recorders != null)
-                return;
-
-            s_Recorders = new Dictionary<Type, RecorderInfo>();
-            foreach (var recorder in FindRecorders())
+            if (s_Recorders == null)
             {
-                var settingsType = recorder.Key;
-                var settingsAttribs = recorder.Value;
-                    
-                if (settingsType == null || string.IsNullOrEmpty(settingsType.FullName))
-                    continue;
-
-                if (settingsAttribs.Length == 1)
+                s_Recorders = new Dictionary<Type, RecorderInfo>();
+                foreach (var recorder in FindRecorders())
                 {
-                    var settingsAttrib = (RecorderSettingsAttribute) settingsAttribs[0];
+                    var settingsType = recorder.Key;
+                    var settingsAttribs = recorder.Value;
 
-                    var info = new RecorderInfo
+                    if (settingsType == null || string.IsNullOrEmpty(settingsType.FullName))
+                        continue;
+
+                    if (settingsAttribs.Length == 1)
                     {
-                        settingsType = settingsType,
-                        recorderType = settingsAttrib.recorderType,
-                        displayName = settingsAttrib.displayName,
-                        iconName = settingsAttrib.iconName
-                    };
+                        var settingsAttrib = (RecorderSettingsAttribute) settingsAttribs[0];
 
-                    s_Recorders.Add(settingsType, info);
+                        var info = new RecorderInfo
+                        {
+                            settingsType = settingsType,
+                            recorderType = settingsAttrib.recorderType,
+                            displayName = settingsAttrib.displayName,
+                            iconName = settingsAttrib.iconName
+                        };
+
+                        s_Recorders.Add(settingsType, info);
+                    }
+                }
+            }
+
+            if (s_Recorders != null)
+            {
+                if (s_BuiltInRecorderInfos == null)
+                {
+                    s_BuiltInRecorderInfos = new HashSet<RecorderInfo>
+                    {
+                        s_Recorders[typeof(AnimationRecorderSettings)],
+                        s_Recorders[typeof(VideoRecorderSettings)],
+                        s_Recorders[typeof(ImageRecorderSettings)],
+                        s_Recorders[typeof(GIFRecorderSettings)]
+                    };
+                }
+
+                if (s_LegacyRecorderInfos == null)
+                {
+                    s_LegacyRecorderInfos = new HashSet<RecorderInfo>
+                    {
+                        s_Recorders[typeof(MP4RecorderSettings)],
+                        s_Recorders[typeof(EXRRecorderSettings)],
+                        s_Recorders[typeof(PNGRecorderSettings)],
+                        s_Recorders[typeof(WEBMRecorderSettings)]
+                    };
                 }
             }
         }
-
+        
         public static RecorderInfo GetRecorderInfo(Type settingsType)
         {
             Init();
@@ -84,6 +112,33 @@ namespace Recorder
             return s_Recorders.ContainsKey(settingsType) ? s_Recorders[settingsType] : null;
         }
 
+        public static IEnumerable<RecorderInfo> builtInRecorderInfos
+        {
+            get
+            {
+                Init();
+                return s_BuiltInRecorderInfos;
+            }
+        }
+        
+        public static IEnumerable<RecorderInfo> legacyRecorderInfos
+        {
+            get
+            {
+                Init();
+                return s_LegacyRecorderInfos;
+            }
+        }
+        
+        public static IEnumerable<RecorderInfo> customRecorderInfos
+        {
+            get
+            {
+                Init();
+                return s_Recorders.Values.Where(r => !s_BuiltInRecorderInfos.Contains(r) && !s_LegacyRecorderInfos.Contains(r));
+            }
+        }
+        
         public static List<RecorderInfo> recorderInfos
         {
             get

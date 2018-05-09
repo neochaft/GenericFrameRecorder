@@ -1,8 +1,8 @@
 using System;
-using Recorder;
 using UnityEngine;
+using UTJ.FrameCapturer;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace Recorder
 {
     public class GIFRecorder : GenericRecorder<GIFRecorderSettings>
     {
