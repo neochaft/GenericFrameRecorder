@@ -60,7 +60,7 @@ namespace Recorder
 
         State m_State = State.None;
 
-        public void UpdateState(bool checkForWarnings = true)
+        void UpdateState(bool checkForWarnings = true)
         {
             if (settings == null || settings.HasErrors())
             {

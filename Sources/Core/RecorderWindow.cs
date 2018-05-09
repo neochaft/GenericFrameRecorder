@@ -495,7 +495,7 @@ namespace Recorder
         {
             var info = RecordersInventory.GetRecorderInfo(recorderSettings.GetType());
            
-            var hasError = info == null || string.IsNullOrEmpty(info.iconName); 
+            var hasError = info == null; 
             
             var recorderItem = new RecorderItem(m_Prefs, recorderSettings, hasError ? null : info.iconName);
             
