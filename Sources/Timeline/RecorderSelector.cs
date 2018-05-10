@@ -1,73 +1,75 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Recorder
+namespace Recorder.Timeline
 {
     class RecorderSelector
     {
         string[] m_RecorderNames;
-        List<RecorderInfo> m_Recorders;
+        List<Type> m_RecorderTypes;
+        
+        //List<RecorderInfo> m_Recorders;
         bool m_SettingsAreAssets;
 
-        public Type selectedRecorder { get; private set; }
+        Type m_SelectedRecorder;
 
-        readonly Action m_SetRecorderCallback;
+        public event Action<Type> OnSelectionChanged;
 
-        public RecorderSelector(Action setRecorderCallback)
+        public void Init( RecorderSettings settings)
         {
-            m_SetRecorderCallback = setRecorderCallback;
+            if (m_RecorderTypes == null)
+            {
+                var recorderList = RecordersInventory.builtInRecorderInfos.ToList();
+                
+                if (Options.showLegacyRecorders)
+                    recorderList.AddRange(RecordersInventory.legacyRecorderInfos);
+                
+                recorderList.AddRange(RecordersInventory.customRecorderInfos);
+                
+                m_RecorderTypes = recorderList.Select(x => x.settingsType).ToList();
+                m_RecorderNames = recorderList.Select(x => x.displayName).ToArray();
+            }
+
+            SelectRecorder(settings != null ? settings.GetType() : m_RecorderTypes.First());
         }
 
-        public void Init(RecorderSettings settings)
+        int GetRecorderIndex(Type settingType)
         {
-            //if(settings != null)
-            //    SelectRecorder(settings);
+            return m_RecorderTypes.IndexOf(settingType);
         }
-
-        int GetRecorderIndex()
+        
+        Type GetRecorderFromIndex(int index)
         {
-            if (m_Recorders.Count == 0)
-                return -1;
-            
-            for (int i = 0; i < m_Recorders.Count; i++)
-                if (m_Recorders[i].recorderType == selectedRecorder)
-                    return i;
-
-            if (m_Recorders.Count > 0)
-                return 0;
-            
-            return -1;
-        }
-
-        static Type GetRecorderFromIndex(int index)
-        {
-            return index >= 0 ? RecordersInventory.recorderInfos[index].recorderType : null;
+            return m_RecorderTypes.ElementAt(index);
         }
 
         public void OnGui()
         {
             // Recorder in group selection
             EditorGUILayout.BeginHorizontal();
-            //var oldIndex = GetRecorderIndex();
-            //var newIndex = EditorGUILayout.Popup("Selected recorder:", oldIndex, m_RecorderNames);
-            //SelectRecorder(GetRecorderFromIndex(newIndex));
+            var oldIndex = GetRecorderIndex(m_SelectedRecorder);
+            var newIndex = EditorGUILayout.Popup("Selected recorder:", oldIndex, m_RecorderNames);
+            SelectRecorder(GetRecorderFromIndex(newIndex));
 
             EditorGUILayout.EndHorizontal();
         }
 
-        void SelectRecorder( Type newSelection )
+        void SelectRecorder(Type newSelection)
         {
-            if (selectedRecorder == newSelection)
+            if (m_SelectedRecorder == newSelection)
                 return;
 
             var recorderAttribs = newSelection.GetCustomAttributes(typeof(ObsoleteAttribute), false);
             if (recorderAttribs.Length > 0 )
                 Debug.LogWarning( "Recorder " + ((ObsoleteAttribute)recorderAttribs[0]).Message);
 
-            selectedRecorder = newSelection;
-            m_SetRecorderCallback();
+            m_SelectedRecorder = newSelection;
+            
+            if (OnSelectionChanged != null)
+                OnSelectionChanged.Invoke(m_SelectedRecorder);
         }
     }
 }

@@ -1,18 +1,27 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace Recorder.Timeline
 {
-    [System.ComponentModel.DisplayName("Recorder Clip")]
+    [DisplayName("Recorder Clip")]
     public class RecorderClip : PlayableAsset, ITimelineClipAsset
     {
         public delegate void RecordingClipDoneDelegate(RecorderClip clip);
 
         public static RecordingClipDoneDelegate OnClipDone;
 
-//        [SerializeField] public RecorderSettings m_Settings;
+        [SerializeField]
+        public RecorderSettings m_Settings;
+        
+        SceneHook m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
+
+        public Type recorderType
+        {
+            get { return m_Settings == null ? null : RecordersInventory.GetRecorderInfo(m_Settings.GetType()).recorderType; }
+        }
 
         public ClipCaps clipCaps
         {
@@ -23,34 +32,29 @@ namespace Recorder.Timeline
         {
             var playable = ScriptPlayable<RecorderPlayableBehaviour>.Create(graph);
             var behaviour = playable.GetBehaviour();
-//            if (m_Settings != null && UnityHelpers.IsPlaying())
-//            {
-//                
-//                //var RecordersInventory.CreateDefaultRecorderSettings(m_Settings.GetType());
-//                behaviour.session = new RecordingSession()
-//                {
-//                    //m_Recorder = RecordersInventory.CreateDefaultRecorderSettings(m_Settings.GetType()),
-//                    //m_RecorderGO = SceneHook.GetRecorderHost(true),
-//                };
-//                behaviour.OnEnd = () =>
-//                {
-//                    try
-//                    {
-//                        if (OnClipDone != null) OnClipDone(this);     
-//                    }
-//                    catch (Exception ex)
-//                    {
-//                        Debug.Log("OnClipDone call back generated an exception: " + ex.Message );
-//                        Debug.LogException(ex);
-//                    }
-//                };
-//            }
+            if (recorderType != null && UnityHelpers.IsPlaying())
+            {
+                behaviour.session = m_SceneHook.CreateRecorderSession(m_Settings, false);
+                
+                behaviour.OnEnd = () =>
+                {
+                    try
+                    {
+                        if (OnClipDone != null) OnClipDone(this);     
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log("OnClipDone call back generated an exception: " + ex.Message );
+                        Debug.LogException(ex);
+                    }
+                };
+            }
             return playable;
         }
 
         public virtual void OnDestroy()
         {
-            //UnityHelpers.Destroy( m_Settings, true );
+            UnityHelpers.Destroy( m_Settings, true );
         }
     }
 }
