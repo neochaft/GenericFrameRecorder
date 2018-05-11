@@ -1,0 +1,12 @@
+{
+    "name": "com.unity.recorder.Editor",
+    "references": [
+        "com.unity.recorder.Engine"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

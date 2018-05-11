@@ -1,0 +1,8 @@
+{
+    "name": "com.unity.recorder.Engine",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
