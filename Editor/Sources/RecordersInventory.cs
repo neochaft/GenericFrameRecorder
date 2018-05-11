@@ -83,7 +83,7 @@ namespace Recorder
                     s_BuiltInRecorderInfos = new HashSet<RecorderInfo>
                     {
                         s_Recorders[typeof(AnimationRecorderSettings)],
-                        s_Recorders[typeof(VideoRecorderSettings)],
+                        s_Recorders[typeof(MovieRecorderSettings)],
                         s_Recorders[typeof(ImageRecorderSettings)],
                         s_Recorders[typeof(GIFRecorderSettings)]
                     };

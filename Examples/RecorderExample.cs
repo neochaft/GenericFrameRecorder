@@ -20,7 +20,7 @@ public class RecorderExample : MonoBehaviour
         
         m_Prefs = ScriptableObject.CreateInstance<RecorderSettingsPrefs>();
 
-        var videoRecorder = ScriptableObject.CreateInstance<VideoRecorderSettings>();
+        var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
 
         videoRecorder.outputFormat = VideoRecorderOutputFormat.MP4;
         videoRecorder.videoBitRateMode = VideoBitrateMode.Low;

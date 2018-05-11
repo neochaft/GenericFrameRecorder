@@ -7,10 +7,10 @@ using UnityEditor;
 
 namespace Recorder
 {
-    public class VideoRecorder : GenericRecorder<VideoRecorderSettings> // TODO Remove UTJ/MovieRecorder and rename to MovieRecorder
+    public class MovieRecorder : GenericRecorder<MovieRecorderSettings>
     {
-        private MediaEncoder m_Encoder;
-        private Texture2D m_ReadBackTexture;
+        MediaEncoder m_Encoder;
+        Texture2D m_ReadBackTexture;
 
         public override bool BeginRecording(RecordingSession session)
         {

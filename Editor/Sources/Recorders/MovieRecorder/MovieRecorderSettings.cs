@@ -12,8 +12,8 @@ namespace Recorder
         WEBM
     }
 
-    [RecorderSettings(typeof(VideoRecorder), "Movie", "movie_recorder")]
-    public class VideoRecorderSettings : RecorderSettings
+    [RecorderSettings(typeof(MovieRecorder), "Movie", "movie_recorder")]
+    public class MovieRecorderSettings : RecorderSettings
     {
         public VideoRecorderOutputFormat outputFormat = VideoRecorderOutputFormat.MP4;
         public VideoBitrateMode videoBitRateMode = VideoBitrateMode.High;
@@ -46,7 +46,7 @@ namespace Recorder
         [SerializeField] VideoInputSelector m_VideoInputSelector = new VideoInputSelector();
         [SerializeField] AudioInputSettings m_AudioInputSettings = new AudioInputSettings();
         
-        public VideoRecorderSettings()
+        public MovieRecorderSettings()
         {
             fileNameGenerator.fileName = "movie";
             ((ImageInputSettings)m_VideoInputSelector.selected).maxSupportedSize = ImageResolution.x2160p_4K;

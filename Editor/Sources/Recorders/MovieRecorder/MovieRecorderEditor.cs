@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Recorder
 {
-    [CustomEditor(typeof(VideoRecorderSettings))]
-    public class VideoRecorderEditor : RecorderEditor
+    [CustomEditor(typeof(MovieRecorderSettings))]
+    public class MovieRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_EncodingBitRateMode;
@@ -31,7 +31,7 @@ namespace Recorder
         {
             EditorGUILayout.PropertyField(m_OutputFormat, new GUIContent("Format"));
 
-            if (((VideoRecorderSettings) target).outputFormat == VideoRecorderOutputFormat.WEBM)
+            if (((MovieRecorderSettings) target).outputFormat == VideoRecorderOutputFormat.WEBM)
             {
                 ++EditorGUI.indentLevel;
                 EditorGUILayout.PropertyField(m_CaptureAlpha, new GUIContent("Capture Alpha"));
