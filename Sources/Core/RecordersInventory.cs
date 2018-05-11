@@ -7,7 +7,7 @@ using UTJ.FrameCapturer.Recorders;
 
 namespace Recorder
 {
-    class RecorderInfo
+    public class RecorderInfo
     {
         public Type recorderType;
         public Type settingsType;
@@ -15,7 +15,7 @@ namespace Recorder
         public string iconName;
     }
 
-    static class RecordersInventory
+    public static class RecordersInventory
     {
         static Dictionary<Type, RecorderInfo> s_Recorders;
         static HashSet<RecorderInfo> s_BuiltInRecorderInfos;

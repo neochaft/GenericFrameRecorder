@@ -4,6 +4,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace Recorder
 {     
+    [ExecuteInEditMode]
     public class RecorderBindings : MonoBehaviour, IExposedPropertyTable
     {
         [Serializable]

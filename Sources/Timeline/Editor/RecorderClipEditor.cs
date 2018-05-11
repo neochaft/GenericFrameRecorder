@@ -2,6 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
+using UnityObject = UnityEngine.Object;
 
 namespace Recorder.Timeline
 {
@@ -83,7 +84,7 @@ namespace Recorder.Timeline
             UnityHelpers.Destroy(((RecorderClip) target).m_Settings, true);
         }
 
-        public void OnRecorderSelected(Type selectedRecorder)
+        void OnRecorderSelected(Type selectedRecorder)
         {
             var clip = (RecorderClip)target;
 
@@ -111,7 +112,7 @@ namespace Recorder.Timeline
                 AssetDatabase.Refresh();
             }
 
-            m_Editor = CreateEditor(clip.m_Settings) as RecorderEditor;
+            m_Editor = (RecorderEditor) CreateEditorWithContext(new UnityObject[] { clip.m_Settings}, SceneHook.GetRecorderBindings());
             AssetDatabase.Refresh();
         }
 
