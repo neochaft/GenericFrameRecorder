@@ -1,7 +1,7 @@
 using System;
 
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     public abstract class EncoderBase
     {

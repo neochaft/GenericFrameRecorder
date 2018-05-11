@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     [CustomPropertyDrawer(typeof(Bool))]
     class BoolDrawer : PropertyDrawer

@@ -1,8 +1,7 @@
 using System;
-using Recorder;
 using UnityEngine;
 
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [Obsolete("'Legacy/WEBM' is obsolete, concider using 'Unity/Movie' instead", false)]    
     public class WEBMRecorder : GenericRecorder<WEBMRecorderSettings>

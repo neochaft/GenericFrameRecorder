@@ -1,6 +1,4 @@
-using Recorder;
-
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(EXRRecorder), "Legacy/OpenEXR")]
     public class EXRRecorderSettings : BaseFCRecorderSettings

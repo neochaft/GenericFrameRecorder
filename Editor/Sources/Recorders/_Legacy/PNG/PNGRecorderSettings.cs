@@ -1,6 +1,4 @@
-using Recorder;
-
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(PNGRecorder), "Legacy/PNG" )]
     public class PNGRecorderSettings : BaseFCRecorderSettings

@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using FrameCapturer;
+using Recorder.FrameCapturer;
 
 namespace Recorder
 {

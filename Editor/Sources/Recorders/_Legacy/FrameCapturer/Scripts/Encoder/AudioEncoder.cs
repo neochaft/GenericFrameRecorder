@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     [Serializable]
     public class AudioEncoderConfigs

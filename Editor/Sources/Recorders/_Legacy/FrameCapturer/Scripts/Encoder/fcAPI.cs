@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEditor;
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     public static class fcAPI
     {

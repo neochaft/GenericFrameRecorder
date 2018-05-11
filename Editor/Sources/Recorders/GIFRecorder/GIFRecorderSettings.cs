@@ -1,5 +1,4 @@
-using FrameCapturer;
-using FrameCapturer.Recorders;
+using Recorder.FrameCapturer;
 
 namespace Recorder
 {

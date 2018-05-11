@@ -1,8 +1,7 @@
-using Recorder;
 using UnityEditor;
 using UnityEngine;
 
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [CustomEditor(typeof(WEBMRecorderSettings))]
     public class WEBMRecorderSettingsEditor : RecorderEditor

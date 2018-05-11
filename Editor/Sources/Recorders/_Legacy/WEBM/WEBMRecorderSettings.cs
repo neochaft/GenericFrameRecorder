@@ -1,6 +1,4 @@
-using Recorder;
-
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(WEBMRecorder), "Legacy/WebM" )]
     public class WEBMRecorderSettings : BaseFCRecorderSettings

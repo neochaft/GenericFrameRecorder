@@ -1,7 +1,6 @@
 using System;
-using Recorder;
 
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [Obsolete("'Legacy/PNG' is obsolete, concider using 'Image Sequence' instead", false)]
     public class PNGRecorder : GenericRecorder<PNGRecorderSettings>

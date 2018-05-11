@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     public class GifEncoder : MovieEncoder
     {

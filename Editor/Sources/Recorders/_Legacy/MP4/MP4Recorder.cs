@@ -1,8 +1,7 @@
 using System;
-using Recorder;
 using UnityEngine;
 
-namespace FrameCapturer.Recorders
+namespace Recorder.FrameCapturer
 {
     [Obsolete("'Legacy/MP4' is obsolete, concider using 'Movie' instead", false)]
     public class MP4Recorder : GenericRecorder<MP4RecorderSettings>

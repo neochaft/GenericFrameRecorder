@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace FrameCapturer
+namespace Recorder.FrameCapturer
 {
     [CustomPropertyDrawer(typeof(DataPath))]
     class DataPathDrawer : PropertyDrawer
