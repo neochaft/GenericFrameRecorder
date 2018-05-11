@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Recorder
 {
     [CustomEditor(typeof(GIFRecorderSettings))]
-    public class GIFRecorderSettingsEditor : RecorderEditor
+    class GIFRecorderSettingsEditor : RecorderEditor
     {
         protected override void OnEncodingGui()
         {

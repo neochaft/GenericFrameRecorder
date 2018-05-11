@@ -2,9 +2,8 @@ using System;
 using UnityEngine;
 
 namespace Recorder.FrameCapturer
-{
-    [Obsolete("'Legacy/WEBM' is obsolete, concider using 'Unity/Movie' instead", false)]    
-    public class WEBMRecorder : GenericRecorder<WEBMRecorderSettings>
+{   
+    class WEBMRecorder : GenericRecorder<WEBMRecorderSettings>
     {
         fcAPI.fcWebMContext m_ctx;
         fcAPI.fcStream m_stream;

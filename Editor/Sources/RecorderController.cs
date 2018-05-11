@@ -80,7 +80,7 @@ namespace Recorder
 
         public bool IsRecording()
         {
-            return m_RecordingSessions != null && m_RecordingSessions.Any(r => r.recording);
+            return m_RecordingSessions != null && m_RecordingSessions.Any(r => r.isRecording);
         }
 
         public void StopRecording()

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Recorder
 { 
-    public abstract class BaseRenderTextureInput : RecorderInput
+    abstract class BaseRenderTextureInput : RecorderInput
     {
         public RenderTexture outputRT { get; set; }
 

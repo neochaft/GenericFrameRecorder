@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Recorder.FrameCapturer
 {
     [Serializable]
-    public class MovieEncoderConfigs
+    class MovieEncoderConfigs
     {
         public MovieEncoder.Type format = MovieEncoder.Type.WebM;
         public fcAPI.fcPngConfig pngEncoderSettings = fcAPI.fcPngConfig.default_value;
@@ -103,7 +103,7 @@ namespace Recorder.FrameCapturer
         }
     }
 
-    public abstract class MovieEncoder : EncoderBase
+    abstract class MovieEncoder : EncoderBase
     {
         public enum Type
         {
@@ -146,18 +146,18 @@ namespace Recorder.FrameCapturer
             return null;
         }
 
-        public static MovieEncoder Create(MovieEncoderConfigs c, string path)
-        {
-            var ret = Create(c.format);
-            switch (c.format)
-            {
-                case Type.Png: ret.Initialize(c.pngEncoderSettings, path); break;
-                case Type.Exr: ret.Initialize(c.exrEncoderSettings, path); break;
-                case Type.Gif: ret.Initialize(c.gifEncoderSettings, path); break;
-                case Type.WebM:ret.Initialize(c.webmEncoderSettings,path); break;
-                case Type.MP4: ret.Initialize(c.mp4EncoderSettings, path); break;
-            }
-            return ret;
-        }
+//        public static MovieEncoder Create(MovieEncoderConfigs c, string path)
+//        {
+//            var ret = Create(c.format);
+//            switch (c.format)
+//            {
+//                case Type.Png: ret.Initialize(c.pngEncoderSettings, path); break;
+//                case Type.Exr: ret.Initialize(c.exrEncoderSettings, path); break;
+//                case Type.Gif: ret.Initialize(c.gifEncoderSettings, path); break;
+//                case Type.WebM:ret.Initialize(c.webmEncoderSettings,path); break;
+//                case Type.MP4: ret.Initialize(c.mp4EncoderSettings, path); break;
+//            }
+//            return ret;
+//        }
     }
 }

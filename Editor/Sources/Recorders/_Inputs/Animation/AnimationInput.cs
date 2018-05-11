@@ -2,7 +2,7 @@
 
 namespace Recorder.Input
 {
-    public class AnimationInput : RecorderInput
+    class AnimationInput : RecorderInput
     {
         public GameObjectRecorder gameObjectRecorder { get; private set; }
         float m_Time;
@@ -28,7 +28,7 @@ namespace Recorder.Input
 
         public override void NewFrameReady(RecordingSession session)
         {
-            if (gameObjectRecorder != null && session.recording)
+            if (gameObjectRecorder != null && session.isRecording)
             {
                 gameObjectRecorder.TakeSnapshot(session.recorderTime - m_Time);
                 m_Time = session.recorderTime;

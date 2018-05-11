@@ -4,7 +4,7 @@ using Recorder.FrameCapturer;
 
 namespace Recorder
 {
-    public class GIFRecorder : GenericRecorder<GIFRecorderSettings>
+    class GIFRecorder : GenericRecorder<GIFRecorderSettings>
     {
         fcAPI.fcGifContext m_ctx;
         fcAPI.fcStream m_stream;

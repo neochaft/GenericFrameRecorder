@@ -2,8 +2,7 @@ using System;
 
 namespace Recorder.FrameCapturer
 {
-    [Obsolete("'Legacy/OpenEXR' is obsolete, concider using 'Image Sequence' instead", false)]
-    public class EXRRecorder : GenericRecorder<EXRRecorderSettings>
+    class EXRRecorder : GenericRecorder<EXRRecorderSettings>
     {
         static readonly string[] s_channelNames = { "R", "G", "B", "A" };
         fcAPI.fcExrContext m_ctx;

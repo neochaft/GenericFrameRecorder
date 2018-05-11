@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Recorder
 {
     [CustomPropertyDrawer(typeof(FileNameGenerator))]
-    public class FileNameGeneratorDrawer : TargetedPropertyDrawer<FileNameGenerator>
+    class FileNameGeneratorDrawer : TargetedPropertyDrawer<FileNameGenerator>
     {
         SerializedProperty m_FileName;
         SerializedProperty m_Path;

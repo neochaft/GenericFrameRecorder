@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Recorder.Input
 {
-    public class RenderTextureSampler : BaseRenderTextureInput
+    class RenderTextureSampler : BaseRenderTextureInput
     {
         Shader superShader;
         Shader accumulateShader;

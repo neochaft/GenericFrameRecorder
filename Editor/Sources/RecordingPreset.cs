@@ -1,7 +1,7 @@
 namespace Recorder
 {
     
-//    public class RecordingPreset : RecorderPreset<RecorderSettings>
+//    class RecordingPreset : RecorderPreset<RecorderSettings>
 //    {
 //        public static void Save(RecorderSettings model, string path)
 //        {

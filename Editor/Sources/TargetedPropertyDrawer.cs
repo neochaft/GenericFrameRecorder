@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Recorder
 {
-    public class TargetedPropertyDrawer<T> : PropertyDrawer where T : class
+    class TargetedPropertyDrawer<T> : PropertyDrawer where T : class
     {
         protected T target;
 

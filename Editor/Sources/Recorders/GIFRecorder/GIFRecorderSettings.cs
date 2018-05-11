@@ -3,7 +3,7 @@ using Recorder.FrameCapturer;
 namespace Recorder
 {
     [RecorderSettings(typeof(GIFRecorder), "GIF Animation", "image_recorder")]
-    public class GIFRecorderSettings : BaseFCRecorderSettings
+    class GIFRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcGifConfig m_GifEncoderSettings = fcAPI.fcGifConfig.default_value;
 

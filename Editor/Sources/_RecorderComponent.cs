@@ -4,31 +4,31 @@ using UnityEngine;
 namespace Recorder
 {
     [ExecuteInEditMode]
-    public class RecorderComponent : MonoBehaviour
+    class RecorderComponent : MonoBehaviour
     {
         public bool autoExitPlayMode { get; set; }
         public RecordingSession session { get; set; }
 
         public void Update()
         {
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
                 session.PrepareNewFrame();
         }
 
         IEnumerator RecordFrame()
         {
             yield return new WaitForEndOfFrame();
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
             {
                 session.RecordFrame();
 
-                switch (session.m_Recorder.settings.recordMode)
+                switch (session.recorder.settings.recordMode)
                 {
                     case RecordMode.Manual:
                         break;
                     case RecordMode.SingleFrame:
                     {
-                        if (session.m_Recorder.recordedFramesCount == 1)
+                        if (session.recorder.recordedFramesCount == 1)
                             enabled = false;
                         break;
                     }
@@ -42,7 +42,7 @@ namespace Recorder
                     {
                         if (session.settings.frameRatePlayback == FrameRatePlayback.Variable)
                         {
-                            if (session.m_CurrentFrameStartTS >= session.settings.endTime)
+                            if (session.currentFrameStartTS >= session.settings.endTime)
                                 enabled = false;
                         }
                         else
@@ -59,7 +59,7 @@ namespace Recorder
 
         public void LateUpdate()
         {
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
                 StartCoroutine(RecordFrame());
         }
 

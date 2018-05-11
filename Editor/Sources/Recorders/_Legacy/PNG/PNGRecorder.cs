@@ -2,8 +2,7 @@ using System;
 
 namespace Recorder.FrameCapturer
 {
-    [Obsolete("'Legacy/PNG' is obsolete, concider using 'Image Sequence' instead", false)]
-    public class PNGRecorder : GenericRecorder<PNGRecorderSettings>
+    class PNGRecorder : GenericRecorder<PNGRecorderSettings>
     {
         fcAPI.fcPngContext m_ctx;
         

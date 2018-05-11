@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace Recorder.Input
 {
-    public class CBRenderTextureInput : BaseRenderTextureInput
+    class CBRenderTextureInput : BaseRenderTextureInput
     {
         struct CanvasBackup
         {
@@ -149,7 +149,7 @@ namespace Recorder.Input
             {
                 var uiGO = new GameObject();
                 uiGO.name = "UICamera";
-                uiGO.transform.parent = session.m_RecorderGO.transform;
+                uiGO.transform.parent = session.recorderGameObject.transform;
 
                 m_UICamera = uiGO.AddComponent<Camera>();
                 m_UICamera.cullingMask = 1 << 5;
@@ -170,7 +170,7 @@ namespace Recorder.Input
                     {
                         var displayGO = new GameObject();
                         displayGO.name = "CameraHostGO-" + displayGO.GetInstanceID();
-                        displayGO.transform.parent = session.m_RecorderGO.transform;
+                        displayGO.transform.parent = session.recorderGameObject.transform;
                         var camera = displayGO.AddComponent<Camera>();
                         camera.clearFlags = CameraClearFlags.Nothing;
                         camera.cullingMask = 0;

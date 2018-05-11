@@ -2,7 +2,7 @@
 
 namespace Recorder.Input
 {
-    public class RenderTextureInput : BaseRenderTextureInput
+    class RenderTextureInput : BaseRenderTextureInput
     {
         RenderTextureInputSettings cbSettings
         {

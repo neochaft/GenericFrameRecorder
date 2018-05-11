@@ -14,7 +14,7 @@ namespace Recorder
         SessionCreated
     }
 
-    public abstract class Recorder : ScriptableObject
+    abstract class Recorder : ScriptableObject
     {
         static int sm_CaptureFrameRateCount;
         bool m_ModifiedCaptureFR;
@@ -133,7 +133,7 @@ namespace Recorder
         {
             return !recording 
                 || (ctx.frameIndex % settings.captureEveryNthFrame) != 0 
-                || ( settings.recordMode == RecordMode.TimeInterval && ctx.m_CurrentFrameStartTS < settings.startTime )
+                || ( settings.recordMode == RecordMode.TimeInterval && ctx.currentFrameStartTS < settings.startTime )
                 || ( settings.recordMode == RecordMode.FrameInterval && ctx.frameIndex < settings.startFrame )
                 || ( settings.recordMode == RecordMode.SingleFrame && ctx.frameIndex < settings.startFrame );
         }

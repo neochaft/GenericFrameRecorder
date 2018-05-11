@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Recorder.FrameCapturer
 {
-    public class WaveEncoder : AudioEncoder
+    class WaveEncoder : AudioEncoder
     {
         fcAPI.fcWaveContext m_ctx;
         fcAPI.fcWaveConfig m_config;

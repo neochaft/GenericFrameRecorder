@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Recorder.Input
 {
-    public class ScreenCaptureInput : RecorderInput
+    class ScreenCaptureInput : RecorderInput
     {
         bool m_ModifiedResolution;
 

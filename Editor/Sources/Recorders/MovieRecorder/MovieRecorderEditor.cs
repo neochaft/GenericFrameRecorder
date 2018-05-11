@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Recorder
 {
     [CustomEditor(typeof(MovieRecorderSettings))]
-    public class MovieRecorderEditor : RecorderEditor
+    class MovieRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_EncodingBitRateMode;

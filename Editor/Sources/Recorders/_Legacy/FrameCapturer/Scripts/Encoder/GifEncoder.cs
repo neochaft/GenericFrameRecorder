@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Recorder.FrameCapturer
 {
-    public class GifEncoder : MovieEncoder
+    class GifEncoder : MovieEncoder
     {
         fcAPI.fcGifContext m_ctx;
         fcAPI.fcGifConfig m_config;

@@ -1,7 +1,7 @@
 namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(PNGRecorder), "Legacy/PNG" )]
-    public class PNGRecorderSettings : BaseFCRecorderSettings
+    class PNGRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcPngConfig m_PngEncoderSettings = fcAPI.fcPngConfig.default_value;
 

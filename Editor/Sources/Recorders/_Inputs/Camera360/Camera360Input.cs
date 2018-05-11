@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace Recorder.Input
 {
-    public class Camera360Input : BaseRenderTextureInput
+    class Camera360Input : BaseRenderTextureInput
     {
         bool m_ModifiedResolution;
         Shader m_shCopy;

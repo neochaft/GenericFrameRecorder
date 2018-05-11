@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(ScreenCaptureInputSettings))]
-    public class ScreenCaptureInputPropertyDrawer : InputPropertyDrawer<ScreenCaptureInputSettings>
+    class ScreenCaptureInputPropertyDrawer : InputPropertyDrawer<ScreenCaptureInputSettings>
     {
         SerializedProperty m_RenderSize;
         SerializedProperty m_RenderAspect;

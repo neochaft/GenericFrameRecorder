@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public class RecorderVersion : ScriptableObject
+    class RecorderVersion : ScriptableObject
     {
         public const string Version = "0.2";  // major.minor.build
         public static int BuildNumber = 30;

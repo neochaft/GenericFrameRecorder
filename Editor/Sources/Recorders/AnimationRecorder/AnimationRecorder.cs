@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
+    class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
     {
         public override void RecordFrame(RecordingSession session)
         {

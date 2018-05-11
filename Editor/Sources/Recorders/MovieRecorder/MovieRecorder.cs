@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace Recorder
 {
-    public class MovieRecorder : GenericRecorder<MovieRecorderSettings>
+    class MovieRecorder : GenericRecorder<MovieRecorderSettings>
     {
         MediaEncoder m_Encoder;
         Texture2D m_ReadBackTexture;

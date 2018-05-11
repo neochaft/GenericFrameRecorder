@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-
 namespace Recorder.FrameCapturer
 {
     [Serializable]
-    public class AudioEncoderConfigs
+    class AudioEncoderConfigs
     {
         public AudioEncoder.Type format = AudioEncoder.Type.Flac;
         public fcAPI.fcWaveConfig waveEncoderSettings = fcAPI.fcWaveConfig.default_value;
@@ -17,7 +16,7 @@ namespace Recorder.FrameCapturer
         }
     }
 
-    public abstract class AudioEncoder : EncoderBase
+    abstract class AudioEncoder : EncoderBase
     {
         public enum Type
         {
@@ -53,16 +52,16 @@ namespace Recorder.FrameCapturer
             return null;
         }
 
-        public static AudioEncoder Create(AudioEncoderConfigs c, string path)
-        {
-            var ret = Create(c.format);
-            switch (c.format)
-            {
-                case Type.Wave: ret.Initialize(c.waveEncoderSettings, path); break;
-                case Type.Ogg: ret.Initialize(c.oggEncoderSettings, path); break;
-                case Type.Flac: ret.Initialize(c.flacEncoderSettings, path); break;
-            }
-            return ret;
-        }
+//        public static AudioEncoder Create(AudioEncoderConfigs c, string path)
+//        {
+//            var ret = Create(c.format);
+//            switch (c.format)
+//            {
+//                case Type.Wave: ret.Initialize(c.waveEncoderSettings, path); break;
+//                case Type.Ogg: ret.Initialize(c.oggEncoderSettings, path); break;
+//                case Type.Flac: ret.Initialize(c.flacEncoderSettings, path); break;
+//            }
+//            return ret;
+//        }
     }
 }

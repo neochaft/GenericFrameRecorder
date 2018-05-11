@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public class TextureFlipper : IDisposable
+    class TextureFlipper : IDisposable
     {
         Shader          m_shVFlip;
         Material        m_VFLipMaterial;

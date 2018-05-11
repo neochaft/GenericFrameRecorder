@@ -6,7 +6,7 @@ using Recorder.Input;
 namespace Recorder.FrameCapturer
 {
     [Serializable]
-    public class UTJVideoSelector : InputSettingsSelector
+    class UTJVideoSelector : InputSettingsSelector
     {
         [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
         [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
@@ -26,7 +26,7 @@ namespace Recorder.FrameCapturer
         }
     }
     
-    public abstract class BaseFCRecorderSettings : RecorderSettings
+    abstract class BaseFCRecorderSettings : RecorderSettings
     {
         [SerializeField] protected UTJVideoSelector m_VideoInputSelector = new UTJVideoSelector();
 

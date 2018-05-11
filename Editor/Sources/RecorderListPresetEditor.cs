@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder
 {  
     [CustomEditor(typeof(RecorderListPreset))]
-    public class RecorderListPresetEditor : Editor
+    class RecorderListPresetEditor : Editor
     {
         Editor m_Editor;
 

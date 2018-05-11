@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Recorder.FrameCapturer
 {
     [Serializable]
-    public class DataPath
+    class DataPath
     {
         public enum Root
         {

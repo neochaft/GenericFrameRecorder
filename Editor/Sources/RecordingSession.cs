@@ -4,12 +4,10 @@ using UnityEngine;
 namespace Recorder
 {
     public class RecordingSession : IDisposable
-    {
-        public Recorder m_Recorder;
-        public GameObject m_RecorderGO;
-
-        public double m_CurrentFrameStartTS;
-        public double m_RecordingStartTS;
+    {   
+        internal Recorder recorder;
+        internal GameObject recorderGameObject;
+        
         int m_FrameIndex = 0;
         int m_InitialFrame = 0;
         int m_FirstRecordedFrameCount = -1;
@@ -17,16 +15,19 @@ namespace Recorder
         float m_FPSNextTimeStart;
         int m_FPSNextFrameCount;
 
-        public DateTime m_SessionStartTS;
+        public double currentFrameStartTS { get; private set; }
+        public double recordingStartTS { get; private set; }
+        
+        public DateTime sessionStartTS { get; private set; }
 
         public RecorderSettings settings
         {
-            get { return m_Recorder.settings; }
+            get { return recorder.settings; }
         }
 
-        public bool recording
+        public bool isRecording
         {
-            get { return m_Recorder.recording; }
+            get { return recorder.recording; }
         }
 
         public int frameIndex
@@ -41,10 +42,10 @@ namespace Recorder
 
         public float recorderTime
         {
-            get { return (float)(m_CurrentFrameStartTS - settings.startTime); }
+            get { return (float)(currentFrameStartTS - settings.startTime); }
         }
 
-        void AllowInBackgroundMode()
+        static void AllowInBackgroundMode()
         {
             if (!Application.runInBackground)
             {
@@ -54,14 +55,14 @@ namespace Recorder
             }
         }
 
-        public bool SessionCreated()
+        internal bool SessionCreated()
         {
             try
             {
                 AllowInBackgroundMode();
-                m_RecordingStartTS = (Time.time / Time.timeScale);
-                m_SessionStartTS = DateTime.Now;
-                m_Recorder.SessionCreated(this);
+                recordingStartTS = (Time.time / Time.timeScale);
+                sessionStartTS = DateTime.Now;
+                recorder.SessionCreated(this);
                 return true;
 
             }
@@ -72,23 +73,22 @@ namespace Recorder
             }
         }
 
-
-        public bool BeginRecording()
+        internal bool BeginRecording()
         {
             try
             {
                 if (!settings.isPlatformSupported)
                 {
-                    Debug.LogError(string.Format("Recorder {0} does not support current platform", m_Recorder.GetType().Name));
+                    Debug.LogError(string.Format("Recorder {0} does not support current platform", recorder.GetType().Name));
                     return false;
                 }
 
                 AllowInBackgroundMode();
 
-                m_RecordingStartTS = (Time.time / Time.timeScale);
-                m_Recorder.SignalInputsOfStage(ERecordingSessionStage.BeginRecording, this);
+                recordingStartTS = (Time.time / Time.timeScale);
+                recorder.SignalInputsOfStage(ERecordingSessionStage.BeginRecording, this);
 
-                if (!m_Recorder.BeginRecording(this))
+                if (!recorder.BeginRecording(this))
                     return false;
                 m_InitialFrame = Time.renderedFrameCount;
                 m_FPSTimeStart = Time.unscaledTime;
@@ -102,12 +102,12 @@ namespace Recorder
             }
         }
 
-        public virtual void EndRecording()
+        internal void EndRecording()
         {
             try
             {
-                m_Recorder.SignalInputsOfStage(ERecordingSessionStage.EndRecording, this);
-                m_Recorder.EndRecording(this);
+                recorder.SignalInputsOfStage(ERecordingSessionStage.EndRecording, this);
+                recorder.EndRecording(this);
             }
             catch (Exception ex)
             {
@@ -115,19 +115,19 @@ namespace Recorder
             }
         }
 
-        public void RecordFrame()
+        internal void RecordFrame()
         {
             try
             {
-                m_Recorder.SignalInputsOfStage(ERecordingSessionStage.NewFrameReady, this);
-                if (!m_Recorder.SkipFrame(this))
+                recorder.SignalInputsOfStage(ERecordingSessionStage.NewFrameReady, this);
+                if (!recorder.SkipFrame(this))
                 {
-                    m_Recorder.RecordFrame(this);
-                    m_Recorder.recordedFramesCount++;
-                    if (m_Recorder.recordedFramesCount == 1)
+                    recorder.RecordFrame(this);
+                    recorder.recordedFramesCount++;
+                    if (recorder.recordedFramesCount == 1)
                         m_FirstRecordedFrameCount = Time.renderedFrameCount;
                 }
-                m_Recorder.SignalInputsOfStage(ERecordingSessionStage.FrameDone, this);
+                recorder.SignalInputsOfStage(ERecordingSessionStage.FrameDone, this);
             }
             catch (Exception ex)
             {
@@ -136,10 +136,10 @@ namespace Recorder
 
             // Note: This is not great when multiple recorders are simultaneously active...
             if (settings.frameRatePlayback == FrameRatePlayback.Variable ||
-                settings.frameRatePlayback == FrameRatePlayback.Constant && m_Recorder.settings.synchFrameRate)
+                settings.frameRatePlayback == FrameRatePlayback.Constant && recorder.settings.synchFrameRate)
             {
                 var frameCount = Time.renderedFrameCount - m_InitialFrame;
-                var frameLen = 1.0f / m_Recorder.settings.frameRate;
+                var frameLen = 1.0f / recorder.settings.frameRate;
                 var elapsed = Time.unscaledTime - m_FPSTimeStart;
                 var target = frameLen * (frameCount + 1);
                 var sleep = (int)((target - elapsed) * 1000);
@@ -170,15 +170,15 @@ namespace Recorder
             m_FrameIndex++;
         }
 
-        public void PrepareNewFrame()
+        internal void PrepareNewFrame()
         {
             try
             {
                 AllowInBackgroundMode();
 
-                m_CurrentFrameStartTS = (Time.time / Time.timeScale) - m_RecordingStartTS;
-                m_Recorder.SignalInputsOfStage(ERecordingSessionStage.NewFrameStarting, this);
-                m_Recorder.PrepareNewFrame(this);
+                currentFrameStartTS = (Time.time / Time.timeScale) - recordingStartTS;
+                recorder.SignalInputsOfStage(ERecordingSessionStage.NewFrameStarting, this);
+                recorder.PrepareNewFrame(this);
             }
             catch (Exception ex)
             {
@@ -188,11 +188,11 @@ namespace Recorder
 
         public void Dispose()
         {
-            if (m_Recorder != null)
+            if (recorder != null)
             {
                 try
                 {
-                    if (recording)
+                    if (isRecording)
                         EndRecording();
                 }
                 catch (Exception ex)
@@ -200,8 +200,8 @@ namespace Recorder
                     Debug.LogException(ex);
                 }
 
-                UnityHelpers.Destroy(m_Recorder);
-                UnityHelpers.Destroy(m_RecorderGO);
+                UnityHelpers.Destroy(recorder);
+                UnityHelpers.Destroy(recorderGameObject);
             }
         }
     }

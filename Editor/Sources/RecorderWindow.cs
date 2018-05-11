@@ -960,10 +960,10 @@ namespace Recorder
                 }
                 case RecordMode.TimeInterval:
                 {
-                    var label = session.m_CurrentFrameStartTS < settings.startTime
+                    var label = session.currentFrameStartTS < settings.startTime
                         ? string.Format("Skipping first {0} second(s)...", settings.startTime)
                         : string.Format("{0} Frame(s) processed", session.frameIndex - settings.startFrame + 1);
-                    EditorGUI.ProgressBar(progressBarRect, (float) session.m_CurrentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
+                    EditorGUI.ProgressBar(progressBarRect, (float) session.currentFrameStartTS / (settings.endTime.Equals(0.0f) ? 0.0001f : settings.endTime), label);
                     
                     break;
                 }

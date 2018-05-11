@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public class ImageRecorder : GenericRecorder<ImageRecorderSettings> // TODO Rename to ImageSequenceRecorder
+    class ImageRecorder : GenericRecorder<ImageRecorderSettings>
     {
 
         public override bool BeginRecording(RecordingSession session)

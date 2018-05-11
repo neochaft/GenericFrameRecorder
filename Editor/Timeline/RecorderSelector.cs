@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Recorder.Timeline
 {
-    public class RecorderSelector
+    class RecorderSelector
     {
         string[] m_RecorderNames;
         List<Type> m_RecorderTypes;

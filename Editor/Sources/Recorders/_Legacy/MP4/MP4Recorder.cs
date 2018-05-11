@@ -3,8 +3,7 @@ using UnityEngine;
 
 namespace Recorder.FrameCapturer
 {
-    [Obsolete("'Legacy/MP4' is obsolete, concider using 'Movie' instead", false)]
-    public class MP4Recorder : GenericRecorder<MP4RecorderSettings>
+    class MP4Recorder : GenericRecorder<MP4RecorderSettings>
     {
         fcAPI.fcMP4Context m_ctx;
         

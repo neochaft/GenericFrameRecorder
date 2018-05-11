@@ -3,14 +3,12 @@ using UnityEngine.Playables;
 
 namespace Recorder.Timeline
 {  
-    public class RecorderPlayableBehaviour : PlayableBehaviour
+    class RecorderPlayableBehaviour : PlayableBehaviour
     {
         PlayState m_PlayState = PlayState.Paused;
         public RecordingSession session { get; set; }
         WaitForEndOfFrameComponent endOfFrameComp;
         bool m_FirstOneSkipped;
-
-        public Action OnEnd;
 
         public override void OnGraphStart(Playable playable)
         {
@@ -24,20 +22,17 @@ namespace Recorder.Timeline
 
         public override void OnGraphStop(Playable playable)
         {
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
             {
                 session.EndRecording();
                 session.Dispose();
                 session = null;
-
-                if (OnEnd != null)
-                    OnEnd();
             }
         }
 
         public override void PrepareFrame(Playable playable, FrameData info)
         {
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
             {
                 session.PrepareNewFrame();
             }
@@ -49,7 +44,7 @@ namespace Recorder.Timeline
             {
                 if (endOfFrameComp == null)
                 {
-                    endOfFrameComp = session.m_RecorderGO.AddComponent<WaitForEndOfFrameComponent>();
+                    endOfFrameComp = session.recorderGameObject.AddComponent<WaitForEndOfFrameComponent>();
                     endOfFrameComp.m_playable = this;
                 }
             }
@@ -70,14 +65,11 @@ namespace Recorder.Timeline
             if (session == null)
                 return;
 
-            if (session.recording && m_PlayState == PlayState.Playing)
+            if (session.isRecording && m_PlayState == PlayState.Playing)
             {
                 session.EndRecording();
                 session.Dispose();
                 session = null;
-
-                if (OnEnd != null)
-                    OnEnd();
             }
 
             m_PlayState = PlayState.Paused;
@@ -85,7 +77,7 @@ namespace Recorder.Timeline
 
         public void FrameEnded()
         {
-            if (session != null && session.recording)
+            if (session != null && session.isRecording)
                 session.RecordFrame();
         }
     }

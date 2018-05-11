@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder
 {
     [CustomEditor(typeof(ImageRecorderSettings))]
-    public class ImageRecorderEditor : RecorderEditor
+    class ImageRecorderEditor : RecorderEditor
     {
         SerializedProperty m_OutputFormat;
         SerializedProperty m_CaptureAlpha;

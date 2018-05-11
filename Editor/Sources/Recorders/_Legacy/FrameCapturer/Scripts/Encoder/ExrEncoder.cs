@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Recorder.FrameCapturer
 {
-    public class ExrEncoder : MovieEncoder
+    class ExrEncoder : MovieEncoder
     {
         static readonly string[] s_channelNames = { "R", "G", "B", "A" };
         fcAPI.fcExrContext m_ctx;

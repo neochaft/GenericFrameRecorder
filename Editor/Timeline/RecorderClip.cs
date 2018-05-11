@@ -7,18 +7,14 @@ using UnityEngine.Timeline;
 namespace Recorder.Timeline
 {
     [DisplayName("Recorder Clip")]
-    public class RecorderClip : PlayableAsset, ITimelineClipAsset
+    class RecorderClip : PlayableAsset, ITimelineClipAsset
     {
-        public delegate void RecordingClipDoneDelegate(RecorderClip clip);
-
-        public static RecordingClipDoneDelegate OnClipDone;
-
         [SerializeField]
         public RecorderSettings m_Settings;
-        
-        SceneHook m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
 
-        public Type recorderType
+        readonly SceneHook m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
+
+        Type recorderType
         {
             get { return m_Settings == null ? null : RecordersInventory.GetRecorderInfo(m_Settings.GetType()).recorderType; }
         }
@@ -35,24 +31,11 @@ namespace Recorder.Timeline
             if (recorderType != null && UnityHelpers.IsPlaying())
             {
                 behaviour.session = m_SceneHook.CreateRecorderSession(m_Settings, false);
-                
-                behaviour.OnEnd = () =>
-                {
-                    try
-                    {
-                        if (OnClipDone != null) OnClipDone(this);     
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.Log("OnClipDone call back generated an exception: " + ex.Message );
-                        Debug.LogException(ex);
-                    }
-                };
             }
             return playable;
         }
 
-        public virtual void OnDestroy()
+        public void OnDestroy()
         {
             UnityHelpers.Destroy( m_Settings, true );
         }

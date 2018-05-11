@@ -1,7 +1,7 @@
 namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(WEBMRecorder), "Legacy/WebM" )]
-    public class WEBMRecorderSettings : BaseFCRecorderSettings
+    class WEBMRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcWebMConfig m_WebmEncoderSettings = fcAPI.fcWebMConfig.default_value;
         public bool m_AutoSelectBR;

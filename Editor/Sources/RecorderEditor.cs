@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Recorder
 {   
-    public abstract class RecorderEditor : Editor
+    abstract class RecorderEditor : Editor
     {
         SerializedProperty m_CaptureEveryNthFrame;
         SerializedProperty m_FileNameGenerator;

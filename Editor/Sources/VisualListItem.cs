@@ -7,7 +7,7 @@ using UnityEngine.Experimental.UIElements.StyleEnums;
 
 namespace Recorder
 {   
-    public class VisualListItem<T> : VisualElement where T : VisualElement
+    class VisualListItem<T> : VisualElement where T : VisualElement
     {
         public event Action OnSelectionChanged;
         public event Action OnContextMenu;

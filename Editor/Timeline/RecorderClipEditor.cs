@@ -7,7 +7,7 @@ using UnityObject = UnityEngine.Object;
 namespace Recorder.Timeline
 {
     [CustomEditor(typeof(RecorderClip), true)]
-    public class RecorderClipEditor : Editor
+    class RecorderClipEditor : Editor
     {
         RecorderEditor m_Editor;
         TimelineAsset m_Timeline;

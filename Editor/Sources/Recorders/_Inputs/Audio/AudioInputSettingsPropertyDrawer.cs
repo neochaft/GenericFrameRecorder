@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(AudioInputSettings))]
-    public class AudioInputSettingsPropertyDrawer : InputPropertyDrawer<AudioInputSettings>
+    class AudioInputSettingsPropertyDrawer : InputPropertyDrawer<AudioInputSettings>
     {
         SerializedProperty m_PreserveAudio;
 	    protected override void Initialize(SerializedProperty property)

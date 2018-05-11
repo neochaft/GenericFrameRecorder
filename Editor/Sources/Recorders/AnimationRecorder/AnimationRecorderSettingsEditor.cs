@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder
 {
     [CustomEditor(typeof(AnimationRecorderSettings))]
-    public class AnimationRecorderSettingsEditor: RecorderEditor
+    class AnimationRecorderSettingsEditor: RecorderEditor
     {
         protected override void FileTypeAndFormatGUI()
         {

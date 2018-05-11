@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Recorder
 {  
-    public class SceneHook
+    class SceneHook
     {
         const string k_HostGoName = "UnityEngine-Recorder";
         
@@ -82,8 +82,8 @@ namespace Recorder
             
             var session = new RecordingSession
             {
-                m_Recorder = RecordersInventory.CreateDefaultRecorder(settings),
-                m_RecorderGO = component.gameObject
+                recorder = RecordersInventory.CreateDefaultRecorder(settings),
+                recorderGameObject = component.gameObject
             };
          
             component.autoExitPlayMode = autoExitPlayMode;

@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(RenderTextureSamplerSettings))]
-    public class RenderTextureSamplerPropertyDrawer : InputPropertyDrawer<RenderTextureSamplerSettings>
+    class RenderTextureSamplerPropertyDrawer : InputPropertyDrawer<RenderTextureSamplerSettings>
     {
         static ImageSource m_SupportedSources = ImageSource.ActiveCameras | ImageSource.MainCamera | ImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;

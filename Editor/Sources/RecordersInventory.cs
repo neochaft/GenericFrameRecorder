@@ -7,7 +7,7 @@ using Recorder.FrameCapturer;
 
 namespace Recorder
 {
-    public class RecorderInfo
+    class RecorderInfo
     {
         public Type recorderType;
         public Type settingsType;
@@ -102,7 +102,7 @@ namespace Recorder
             }
         }
         
-        public static RecorderInfo GetRecorderInfo(Type settingsType)
+        internal static RecorderInfo GetRecorderInfo(Type settingsType)
         {
             Init();
 
@@ -112,7 +112,7 @@ namespace Recorder
             return s_Recorders.ContainsKey(settingsType) ? s_Recorders[settingsType] : null;
         }
 
-        public static IEnumerable<RecorderInfo> builtInRecorderInfos
+        internal static IEnumerable<RecorderInfo> builtInRecorderInfos
         {
             get
             {
@@ -121,7 +121,7 @@ namespace Recorder
             }
         }
         
-        public static IEnumerable<RecorderInfo> legacyRecorderInfos
+        internal static IEnumerable<RecorderInfo> legacyRecorderInfos
         {
             get
             {
@@ -130,7 +130,7 @@ namespace Recorder
             }
         }
         
-        public static IEnumerable<RecorderInfo> customRecorderInfos
+        internal static IEnumerable<RecorderInfo> customRecorderInfos
         {
             get
             {
@@ -139,7 +139,7 @@ namespace Recorder
             }
         }
         
-        public static List<RecorderInfo> recorderInfos
+        internal static List<RecorderInfo> recorderInfos
         {
             get
             {
@@ -148,7 +148,7 @@ namespace Recorder
             }
         }
 
-        public static Recorder CreateDefaultRecorder(RecorderSettings recorderSettings)
+        internal static Recorder CreateDefaultRecorder(RecorderSettings recorderSettings)
         {
             Init();
             var factory = GetRecorderInfo(recorderSettings.GetType());

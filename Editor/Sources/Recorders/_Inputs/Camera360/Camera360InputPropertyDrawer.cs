@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(Camera360InputSettings))]
-    public class Camera360InputPropertyDrawer : InputPropertyDrawer<Camera360InputSettings>
+    class Camera360InputPropertyDrawer : InputPropertyDrawer<Camera360InputSettings>
     {
         static ImageSource m_SupportedSources = ImageSource.MainCamera | ImageSource.TaggedCamera;
         string[] m_MaskedSourceNames;

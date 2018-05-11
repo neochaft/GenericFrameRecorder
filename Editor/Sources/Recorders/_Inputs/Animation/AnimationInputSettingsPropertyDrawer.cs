@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(AnimationInputSettings))]
-    public class AnimationInputSettingsPropertyDrawer : InputPropertyDrawer<AnimationInputSettings>
+    class AnimationInputSettingsPropertyDrawer : InputPropertyDrawer<AnimationInputSettings>
     {
         SerializedProperty m_GameObjectExposedProperty;
         SerializedProperty m_Recursive;

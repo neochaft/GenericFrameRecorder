@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Recorder
-{   
+{
     public class Wildcard
     {
         readonly string m_Pattern;
@@ -117,7 +117,7 @@ namespace Recorder
         
         static string TimeResolver(RecordingSession session)
         {
-            var date = session != null ? session.m_SessionStartTS : DateTime.Now;
+            var date = session != null ? session.sessionStartTS : DateTime.Now;
             return string.Format("{0:HH}h{1:mm}m", date, date);
         }
         
@@ -128,7 +128,7 @@ namespace Recorder
 
         static string DateResolver(RecordingSession session)
         {
-            var date = session != null ? session.m_SessionStartTS : DateTime.Now;
+            var date = session != null ? session.sessionStartTS : DateTime.Now;
             return date.ToString(CultureInfo.InvariantCulture).Replace('/', '-');
         }
 

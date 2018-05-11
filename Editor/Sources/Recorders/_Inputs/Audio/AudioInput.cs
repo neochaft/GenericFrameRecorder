@@ -51,7 +51,7 @@ namespace Recorder.Input
         }
     }
 
-    public class AudioInput : RecorderInput
+    class AudioInput : RecorderInput
     {
         class BufferManager : IDisposable
         {

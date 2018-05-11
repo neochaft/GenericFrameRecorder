@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Recorder.FrameCapturer
 {
     [CustomEditor(typeof(WEBMRecorderSettings))]
-    public class WEBMRecorderSettingsEditor : RecorderEditor
+    class WEBMRecorderSettingsEditor : RecorderEditor
     {
         SerializedProperty m_VideoEncoder;
         SerializedProperty m_VideoBitRateMode;

@@ -23,7 +23,7 @@ namespace Recorder
         }
     }
 
-    public class PropertyFinder<TType> where TType : class
+    class PropertyFinder<TType> where TType : class
     {
         SerializedObject m_Obj;
         public PropertyFinder(SerializedObject obj)

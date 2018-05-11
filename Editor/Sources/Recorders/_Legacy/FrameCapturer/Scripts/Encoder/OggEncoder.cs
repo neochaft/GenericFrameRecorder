@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Recorder.FrameCapturer
 {
-    public class OggEncoder : AudioEncoder
+    class OggEncoder : AudioEncoder
     {
         fcAPI.fcOggContext m_ctx;
         fcAPI.fcOggConfig m_config;

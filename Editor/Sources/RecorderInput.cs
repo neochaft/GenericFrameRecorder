@@ -2,7 +2,7 @@ using System;
 
 namespace Recorder
 {
-    public class RecorderInput : IDisposable
+    class RecorderInput : IDisposable
     {
         public int SourceID { get; set; }
         public RecorderInputSetting settings { get; set; }

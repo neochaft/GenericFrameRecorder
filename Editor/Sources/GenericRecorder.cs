@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Recorder
 {
-    public abstract class GenericRecorder<T> : Recorder where T : RecorderSettings
+    abstract class GenericRecorder<T> : Recorder where T : RecorderSettings
     {
         [SerializeField]
         protected T m_Settings;

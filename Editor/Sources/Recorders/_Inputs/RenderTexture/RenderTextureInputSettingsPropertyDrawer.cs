@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Recorder.Input
 {
     [CustomPropertyDrawer(typeof(RenderTextureInputSettings))]
-    public class RenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<RenderTextureInputSettings>
+    class RenderTextureInputSettingsPropertyDrawer : InputPropertyDrawer<RenderTextureInputSettings>
     {
         SerializedProperty m_SourceRTxtr;
 

@@ -3,7 +3,7 @@ using System;
 namespace Recorder
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class RecorderSettingsAttribute : Attribute
+    class RecorderSettingsAttribute : Attribute
     {
         public readonly Type recorderType;
         public readonly string displayName;

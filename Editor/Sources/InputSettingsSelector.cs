@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Recorder
 {
     [Serializable]
-    public abstract class InputSettingsSelector
+    abstract class InputSettingsSelector
     {
         [SerializeField] string m_Selected;
         

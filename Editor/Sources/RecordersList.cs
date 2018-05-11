@@ -1,6 +1,6 @@
 namespace Recorder
 {
-//    public class RecordersList : ScriptableObject
+//    class RecordersList : ScriptableObject
 //    {
 //        [SerializeField] List<RecorderSettings> m_Recorders = new List<RecorderSettings>();
 //        

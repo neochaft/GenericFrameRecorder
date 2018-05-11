@@ -1,7 +1,7 @@
 namespace Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(EXRRecorder), "Legacy/OpenEXR")]
-    public class EXRRecorderSettings : BaseFCRecorderSettings
+    class EXRRecorderSettings : BaseFCRecorderSettings
     {
         public fcAPI.fcExrConfig m_ExrEncoderSettings = fcAPI.fcExrConfig.default_value;
 

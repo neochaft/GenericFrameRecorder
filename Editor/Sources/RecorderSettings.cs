@@ -28,7 +28,7 @@ namespace Recorder
         FrameInterval,
         TimeInterval
     }
-    
+
     public abstract class RecorderSettings : ScriptableObject
     {
         public FileNameGenerator fileNameGenerator;

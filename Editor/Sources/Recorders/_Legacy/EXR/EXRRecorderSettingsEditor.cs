@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Recorder.FrameCapturer
 {
     [CustomEditor(typeof(EXRRecorderSettings))]
-    public class EXRRecorderSettingsEditor : RecorderEditor
+    class EXRRecorderSettingsEditor : RecorderEditor
     {
         protected override void OnEncodingGui()
         {

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Recorder.Input
 {
 
-    public class GameViewSize
+    class GameViewSize
     {
         static object m_InitialSizeObj;
         public static int m_ModifiedResolutionCount;
