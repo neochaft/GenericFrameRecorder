@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Recorder.Input;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [Serializable]
     [RecorderSettings(typeof(AnimationRecorder), "Animation Clip", "animation_recorder")]

@@ -1,7 +1,6 @@
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [CustomEditor(typeof(MP4RecorderSettings))]
     class Mp4RecorderSettingsEditor : RecorderEditor

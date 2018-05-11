@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [Serializable]
     public class OutputPath

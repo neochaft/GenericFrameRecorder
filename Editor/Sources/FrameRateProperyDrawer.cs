@@ -1,6 +1,4 @@
-using UnityEditor;
-
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(FrameRateType))]
     class FrameRateProperyDrawer : EnumProperyDrawer<FrameRateType>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class EditableLabel : VisualElement
     {

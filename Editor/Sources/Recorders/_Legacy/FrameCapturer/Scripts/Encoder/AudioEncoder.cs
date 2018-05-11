@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [Serializable]
     class AudioEncoderConfigs

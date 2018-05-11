@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     [Serializable]
     [DisplayName("Animation")]

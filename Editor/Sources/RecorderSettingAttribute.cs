@@ -1,6 +1,6 @@
 using System;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     class RecorderSettingsAttribute : Attribute

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {
     [DisplayName("Recorder Clip")]
     class RecorderClip : PlayableAsset, ITimelineClipAsset

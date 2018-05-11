@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     public abstract class ImageInputSettings : RecorderInputSetting
     {

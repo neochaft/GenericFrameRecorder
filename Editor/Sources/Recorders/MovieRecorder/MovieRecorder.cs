@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Recorder.Input;
+using UnityEditor.Recorder.Input;
 using UnityEditor.Media;
-using UnityEditor;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class MovieRecorder : GenericRecorder<MovieRecorderSettings>
     {

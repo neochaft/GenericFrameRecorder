@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [ExecuteInEditMode]
     class RecorderComponent : MonoBehaviour

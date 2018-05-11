@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Reflection;
 using Unity.Collections;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class AudioRenderer
     {

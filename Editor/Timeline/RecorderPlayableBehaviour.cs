@@ -1,7 +1,6 @@
-using System;
 using UnityEngine.Playables;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {  
     class RecorderPlayableBehaviour : PlayableBehaviour
     {

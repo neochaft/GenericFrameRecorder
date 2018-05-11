@@ -1,4 +1,4 @@
-namespace Recorder
+namespace UnityEditor.Recorder
 {
 //    class RecordersList : ScriptableObject
 //    {

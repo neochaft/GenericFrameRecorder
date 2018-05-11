@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {
     [ExecuteInEditMode]
     class WaitForEndOfFrameComponent : MonoBehaviour

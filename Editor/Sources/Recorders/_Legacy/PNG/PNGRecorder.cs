@@ -1,6 +1,6 @@
 using System;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     class PNGRecorder : GenericRecorder<PNGRecorderSettings>
     {

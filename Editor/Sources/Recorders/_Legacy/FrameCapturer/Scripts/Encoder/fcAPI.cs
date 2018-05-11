@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEditor;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     public static class fcAPI
     {

@@ -1,6 +1,6 @@
 using UnityEngine.Timeline;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {
 
     /// <summary>

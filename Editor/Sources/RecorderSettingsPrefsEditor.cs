@@ -1,7 +1,6 @@
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomEditor(typeof(RecorderSettingsPrefs))]
     class RecorderSettingsPrefsEditor : Editor

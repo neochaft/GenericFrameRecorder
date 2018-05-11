@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEditor;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [CustomPropertyDrawer(typeof(MovieEncoderConfigs))]
     class MovieEncoderConfigsDrawer : PropertyDrawer

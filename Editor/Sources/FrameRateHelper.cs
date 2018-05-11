@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public enum FrameRateType
     {

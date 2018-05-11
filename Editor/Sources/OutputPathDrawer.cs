@@ -1,7 +1,6 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(OutputPath))]
     class OutputPathDrawer : TargetedPropertyDrawer<OutputPath>

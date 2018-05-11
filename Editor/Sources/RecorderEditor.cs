@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {   
     abstract class RecorderEditor : Editor
     {

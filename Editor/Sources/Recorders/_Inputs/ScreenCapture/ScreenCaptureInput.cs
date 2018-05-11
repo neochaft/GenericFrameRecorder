@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class ScreenCaptureInput : RecorderInput
     {

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public static class ResolutionSelector
     {

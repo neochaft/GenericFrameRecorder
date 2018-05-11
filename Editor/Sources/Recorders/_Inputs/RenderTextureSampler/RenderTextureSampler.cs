@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class RenderTextureSampler : BaseRenderTextureInput
     {

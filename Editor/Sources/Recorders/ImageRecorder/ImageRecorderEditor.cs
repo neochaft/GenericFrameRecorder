@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEditor;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomEditor(typeof(ImageRecorderSettings))]
     class ImageRecorderEditor : RecorderEditor

@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-
-namespace Recorder
+﻿namespace UnityEditor.Recorder
 {
     public static class Options
     {   

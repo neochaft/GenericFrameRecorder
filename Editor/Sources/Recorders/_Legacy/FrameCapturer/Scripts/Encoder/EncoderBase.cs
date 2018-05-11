@@ -1,7 +1,7 @@
 using System;
 
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     abstract class EncoderBase
     {

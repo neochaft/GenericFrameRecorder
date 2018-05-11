@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 #if UNITY_EDITOR
-using Recorder;
-using Recorder.Input;
+using UnityEditor;
+using UnityEditor.Recorder;
+using UnityEditor.Recorder.Input;
 #endif
 
 public class RecorderExample : MonoBehaviour

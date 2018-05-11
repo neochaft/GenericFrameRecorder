@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
 
     class GameViewSize

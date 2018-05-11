@@ -1,6 +1,6 @@
-using Recorder.FrameCapturer;
+using UnityEditor.Recorder.FrameCapturer;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [RecorderSettings(typeof(GIFRecorder), "GIF Animation", "image_recorder")]
     class GIFRecorderSettings : BaseFCRecorderSettings

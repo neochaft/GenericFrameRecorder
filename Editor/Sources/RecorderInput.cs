@@ -1,10 +1,9 @@
 using System;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class RecorderInput : IDisposable
     {
-        public int SourceID { get; set; }
         public RecorderInputSetting settings { get; set; }
 
         ~RecorderInput()

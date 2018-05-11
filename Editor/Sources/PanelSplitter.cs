@@ -1,10 +1,9 @@
 using System;
-using UnityEditor;
 using UnityEditor.Experimental.UIElements;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class PanelSplitter : VisualElement
     {

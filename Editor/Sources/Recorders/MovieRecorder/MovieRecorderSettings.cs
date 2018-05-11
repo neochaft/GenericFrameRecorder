@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Recorder.Input;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
-using UnityEditor;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public enum VideoRecorderOutputFormat
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class RecorderVersion : ScriptableObject
     {

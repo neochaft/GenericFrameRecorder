@@ -1,4 +1,4 @@
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(WEBMRecorder), "Legacy/WebM" )]
     class WEBMRecorderSettings : BaseFCRecorderSettings

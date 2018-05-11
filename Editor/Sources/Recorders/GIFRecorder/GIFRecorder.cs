@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using Recorder.FrameCapturer;
+using UnityEditor.Recorder.FrameCapturer;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class GIFRecorder : GenericRecorder<GIFRecorderSettings>
     {

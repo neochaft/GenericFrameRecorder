@@ -1,7 +1,5 @@
 ﻿
-using UnityEditor;
-
-namespace Recorder.Examples
+namespace UnityEditor.Recorder.Examples
 {
     public static class RecorderEditorExample
     {

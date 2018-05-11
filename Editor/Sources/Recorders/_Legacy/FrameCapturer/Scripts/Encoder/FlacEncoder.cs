@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     class FlacEncoder : AudioEncoder
     {

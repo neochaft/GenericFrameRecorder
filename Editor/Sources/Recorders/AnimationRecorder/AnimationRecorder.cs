@@ -1,8 +1,7 @@
-﻿using Recorder.Input;
-using UnityEditor;
+﻿using UnityEditor.Recorder.Input;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class AnimationRecorder : GenericRecorder<AnimationRecorderSettings>
     {

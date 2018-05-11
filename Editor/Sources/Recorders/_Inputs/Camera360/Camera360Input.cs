@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class Camera360Input : BaseRenderTextureInput
     {

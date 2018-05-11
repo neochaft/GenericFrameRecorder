@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public class RecorderController
     {

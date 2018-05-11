@@ -7,11 +7,10 @@ using UnityEditor.Presets;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
-using Recorder.Input;
-using UnityEditor;
+using UnityEditor.Recorder.Input;
 using UnityObject = UnityEngine.Object;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public class RecorderWindow : EditorWindow
     {

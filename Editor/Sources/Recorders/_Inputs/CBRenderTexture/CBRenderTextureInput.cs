@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityObject = UnityEngine.Object;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class CBRenderTextureInput : BaseRenderTextureInput
     {

@@ -1,8 +1,7 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(FileNameGenerator))]
     class FileNameGeneratorDrawer : TargetedPropertyDrawer<FileNameGenerator>

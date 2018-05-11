@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     [DisplayName("360 View")]
     [Serializable]

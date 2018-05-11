@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public class RecordingSession : IDisposable
     {   

@@ -1,10 +1,9 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityObject = UnityEngine.Object;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {
     [CustomEditor(typeof(RecorderClip), true)]
     class RecorderClipEditor : Editor

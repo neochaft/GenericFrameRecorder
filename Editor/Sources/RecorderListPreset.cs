@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEditor.Presets;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [Serializable]
     class RecorderPresetInfo

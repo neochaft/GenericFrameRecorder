@@ -1,6 +1,4 @@
-using UnityEditor;
-
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     [CustomPropertyDrawer(typeof(FrameResolution))]
     class FrameResolutionProperyDrawer : EnumProperyDrawer<FrameResolution>

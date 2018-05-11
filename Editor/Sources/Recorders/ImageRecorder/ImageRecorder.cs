@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using Recorder.Input;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class ImageRecorder : GenericRecorder<ImageRecorderSettings>
     {

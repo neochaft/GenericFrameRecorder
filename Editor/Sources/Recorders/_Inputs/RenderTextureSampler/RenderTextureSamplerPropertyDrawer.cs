@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEditor;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     [CustomPropertyDrawer(typeof(RenderTextureSamplerSettings))]
     class RenderTextureSamplerPropertyDrawer : InputPropertyDrawer<RenderTextureSamplerSettings>

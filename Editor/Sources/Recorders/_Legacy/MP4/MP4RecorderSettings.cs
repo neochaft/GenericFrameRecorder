@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [RecorderSettings(typeof(MP4Recorder), "Legacy/MP4" )]
     class MP4RecorderSettings : BaseFCRecorderSettings

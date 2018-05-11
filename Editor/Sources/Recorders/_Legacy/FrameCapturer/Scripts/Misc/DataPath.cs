@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [Serializable]
     class DataPath

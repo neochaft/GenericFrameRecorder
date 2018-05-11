@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Recorder.Input;
+using UnityEditor.Recorder.Input;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     [Serializable]
     class UTJVideoSelector : InputSettingsSelector

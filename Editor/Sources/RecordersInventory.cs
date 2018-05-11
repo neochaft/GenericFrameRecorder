@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using System.Linq;
-using Recorder.FrameCapturer;
+using UnityEditor.Recorder.FrameCapturer;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     class RecorderInfo
     {

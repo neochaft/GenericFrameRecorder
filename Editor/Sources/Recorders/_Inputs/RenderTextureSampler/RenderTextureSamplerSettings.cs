@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     public enum ESuperSamplingCount
     {

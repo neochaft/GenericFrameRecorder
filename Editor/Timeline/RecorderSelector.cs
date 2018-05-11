@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-namespace Recorder.Timeline
+namespace UnityEditor.Recorder.Timeline
 {
     class RecorderSelector
     {

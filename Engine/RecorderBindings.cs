@@ -1,8 +1,7 @@
 ﻿using System;
-using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace Recorder
+namespace UnityEngine.Recorder
 {     
     [ExecuteInEditMode]
     public class RecorderBindings : MonoBehaviour, IExposedPropertyTable

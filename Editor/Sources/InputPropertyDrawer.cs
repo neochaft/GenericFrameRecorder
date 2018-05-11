@@ -1,7 +1,6 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     abstract class InputPropertyDrawer<T> : TargetedPropertyDrawer<T> where T : class
     {   

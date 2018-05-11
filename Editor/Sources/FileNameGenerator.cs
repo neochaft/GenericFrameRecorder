@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public class Wildcard
     {

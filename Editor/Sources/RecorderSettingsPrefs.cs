@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Recorder;
 using UnityObject = UnityEngine.Object;
 
-namespace Recorder
+namespace UnityEditor.Recorder
 {
     public class RecorderSettingsPrefs : ScriptableObject
     {

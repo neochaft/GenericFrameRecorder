@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Recorder.FrameCapturer
+namespace UnityEditor.Recorder.FrameCapturer
 {
     class MP4Recorder : GenericRecorder<MP4RecorderSettings>
     {

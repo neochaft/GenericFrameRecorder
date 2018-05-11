@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Recorder.Input
+namespace UnityEditor.Recorder.Input
 {
     class RenderTextureInput : BaseRenderTextureInput
     {
