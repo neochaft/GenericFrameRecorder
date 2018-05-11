@@ -5,6 +5,11 @@ namespace UnityEditor.Recorder.FrameCapturer
     {
         public fcAPI.fcExrConfig m_ExrEncoderSettings = fcAPI.fcExrConfig.default_value;
 
+        public EXRRecorderSettings()
+        {
+            fileNameGenerator.fileName = "image_" + FileNameGenerator.DefaultWildcard.Frame;
+        }
+        
         public override string extension
         {
             get { return "exr"; }

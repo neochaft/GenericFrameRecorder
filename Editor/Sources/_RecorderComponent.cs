@@ -71,7 +71,7 @@ namespace UnityEditor.Recorder
                 session = null;
 
                 if (autoExitPlayMode)
-                    UnityEditor.EditorApplication.isPlaying = false;
+                    EditorApplication.isPlaying = false;
             }
         }
 

@@ -15,7 +15,7 @@ namespace UnityEditor.Recorder
             if (obj == null)
                 return;
             
-            if (UnityEditor.EditorApplication.isPlaying)
+            if (EditorApplication.isPlaying)
                 Object.Destroy(obj);
             else
                 Object.DestroyImmediate(obj, allowDestroyingAssets);
@@ -23,7 +23,7 @@ namespace UnityEditor.Recorder
 
         public static bool IsPlaying()
         {
-            return UnityEditor.EditorApplication.isPlaying;
+            return EditorApplication.isPlaying;
         }
     }
 }

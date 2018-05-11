@@ -37,7 +37,7 @@ namespace UnityEditor.Timeline
 
         public T CreateNewViewModel()
         {
-            T model = ScriptableObject.CreateInstance<T>();
+            T model = CreateInstance<T>();
             model.hideFlags |= HideFlags.HideAndDontSave;
             return model;
         }
@@ -96,7 +96,7 @@ namespace UnityEditor.Timeline
 
         private string GetFilePath()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             object[] atributes = type.GetCustomAttributes(true);
             foreach (object attr in atributes)
             {

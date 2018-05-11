@@ -40,7 +40,7 @@ namespace UnityEditor.Recorder
         static string s_ProjectName;
 
         [SerializeField] OutputPath m_Path = new OutputPath();
-        [SerializeField] string m_FileName;
+        [SerializeField] string m_FileName = "MyFileName";
         
         readonly List<Wildcard> m_Wildcards;
         
@@ -165,7 +165,7 @@ namespace UnityEditor.Recorder
 
         static string ProductNameResolver(RecordingSession session)
         {
-            return UnityEditor.PlayerSettings.productName;
+            return PlayerSettings.productName;
         }
 
         public string BuildAbsolutePath(RecordingSession session)
@@ -196,6 +196,9 @@ namespace UnityEditor.Recorder
 
         string ApplyWildcards(string str, RecordingSession session)
         {
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+            
             foreach (var w in wildcards)
                 str = str.Replace(w.pattern, w.Resolve(session));
             
