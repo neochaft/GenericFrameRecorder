@@ -97,7 +97,7 @@ namespace UnityEditor.Recorder
                 new Wildcard(DefaultWildcard.Take, TakeResolver),
                 new Wildcard(DefaultWildcard.Date, DateResolver),
                 new Wildcard(DefaultWildcard.Project, ProjectNameResolver),
-                new Wildcard(DefaultWildcard.Product, ProductNameResolver,"(editor only)"),
+                new Wildcard(DefaultWildcard.Product, ProductNameResolver),
                 new Wildcard(DefaultWildcard.Scene, SceneResolver),
                 new Wildcard(DefaultWildcard.Resolution, ResolutionResolver),
                 new Wildcard(DefaultWildcard.Frame, FrameResolver),
