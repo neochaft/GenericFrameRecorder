@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder.FrameCapturer
 {
-    class WebMEncoder : MovieEncoder
+    class WEBMEncoder : MovieEncoder
     {
         fcAPI.fcWebMContext m_ctx;
         fcAPI.fcWebMConfig m_config;

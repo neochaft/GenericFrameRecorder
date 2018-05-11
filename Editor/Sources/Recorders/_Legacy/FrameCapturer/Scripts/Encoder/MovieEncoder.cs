@@ -137,10 +137,10 @@ namespace UnityEditor.Recorder.FrameCapturer
         {
             switch (t)
             {
-                case Type.Png: return new PngEncoder();
-                case Type.Exr: return new ExrEncoder();
-                case Type.Gif: return new GifEncoder();
-                case Type.WebM:return new WebMEncoder();
+                case Type.Png: return new PNGEncoder();
+                case Type.Exr: return new EXREncoder();
+                case Type.Gif: return new GIFEncoder();
+                case Type.WebM:return new WEBMEncoder();
                 case Type.MP4: return new MP4Encoder();
             }
             return null;

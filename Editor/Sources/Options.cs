@@ -9,20 +9,20 @@
             get { return s_debugMode; }
             private set
             {
-                EditorPrefs.SetBool(s_DebugModeMenuItem, value);
+                EditorPrefs.SetBool(k_DebugModeMenuItem, value);
                 s_debugMode = value;
             }
         }
     
-        const string s_DebugModeMenuItem = "Recorder/Options/Debug mode";
-        const string s_ShowLegacyModeMenuItem = "Recorder/Options/Show Legacy Recorders";
+        const string k_DebugModeMenuItem = "Recorder/Options/Debug mode";
+        const string k_ShowLegacyModeMenuItem = "Recorder/Options/Show Legacy Recorders";
         
         public static bool showLegacyRecorders { get; private set; }
 
         static Options()
         {
-            debugMode = EditorPrefs.GetBool(s_DebugModeMenuItem, false);
-            showLegacyRecorders = EditorPrefs.GetBool(s_ShowLegacyModeMenuItem, false);
+            debugMode = EditorPrefs.GetBool(k_DebugModeMenuItem, false);
+            showLegacyRecorders = EditorPrefs.GetBool(k_ShowLegacyModeMenuItem, false);
 
             // Delaying until first editor tick so that the menu will be populated before setting check state, and  re-apply correct action
             EditorApplication.delayCall += UpdateMenus;
@@ -30,23 +30,23 @@
 
         static void UpdateMenus()
         {
-            Menu.SetChecked(s_DebugModeMenuItem, debugMode);
-            Menu.SetChecked(s_ShowLegacyModeMenuItem, showLegacyRecorders);
+            Menu.SetChecked(k_DebugModeMenuItem, debugMode);
+            Menu.SetChecked(k_ShowLegacyModeMenuItem, showLegacyRecorders);
         }
 
-        [MenuItem(s_DebugModeMenuItem, false, int.MaxValue)]
+        [MenuItem(k_DebugModeMenuItem, false, int.MaxValue)]
         static void ToggleDebugMode()
         {
             var value = !debugMode;
-            Menu.SetChecked(s_DebugModeMenuItem, value);
+            Menu.SetChecked(k_DebugModeMenuItem, value);
             debugMode = value;
         }
 
-        [MenuItem(s_ShowLegacyModeMenuItem, false, int.MaxValue)]
+        [MenuItem(k_ShowLegacyModeMenuItem, false, int.MaxValue)]
         static void ToggleShowLegacyRecorders()
         {
             var value = !showLegacyRecorders;
-            Menu.SetChecked(s_ShowLegacyModeMenuItem, value);
+            Menu.SetChecked(k_ShowLegacyModeMenuItem, value);
             showLegacyRecorders = value;
         }
     }

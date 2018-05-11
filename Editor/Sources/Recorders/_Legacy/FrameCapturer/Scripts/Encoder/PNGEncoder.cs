@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder.FrameCapturer
 {
-    class PngEncoder : MovieEncoder
+    class PNGEncoder : MovieEncoder
     {
         fcAPI.fcPngContext m_ctx;
         fcAPI.fcPngConfig m_config;
