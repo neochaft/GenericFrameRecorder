@@ -1,10 +1,8 @@
 {
-    "name": "com.unity.recorder.Editor",
+    "name": "com.unity.Recorder",
     "references": [],
     "optionalUnityReferences": [],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false
 }
