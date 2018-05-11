@@ -2,7 +2,7 @@ using Recorder;
 using UnityEditor;
 using UnityEngine;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [CustomEditor(typeof(MP4RecorderSettings))]
     public class Mp4RecorderSettingsEditor : RecorderEditor

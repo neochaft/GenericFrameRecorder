@@ -4,7 +4,7 @@ using UnityEngine;
 using Recorder;
 using Recorder.Input;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [Serializable]
     public class UTJVideoSelector : InputSettingsSelector

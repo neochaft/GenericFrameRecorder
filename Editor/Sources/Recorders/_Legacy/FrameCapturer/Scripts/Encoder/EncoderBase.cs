@@ -1,7 +1,7 @@
 using System;
 
 
-namespace UTJ.FrameCapturer
+namespace FrameCapturer
 {
     public abstract class EncoderBase
     {

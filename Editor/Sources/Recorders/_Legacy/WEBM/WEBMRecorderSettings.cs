@@ -1,6 +1,6 @@
 using Recorder;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [RecorderSettings(typeof(WEBMRecorder), "Legacy/WebM" )]
     public class WEBMRecorderSettings : BaseFCRecorderSettings

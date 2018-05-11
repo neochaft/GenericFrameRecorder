@@ -1,7 +1,7 @@
 using Recorder;
 using UnityEngine;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [RecorderSettings(typeof(MP4Recorder), "Legacy/MP4" )]
     public class MP4RecorderSettings : BaseFCRecorderSettings

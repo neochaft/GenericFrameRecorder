@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-namespace UTJ.FrameCapturer
+namespace FrameCapturer
 {
     [Serializable]
     public class DataPath

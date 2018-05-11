@@ -1,6 +1,6 @@
 using Recorder;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [RecorderSettings(typeof(EXRRecorder), "Legacy/OpenEXR")]
     public class EXRRecorderSettings : BaseFCRecorderSettings

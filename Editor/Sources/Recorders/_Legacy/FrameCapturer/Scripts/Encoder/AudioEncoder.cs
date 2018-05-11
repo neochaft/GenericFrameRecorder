@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace UTJ.FrameCapturer
+namespace FrameCapturer
 {
     [Serializable]
     public class AudioEncoderConfigs

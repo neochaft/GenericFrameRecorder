@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace UTJ.FrameCapturer
+namespace FrameCapturer
 {
     public class WebMEncoder : MovieEncoder
     {

@@ -1,7 +1,7 @@
 using System;
 using Recorder;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [Obsolete("'Legacy/PNG' is obsolete, concider using 'Image Sequence' instead", false)]
     public class PNGRecorder : GenericRecorder<PNGRecorderSettings>

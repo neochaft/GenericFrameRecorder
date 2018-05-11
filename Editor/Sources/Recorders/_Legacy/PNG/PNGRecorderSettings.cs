@@ -1,6 +1,6 @@
 using Recorder;
 
-namespace UTJ.FrameCapturer.Recorders
+namespace FrameCapturer.Recorders
 {
     [RecorderSettings(typeof(PNGRecorder), "Legacy/PNG" )]
     public class PNGRecorderSettings : BaseFCRecorderSettings

@@ -9,7 +9,7 @@ using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using Recorder.Input;
 using UnityEditor;
-using UTJ.FrameCapturer.Recorders;
+using FrameCapturer.Recorders;
 using UnityObject = UnityEngine.Object;
 
 namespace Recorder
