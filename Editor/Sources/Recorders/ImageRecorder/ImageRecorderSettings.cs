@@ -16,7 +16,7 @@ namespace UnityEditor.Recorder
     class VideoSelector : InputSettingsSelector
     {      
         [SerializeField] public CBRenderTextureInputSettings cbRenderTextureInputSettings = new CBRenderTextureInputSettings();
-        [SerializeField] public ScreenCaptureInputSettings screenCaptureInputSettings = new ScreenCaptureInputSettings();
+        [SerializeField] public GameViewInputSettings gameViewInputSettings = new GameViewInputSettings();
         [SerializeField] public Camera360InputSettings camera360InputSettings = new Camera360InputSettings();
         [SerializeField] public RenderTextureInputSettings renderTextureInputSettings = new RenderTextureInputSettings();
         [SerializeField] public RenderTextureSamplerSettings renderTextureSamplerSettings = new RenderTextureSamplerSettings();

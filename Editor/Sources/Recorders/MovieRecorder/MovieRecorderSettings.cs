@@ -22,7 +22,7 @@ namespace UnityEditor.Recorder
         class VideoInputSelector : InputSettingsSelector
         {      
             [SerializeField] CBRenderTextureInputSettings m_CbRenderTextureInputSettings = new CBRenderTextureInputSettings();
-            [SerializeField] ScreenCaptureInputSettings m_ScreenCaptureInputSettings = new ScreenCaptureInputSettings();
+            [SerializeField] GameViewInputSettings m_GameViewInputSettings = new GameViewInputSettings();
             [SerializeField] Camera360InputSettings m_Camera360InputSettings = new Camera360InputSettings();
             [SerializeField] RenderTextureInputSettings m_RenderTextureInputSettings = new RenderTextureInputSettings();
             [SerializeField] RenderTextureSamplerSettings m_RenderTextureSamplerSettings = new RenderTextureSamplerSettings();
@@ -32,7 +32,7 @@ namespace UnityEditor.Recorder
                 m_CbRenderTextureInputSettings.forceEvenSize = true;
                 m_CbRenderTextureInputSettings.flipFinalOutput = Application.platform == RuntimePlatform.OSXEditor;
             
-                m_ScreenCaptureInputSettings.forceEvenSize = true;
+                m_GameViewInputSettings.forceEvenSize = true;
                 
                 m_Camera360InputSettings.forceEvenSize = true;
                 
@@ -73,7 +73,7 @@ namespace UnityEditor.Recorder
                     throw new ArgumentNullException("value");
 
                 if (value is CBRenderTextureInputSettings ||
-                    value is ScreenCaptureInputSettings ||
+                    value is GameViewInputSettings ||
                     value is Camera360InputSettings ||
                     value is RenderTextureInputSettings ||
                     value is RenderTextureSamplerSettings)

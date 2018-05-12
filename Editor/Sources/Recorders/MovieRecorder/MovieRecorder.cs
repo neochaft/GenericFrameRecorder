@@ -28,9 +28,9 @@ namespace UnityEditor.Recorder
 
             int width;
             int height;
-            if (m_Inputs[0] is ScreenCaptureInput)
+            if (m_Inputs[0] is GameViewInput)
             {
-                var input = (ScreenCaptureInput)m_Inputs[0];
+                var input = (GameViewInput)m_Inputs[0];
                 width = input.outputWidth;
                 height = input.outputHeight;
             }
@@ -124,9 +124,9 @@ namespace UnityEditor.Recorder
             if (m_Inputs.Count != 2)
                 throw new Exception("Unsupported number of sources");
 
-            if (m_Inputs[0] is ScreenCaptureInput)
+            if (m_Inputs[0] is GameViewInput)
             {
-                var input = (ScreenCaptureInput)m_Inputs[0];
+                var input = (GameViewInput)m_Inputs[0];
                 m_Encoder.AddFrame(input.image);
             }
             else

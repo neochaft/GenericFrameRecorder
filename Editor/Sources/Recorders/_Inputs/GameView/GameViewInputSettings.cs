@@ -6,11 +6,11 @@ namespace UnityEditor.Recorder.Input
 {
     [DisplayName("Game View")]
     [Serializable]
-    public class ScreenCaptureInputSettings : ImageInputSettings
+    public class GameViewInputSettings : ImageInputSettings
     {
         public override Type inputType
         {
-            get { return typeof(ScreenCaptureInput); }
+            get { return typeof(GameViewInput); }
         }
 
         public override bool ValidityCheck(List<string> errors)

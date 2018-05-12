@@ -25,7 +25,7 @@ public class RecorderExample : MonoBehaviour
         videoRecorder.outputFormat = VideoRecorderOutputFormat.MP4;
         videoRecorder.videoBitRateMode = VideoBitrateMode.Low;
 
-        videoRecorder.videoInputSettings = new ScreenCaptureInputSettings()
+        videoRecorder.videoInputSettings = new GameViewInputSettings()
         {
             aspectRatio = ImageAspect.x16_9,
             outputResolution = ImageResolution.x240p

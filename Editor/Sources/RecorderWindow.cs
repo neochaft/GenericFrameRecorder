@@ -497,7 +497,7 @@ namespace UnityEditor.Recorder
             }
             
             var ii = m_Prefs.recorderSettings.Where(r => m_Prefs.IsRecorderEnabled(r)).SelectMany(r =>
-                r.inputsSettings.Where(i => i is ScreenCaptureInputSettings)).ToList();
+                r.inputsSettings.Where(i => i is GameViewInputSettings)).ToList();
             
             if (ii.Count >= 2)
                 return "Using Game View on multiple recorders can lead to unespected behaviour.";

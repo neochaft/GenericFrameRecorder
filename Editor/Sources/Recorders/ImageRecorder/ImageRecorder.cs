@@ -23,9 +23,9 @@ namespace UnityEditor.Recorder
                 throw new Exception("Unsupported number of sources");
 
             Texture2D tex = null;
-            if (m_Inputs[0] is ScreenCaptureInput)
+            if (m_Inputs[0] is GameViewInput)
             {
-                tex = ((ScreenCaptureInput)m_Inputs[0]).image;
+                tex = ((GameViewInput)m_Inputs[0]).image;
                 if (m_Settings.outputFormat == ImageRecorderOutputFormat.EXR)
                 {
                     var textx = new Texture2D(tex.width, tex.height, TextureFormat.RGBAFloat, false);

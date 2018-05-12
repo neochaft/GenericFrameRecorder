@@ -2,8 +2,8 @@
 
 namespace UnityEditor.Recorder.Input
 {
-    [CustomPropertyDrawer(typeof(ScreenCaptureInputSettings))]
-    class ScreenCaptureInputPropertyDrawer : InputPropertyDrawer<ScreenCaptureInputSettings>
+    [CustomPropertyDrawer(typeof(GameViewInputSettings))]
+    class GameViewInputPropertyDrawer : InputPropertyDrawer<GameViewInputSettings>
     {
         SerializedProperty m_RenderSize;
         SerializedProperty m_RenderAspect;

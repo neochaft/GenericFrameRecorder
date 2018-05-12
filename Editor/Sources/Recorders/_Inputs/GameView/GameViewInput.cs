@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder.Input
 {
-    class ScreenCaptureInput : RecorderInput
+    class GameViewInput : RecorderInput
     {
         bool m_ModifiedResolution;
 
         public Texture2D image { get; private set; }
 
-        public ScreenCaptureInputSettings scSettings
+        public GameViewInputSettings scSettings
         {
-            get { return (ScreenCaptureInputSettings)settings; }
+            get { return (GameViewInputSettings)settings; }
         }
 
         public int outputWidth { get; protected set; }
