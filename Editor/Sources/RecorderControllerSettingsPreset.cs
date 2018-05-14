@@ -1,45 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor.Presets;
 using UnityEngine;
 
 namespace UnityEditor.Recorder
-{
-    [Serializable]
-    class RecorderPresetInfo
-    {
-        [SerializeField] Preset m_Preset;
-        [SerializeField] string m_DisplayName;
-        [SerializeField] bool m_Enabled;
-            
-        public Preset preset
-        {
-            get { return m_Preset; }
-        }
-
-        public string displayName
-        {
-            get { return m_DisplayName; }
-        }
-
-        public bool enabled
-        {
-            get { return m_Enabled; }
-        }
-
-        public RecorderPresetInfo(Preset preset, string displayName, bool enabled)
-        {
-            m_Preset = preset;
-            m_DisplayName = displayName;
-            m_Enabled = enabled;
-        }
-    }
-    
+{   
     class RecorderControllerSettingsPreset : ScriptableObject
     {
         [SerializeField] Preset m_Model;
-        [SerializeField] List<RecorderPresetInfo> m_RecorderPresetInfos = new List<RecorderPresetInfo>();
+        [SerializeField] List<Preset> m_RecorderPresets = new List<Preset>();
         
         public Preset model
         {
@@ -48,7 +17,7 @@ namespace UnityEditor.Recorder
         
         public Preset[] recorderPresets
         {
-            get { return m_RecorderPresetInfos.Select(i => i.preset).ToArray(); }
+            get { return m_RecorderPresets.ToArray(); }
         }
 
         public static void SaveAtPath(RecorderControllerSettings model, string path)
@@ -67,7 +36,7 @@ namespace UnityEditor.Recorder
             foreach (var recorder in model.recorderSettings)
             {
                 var rp = new Preset(recorder) { name = recorder.name };
-                data.m_RecorderPresetInfos.Add(new RecorderPresetInfo(rp, model.GetRecorderDisplayName(recorder), model.IsRecorderEnabled(recorder)));
+                data.m_RecorderPresets.Add(rp);
             }
             
             //var preset = new Preset(data);
@@ -76,8 +45,8 @@ namespace UnityEditor.Recorder
             var preset = data; //new Preset(data);
             AssetDatabase.CreateAsset(preset, path); //AssetDatabase.CreateAsset(preset, "Assets/test.preset");
             
-            foreach (var rp in data.m_RecorderPresetInfos)
-                AddHiddenObjectToAsset(rp.preset, preset);
+            foreach (var rp in data.m_RecorderPresets)
+                AddHiddenObjectToAsset(rp, preset);
             
             AddHiddenObjectToAsset(p, preset);
             
@@ -91,10 +60,10 @@ namespace UnityEditor.Recorder
             
             m_Model.ApplyTo(prefs);
             
-            foreach (var rp in m_RecorderPresetInfos)
+            foreach (var rp in m_RecorderPresets)
             {
-                var r = (RecorderSettings) CreateFromPreset(rp.preset);
-                prefs.AddRecorderSettings(r, rp.displayName, rp.enabled);
+                var r = (RecorderSettings) CreateFromPreset(rp);
+                prefs.AddRecorderSettings(r);
             }
             
             prefs.Save();

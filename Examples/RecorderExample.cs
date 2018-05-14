@@ -15,7 +15,9 @@ public class RecorderExample : MonoBehaviour
         
         // Video
         var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
-
+        videoRecorder.name = "My LowRes Recorder";
+        videoRecorder.enabled = true;
+        
         videoRecorder.outputFormat = VideoRecorderOutputFormat.MP4;
         videoRecorder.videoBitRateMode = VideoBitrateMode.Low;
 
@@ -38,7 +40,7 @@ public class RecorderExample : MonoBehaviour
         // Image Sequence
         // TODO
         
-        controllerSettings.AddRecorderSettings(videoRecorder, "My LowRes Recorder");
+        controllerSettings.AddRecorderSettings(videoRecorder);
         
         controllerSettings.recordMode = RecordMode.Manual;
         controllerSettings.frameRate = 60.0f;

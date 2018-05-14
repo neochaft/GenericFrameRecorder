@@ -37,7 +37,9 @@ namespace UnityEditor.Recorder
         public void SetItemEnabled(RecorderControllerSettings prefs, bool value)
         {
             m_Disabled = !value;
-            prefs.SetRecorderEnabled(settings, value);
+            settings.enabled = value;
+            prefs.Save();
+            
             m_EditableLabel.SetLabelEnabled(value);
 
             if (m_Toggle != null)
@@ -190,14 +192,15 @@ namespace UnityEditor.Recorder
             
             Add(iconContainer);
             
-            m_EditableLabel = new EditableLabel { text = prefs.GetRecorderDisplayName(settings) };
+            m_EditableLabel = new EditableLabel { text = settings.name };
             m_EditableLabel.OnValueChanged(newValue =>
             {
-                prefs.SetRecorderDisplayName(settings, newValue);
+                settings.name = newValue;
+                prefs.Save();
             });
             Add(m_EditableLabel);
 
-            var recorderEnabled = prefs.IsRecorderEnabled(settings);
+            var recorderEnabled = settings.enabled;
             m_Toggle.on = recorderEnabled;
             SetItemEnabled(prefs, recorderEnabled);
         }

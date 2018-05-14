@@ -32,6 +32,8 @@ namespace UnityEditor.Recorder
     public abstract class RecorderSettings : ScriptableObject
     {
         public FileNameGenerator fileNameGenerator;
+
+        public bool enabled;
         
         public int take = 1;
         

@@ -81,7 +81,7 @@ namespace UnityEditor.Recorder
                                          "' has warnings and may not record properly.");
                 }
 
-                if (!m_Settings.IsRecorderEnabled(recorderSetting))
+                if (!recorderSetting.enabled)
                 {
                     if (debugMode)
                         Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");

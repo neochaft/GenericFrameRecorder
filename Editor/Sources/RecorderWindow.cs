@@ -481,7 +481,7 @@ namespace UnityEditor.Recorder
 
         string CheckRecordersIncompatibility()
         {
-            var activeRecorders = m_ControllerSettings.recorderSettings.Where(r => m_ControllerSettings.IsRecorderEnabled(r)).ToArray();
+            var activeRecorders = m_ControllerSettings.recorderSettings.Where(r => r.enabled).ToArray();
 
             if (activeRecorders.Length == 0)
                 return null;
@@ -497,7 +497,7 @@ namespace UnityEditor.Recorder
                 outputPaths.Add(path);
             }
             
-            var ii = m_ControllerSettings.recorderSettings.Where(r => m_ControllerSettings.IsRecorderEnabled(r)).SelectMany(r =>
+            var ii = m_ControllerSettings.recorderSettings.Where(r => r.enabled).SelectMany(r =>
                 r.inputsSettings.Where(i => i is GameViewInputSettings)).ToList();
             
             if (ii.Count >= 2)
@@ -807,7 +807,8 @@ namespace UnityEditor.Recorder
         void AddLastAndSelect(RecorderSettings recorder, string desiredName, bool enabled)
         {
             recorder.name = GetUniqueRecorderName(desiredName);
-            m_ControllerSettings.AddRecorderSettings(recorder, recorder.name, enabled);
+            recorder.enabled = enabled;
+            m_ControllerSettings.AddRecorderSettings(recorder);
 
             m_RecordingListItem.AddAndSelect(CreateRecorderItem(recorder));
         }
@@ -817,13 +818,13 @@ namespace UnityEditor.Recorder
             var candidate = item.settings;
             var copy = Instantiate(candidate);
             copy.OnAfterDuplicate();
-            AddLastAndSelect(copy, m_ControllerSettings.GetRecorderDisplayName(candidate), m_ControllerSettings.IsRecorderEnabled(candidate));
+            AddLastAndSelect(copy, candidate.name, candidate.enabled);
         }
 
         void DeleteRecorder(RecorderItem item, bool prompt)
         {
             if (!prompt || EditorUtility.DisplayDialog("Delete Recoder?",
-                    "Are you sure you want to delete '" + m_ControllerSettings.GetRecorderDisplayName(item.settings) + "' ?", "Delete"))
+                    "Are you sure you want to delete '" + item.settings.name + "' ?", "Delete"))
             {
 
                 var s = item.settings;
@@ -844,7 +845,7 @@ namespace UnityEditor.Recorder
 
         string GetUniqueRecorderName(string desiredName)
         {
-            return ObjectNames.GetUniqueName(m_ControllerSettings.recorderSettings.Select(r => m_ControllerSettings.GetRecorderDisplayName(r)).ToArray(),
+            return ObjectNames.GetUniqueName(m_ControllerSettings.recorderSettings.Select(r => r.name).ToArray(),
                 desiredName);
         }
 
@@ -892,7 +893,7 @@ namespace UnityEditor.Recorder
 
         bool HaveActiveRecordings()
         {
-            return m_ControllerSettings.recorderSettings.Any(r => m_ControllerSettings.IsRecorderEnabled(r));
+            return m_ControllerSettings.recorderSettings.Any(r => r.enabled);
         }
 
         void UpdateRecordingProgressGUI()
