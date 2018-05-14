@@ -36,7 +36,7 @@ namespace UnityEditor.Recorder.Input
 
             if (outputWidth != (1 << (int)Math.Log(outputWidth, 2)))
             {
-                ok =false;
+                ok = false;
                 errors.Add("Output width must be a power of 2.");
             }
 
@@ -48,7 +48,7 @@ namespace UnityEditor.Recorder.Input
 
             if (outputHeight != (1 << (int)Math.Log(outputHeight, 2)))
             {
-                ok =false;
+                ok = false;
                 errors.Add("Output height must be a power of 2.");
             }
 

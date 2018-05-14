@@ -51,7 +51,7 @@ namespace UnityEditor.Recorder
             ((ImageInputSettings)m_VideoInputSelector.selected).maxSupportedSize = ImageResolution.x2160p_4K;
         }
 
-        public override bool ValidityCheck(List<string> errors)
+        internal override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
             
@@ -82,7 +82,7 @@ namespace UnityEditor.Recorder
                 }
                 else
                 {
-                    throw new ArgumentException("Video input type not support: '" + value.GetType() + "'");
+                    throw new ArgumentException("Video input type not supported: '" + value.GetType() + "'");
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace UnityEditor.Recorder
             get { return m_AudioInputSettings; }
         }
 
-        public override IEnumerable<RecorderInputSetting> inputsSettings
+        internal override IEnumerable<RecorderInputSetting> inputsSettings
         {
             get
             {

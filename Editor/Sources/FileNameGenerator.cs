@@ -17,7 +17,7 @@ namespace UnityEditor.Recorder
         public string pattern { get { return m_Pattern; } }
         public string label { get { return m_Label; } }
 
-        public Wildcard(string pattern, Func<RecordingSession, string> resolver, string info = null)
+        internal Wildcard(string pattern, Func<RecordingSession, string> resolver, string info = null)
         {
             m_Pattern = pattern;
             m_Label = m_Pattern;
@@ -28,7 +28,7 @@ namespace UnityEditor.Recorder
             m_Resolver = resolver;
         }
 
-        public string Resolve(RecordingSession session)
+        internal string Resolve(RecordingSession session)
         {
             return m_Resolver == null ? string.Empty : m_Resolver(session);
         }
@@ -50,8 +50,8 @@ namespace UnityEditor.Recorder
         }
         
         public string fileName {
-            get { return m_FileName;}
-            set { m_FileName = value;  }
+            get { return m_FileName; }
+            set { m_FileName = value; }
         }
 
         public OutputPath.Root root
@@ -105,7 +105,7 @@ namespace UnityEditor.Recorder
             };
         }
 
-        public void AddWildcard(string tag, Func<RecordingSession, string> resolver)
+        internal void AddWildcard(string tag, Func<RecordingSession, string> resolver)
         {
             m_Wildcards.Add(new Wildcard(tag, resolver));
         }
@@ -168,12 +168,12 @@ namespace UnityEditor.Recorder
             return PlayerSettings.productName;
         }
 
-        public string BuildAbsolutePath(RecordingSession session)
+        internal  string BuildAbsolutePath(RecordingSession session)
         {
             return BuildPath(m_Path.GetFullPath(), session);
         }
 
-        public void CreateDirectory(RecordingSession session)
+        internal  void CreateDirectory(RecordingSession session)
         {
             var path = ApplyWildcards(m_Path.GetFullPath(), session);
             if(!string.IsNullOrEmpty(path) && !Directory.Exists(path))

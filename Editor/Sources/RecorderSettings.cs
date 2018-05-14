@@ -35,13 +35,13 @@ namespace UnityEditor.Recorder
         
         public int take = 1;
         
-        public int captureEveryNthFrame = 1;
+        internal int captureEveryNthFrame = 1;
 
-        public RecordMode recordMode { get; set; }
+        internal RecordMode recordMode { get; set; }
 
-        public FrameRatePlayback frameRatePlayback { get; set; }
+        internal FrameRatePlayback frameRatePlayback { get; set; }
 
-        public float frameRate
+        internal float frameRate
         {
             get { return FrameRateHelper.ToFloat(frameRateType, customFrameRateValue); }
             set
@@ -51,20 +51,19 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public FrameRateType frameRateType { get; set; }
+        internal FrameRateType frameRateType { get; set; }
 
-        public float customFrameRateValue { get; set; }
+        internal float customFrameRateValue { get; set; }
 
-        public int startFrame { get; set; }
+        internal int startFrame { get; set; }
 
-        public int endFrame { get; set; }
+        internal int endFrame { get; set; }
 
-        public float startTime { get; set; }
+        internal float startTime { get; set; }
 
-        public float endTime { get; set; }
+        internal float endTime { get; set; }
 
-        public bool synchFrameRate { get; set; }
-        
+        internal bool synchFrameRate { get; set; }
         
         protected RecorderSettings()
         {
@@ -75,7 +74,7 @@ namespace UnityEditor.Recorder
             };
         }
 
-        public virtual bool ValidityCheck(List<string> errors)
+        internal virtual bool ValidityCheck(List<string> errors)
         {
             var ok = true;
 
@@ -118,7 +117,7 @@ namespace UnityEditor.Recorder
             get { return true; }
         }
 
-        public abstract IEnumerable<RecorderInputSetting> inputsSettings { get; }
+        internal abstract IEnumerable<RecorderInputSetting> inputsSettings { get; }
         public abstract string extension { get; }
         public abstract Vector2 resolution { get; }
 

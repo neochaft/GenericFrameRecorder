@@ -60,7 +60,7 @@ namespace UnityEditor.Recorder
         VisualElement m_FrameRateOptionsPanel;
         
         RecorderSettingsPrefs m_Prefs;
-        readonly RecorderController m_RecorderController = new RecorderController();
+        RecorderController m_RecorderController;
 
         static readonly string s_PrefsFileName = "/../Library/Recorder/recorder.pref";
         static readonly string s_StylesFolder = "Styles/";
@@ -324,6 +324,7 @@ namespace UnityEditor.Recorder
             m_SettingsPanel.Add(m_ParametersControl);
 
             m_Prefs = RecorderSettingsPrefs.LoadOrCreate(Application.dataPath + s_PrefsFileName);
+            m_RecorderController = new RecorderController(m_Prefs);
             
             m_RecorderSettingsPrefsEditor = (RecorderSettingsPrefsEditor) Editor.CreateEditor(m_Prefs);
             
@@ -417,7 +418,7 @@ namespace UnityEditor.Recorder
             }
         }
 
-        void ApplyPreset(string presetPath)
+        public void ApplyPreset(string presetPath)
         {           
             var candidate = AssetDatabase.LoadAssetAtPath<RecorderListPreset>(presetPath);
 
@@ -562,8 +563,9 @@ namespace UnityEditor.Recorder
         {        
             if (Options.debugMode)
                 Debug.Log("Start Recording.");
-            
-            var success = m_RecorderController.StartRecording(m_Prefs, Options.debugMode);
+
+            m_RecorderController.debugMode = Options.debugMode;
+            var success = m_RecorderController.StartRecording();
             
             if (success)
             {

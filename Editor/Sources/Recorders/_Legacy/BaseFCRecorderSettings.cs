@@ -30,7 +30,7 @@ namespace UnityEditor.Recorder.FrameCapturer
     {
         [SerializeField] protected UTJVideoSelector m_VideoInputSelector = new UTJVideoSelector();
 
-        public override bool ValidityCheck(List<string> errors)
+        internal override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
             
@@ -69,7 +69,7 @@ namespace UnityEditor.Recorder.FrameCapturer
             }
         }
 
-        public override IEnumerable<RecorderInputSetting> inputsSettings
+        internal override IEnumerable<RecorderInputSetting> inputsSettings
         {
             get { yield return m_VideoInputSelector.selected; }
         }

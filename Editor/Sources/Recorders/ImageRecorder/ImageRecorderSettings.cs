@@ -65,8 +65,8 @@ namespace UnityEditor.Recorder
                 return new Vector2(w, h);
             }
         }
-        
-        public override bool ValidityCheck(List<string> errors)
+
+        internal override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
  
@@ -79,7 +79,7 @@ namespace UnityEditor.Recorder
             return ok;
         }
 
-        public override IEnumerable<RecorderInputSetting> inputsSettings
+        internal override IEnumerable<RecorderInputSetting> inputsSettings
         {
             get { yield return m_VideoInputSelector.selected; }
         }

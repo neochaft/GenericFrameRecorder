@@ -1,25 +1,19 @@
-﻿using System.Linq;
+﻿#if UNITY_EDITOR
 using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Recorder;
 using UnityEditor.Recorder.Input;
-#endif
 
 public class RecorderExample : MonoBehaviour
 {
-#if UNITY_EDITOR
-    readonly RecorderController m_RecorderController = new RecorderController();
-    RecorderSettingsPrefs m_Prefs;
-    float m_Time;
+    RecorderController m_RecorderController;
     
     void OnEnable()
     {
-        m_Time = 0;
+        var prefs = ScriptableObject.CreateInstance<RecorderSettingsPrefs>();
+        m_RecorderController = new RecorderController(prefs);
         
-        m_Prefs = ScriptableObject.CreateInstance<RecorderSettingsPrefs>();
-
+        // Video
         var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
 
         videoRecorder.outputFormat = VideoRecorderOutputFormat.MP4;
@@ -33,50 +27,31 @@ public class RecorderExample : MonoBehaviour
 
         videoRecorder.audioInputSettings.preserveAudio = true;
         
-        videoRecorder.fileNameGenerator.fileName = "Yolo";
-        videoRecorder.fileNameGenerator.root = OutputPath.Root.Project;
+        videoRecorder.fileNameGenerator.fileName = "Video" + FileNameGenerator.DefaultWildcard.Extension;
+        videoRecorder.fileNameGenerator.root = OutputPath.Root.Absolute;
         videoRecorder.fileNameGenerator.leaf = "ScriptRecordings";
         
-        m_Prefs.AddRecorderSettings(videoRecorder, "My LowRes Recorder");
-
-        //m_RecorderState.StartRecording(prefs);
-    }
-
-    void Update()
-    {
-        m_Time += Time.deltaTime;
-
-        if (m_Time >= 3.0f && m_Time < 6.0f && !m_RecorderController.IsRecording())
-        {
-            Debug.Log("Starting first video...");
-            GetComponent<Renderer>().material.color = Color.blue;
-            m_RecorderController.StartRecording(m_Prefs);
-        }
-        else if (m_Time >= 6.0f && m_Time < 10.0f && m_RecorderController.IsRecording())
-        {
-            m_RecorderController.StopRecording();
-            GetComponent<Renderer>().material.color = Color.white;
-            Debug.Log("First video's done");
-        }
+        // Animation
+        // TODO
         
-        if (m_Time >= 10.0f && m_Time < 15.0f && !m_RecorderController.IsRecording())
-        {
-            Debug.Log("Starting second video...");
-            GetComponent<Renderer>().material.color = Color.red;
-            m_Prefs.recorderSettings.First().fileNameGenerator.fileName = "Yolo2";
-            m_RecorderController.StartRecording(m_Prefs);
-        }
-        else if (m_Time >= 15.0f && m_RecorderController.IsRecording())
-        {
-            m_RecorderController.StopRecording();
-            GetComponent<Renderer>().material.color = Color.white;
-            Debug.Log("Second video's done");
-        }
+        
+        // Image Sequence
+        // TODO
+        
+        prefs.AddRecorderSettings(videoRecorder, "My LowRes Recorder");
+        
+        prefs.recordMode = RecordMode.Manual;
+        prefs.frameRate = 60.0f;
+
+
+        m_RecorderController.debugMode = true;
+        m_RecorderController.StartRecording();
     }
 
     void OnDisable()
     {
-        //m_RecorderState.StopRecording();
+        m_RecorderController.StopRecording();
     }
-#endif
 }
+
+#endif

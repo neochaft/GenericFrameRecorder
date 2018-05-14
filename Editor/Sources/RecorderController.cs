@@ -10,22 +10,43 @@ namespace UnityEditor.Recorder
         readonly SceneHook m_SceneHook;
         
         List<RecordingSession> m_RecordingSessions;
-        
-        public RecorderController()
+        readonly RecorderSettingsPrefs m_Prefs;
+
+        public RecorderSettingsPrefs prefs
         {
+            get { return m_Prefs; }
+        }
+
+        public RecorderController(RecorderSettingsPrefs prefs)
+        {          
+            m_Prefs = prefs;   
             m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
         }
+
+        public bool debugMode;
         
-        public bool StartRecording(RecorderSettingsPrefs prefs, bool debugMode = false)
-        {           
-            Debug.Assert(Application.isPlaying);
+        public bool StartRecording()
+        {          
+            if (!Application.isPlaying)
+                throw new Exception("Start Recording can only be called in Playmode.");
+
+            if (m_Prefs == null)
+                throw new NullReferenceException("Can start recording without prefs");
             
+            if (IsRecording())
+            {
+                if (debugMode)
+                    Debug.Log("Recording was already started.");
+                
+                return false;
+            }
+
             if (debugMode)
                 Debug.Log("Start Recording.");
             
             m_RecordingSessions = new List<RecordingSession>();
 
-            foreach (var recorderSetting in prefs.recorderSettings)
+            foreach (var recorderSetting in m_Prefs.recorderSettings)
             {
                 if (recorderSetting == null)
                 {
@@ -35,7 +56,7 @@ namespace UnityEditor.Recorder
                     continue;
                 }
 
-                prefs.ApplyGlobalSetting(recorderSetting);
+                m_Prefs.ApplyGlobalSetting(recorderSetting);
 
                 if (recorderSetting.HasErrors())
                 {
@@ -60,7 +81,7 @@ namespace UnityEditor.Recorder
                                          "' has warnings and may not record properly.");
                 }
 
-                if (!prefs.IsRecorderEnabled(recorderSetting))
+                if (!m_Prefs.IsRecorderEnabled(recorderSetting))
                 {
                     if (debugMode)
                         Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");
@@ -84,17 +105,20 @@ namespace UnityEditor.Recorder
         }
 
         public void StopRecording()
-        {
-            Debug.Assert(Application.isPlaying);
+        {           
+            if (debugMode)
+                Debug.Log("Stop Recording.");
 
             if (m_RecordingSessions != null)
             {
                 foreach (var recordingSession in m_RecordingSessions)
                     recordingSession.EndRecording();
+
+                m_RecordingSessions = null;
             }
         }
         
-        public IEnumerable<RecordingSession> GetRecordingSessions()
+        internal IEnumerable<RecordingSession> GetRecordingSessions()
         {
             return m_SceneHook.GetRecordingSessions();
         }

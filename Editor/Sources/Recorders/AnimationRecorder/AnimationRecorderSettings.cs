@@ -10,6 +10,12 @@ namespace UnityEditor.Recorder
     public class AnimationRecorderSettings : RecorderSettings
     {
         [SerializeField] AnimationInputSettings m_AnimationInputSettings = new AnimationInputSettings();
+
+        public AnimationInputSettings animationInputSettings
+        {
+            get { return m_AnimationInputSettings; }
+            set { m_AnimationInputSettings = value; }
+        }
    
         public AnimationRecorderSettings()
         {
@@ -38,7 +44,7 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public override IEnumerable<RecorderInputSetting> inputsSettings
+        internal override IEnumerable<RecorderInputSetting> inputsSettings
         {
             get { yield return m_AnimationInputSettings; }
         }
@@ -53,7 +59,7 @@ namespace UnityEditor.Recorder
             get { return Vector2.zero; }
         }
 
-        public override bool ValidityCheck(List<string> errors)
+        internal override bool ValidityCheck(List<string> errors)
         {
             var ok = base.ValidityCheck(errors);
             

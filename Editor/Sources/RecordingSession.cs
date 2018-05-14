@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder
 {
-    public class RecordingSession : IDisposable
+    class RecordingSession : IDisposable
     {   
         internal Recorder recorder;
         internal GameObject recorderGameObject;

@@ -29,6 +29,8 @@ namespace UnityEditor.Recorder
             get { return m_RecordMode; }
             set { m_RecordMode = value; }
         }
+       
+        
 
         public FrameRatePlayback frameRatePlayback
         {
@@ -224,7 +226,7 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public void ApplyGlobalSetting(RecorderSettings recorder)
+        internal void ApplyGlobalSetting(RecorderSettings recorder)
         {
             recorder.recordMode = m_RecordMode;
             recorder.frameRatePlayback = m_FrameRatePlayback;
@@ -240,7 +242,7 @@ namespace UnityEditor.Recorder
             recorder.SelfAdjustSettings();
         }
         
-        public void ApplyGlobalSettingToAllRecorders()
+        internal void ApplyGlobalSettingToAllRecorders()
         {
             foreach (var recorder in recorderSettings)
                 ApplyGlobalSetting(recorder);
