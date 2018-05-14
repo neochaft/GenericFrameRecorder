@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace UnityEditor.Recorder
 {  
-    [CustomEditor(typeof(RecorderListPreset))]
-    class RecorderListPresetEditor : Editor
+    [CustomEditor(typeof(RecorderControllerSettingsPreset))]
+    class RecorderControllerSettingsPresetEditor : Editor
     {
         Editor m_Editor;
 
@@ -22,7 +22,7 @@ namespace UnityEditor.Recorder
             if (target == null)
                 return;
             
-            var preset = (RecorderListPreset) target;
+            var preset = (RecorderControllerSettingsPreset) target;
             
             m_Editor = CreateEditor(preset.model);
 

@@ -10,8 +10,8 @@ public class RecorderExample : MonoBehaviour
     
     void OnEnable()
     {
-        var prefs = ScriptableObject.CreateInstance<RecorderSettingsPrefs>();
-        m_RecorderController = new RecorderController(prefs);
+        var controllerSettings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
+        m_RecorderController = new RecorderController(controllerSettings);
         
         // Video
         var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
@@ -38,10 +38,10 @@ public class RecorderExample : MonoBehaviour
         // Image Sequence
         // TODO
         
-        prefs.AddRecorderSettings(videoRecorder, "My LowRes Recorder");
+        controllerSettings.AddRecorderSettings(videoRecorder, "My LowRes Recorder");
         
-        prefs.recordMode = RecordMode.Manual;
-        prefs.frameRate = 60.0f;
+        controllerSettings.recordMode = RecordMode.Manual;
+        controllerSettings.frameRate = 60.0f;
 
 
         m_RecorderController.debugMode = true;

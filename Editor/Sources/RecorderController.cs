@@ -10,16 +10,16 @@ namespace UnityEditor.Recorder
         readonly SceneHook m_SceneHook;
         
         List<RecordingSession> m_RecordingSessions;
-        readonly RecorderSettingsPrefs m_Prefs;
+        readonly RecorderControllerSettings m_Settings;
 
-        public RecorderSettingsPrefs prefs
+        public RecorderControllerSettings settings
         {
-            get { return m_Prefs; }
+            get { return m_Settings; }
         }
 
-        public RecorderController(RecorderSettingsPrefs prefs)
+        public RecorderController(RecorderControllerSettings settings)
         {          
-            m_Prefs = prefs;   
+            m_Settings = settings;   
             m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
         }
 
@@ -30,7 +30,7 @@ namespace UnityEditor.Recorder
             if (!Application.isPlaying)
                 throw new Exception("Start Recording can only be called in Playmode.");
 
-            if (m_Prefs == null)
+            if (m_Settings == null)
                 throw new NullReferenceException("Can start recording without prefs");
             
             if (IsRecording())
@@ -46,7 +46,7 @@ namespace UnityEditor.Recorder
             
             m_RecordingSessions = new List<RecordingSession>();
 
-            foreach (var recorderSetting in m_Prefs.recorderSettings)
+            foreach (var recorderSetting in m_Settings.recorderSettings)
             {
                 if (recorderSetting == null)
                 {
@@ -56,7 +56,7 @@ namespace UnityEditor.Recorder
                     continue;
                 }
 
-                m_Prefs.ApplyGlobalSetting(recorderSetting);
+                m_Settings.ApplyGlobalSetting(recorderSetting);
 
                 if (recorderSetting.HasErrors())
                 {
@@ -81,7 +81,7 @@ namespace UnityEditor.Recorder
                                          "' has warnings and may not record properly.");
                 }
 
-                if (!m_Prefs.IsRecorderEnabled(recorderSetting))
+                if (!m_Settings.IsRecorderEnabled(recorderSetting))
                 {
                     if (debugMode)
                         Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");

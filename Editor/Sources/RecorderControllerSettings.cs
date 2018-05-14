@@ -9,7 +9,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.Recorder
 {
-    public class RecorderSettingsPrefs : ScriptableObject
+    public class RecorderControllerSettings : ScriptableObject
     {
         [SerializeField] RecordMode m_RecordMode = RecordMode.Manual;
         [SerializeField] FrameRatePlayback m_FrameRatePlayback = FrameRatePlayback.Constant;
@@ -29,8 +29,6 @@ namespace UnityEditor.Recorder
             get { return m_RecordMode; }
             set { m_RecordMode = value; }
         }
-       
-        
 
         public FrameRatePlayback frameRatePlayback
         {
@@ -129,13 +127,13 @@ namespace UnityEditor.Recorder
 
         string m_Path;
         
-        public static RecorderSettingsPrefs LoadOrCreate(string path)
+        public static RecorderControllerSettings LoadOrCreate(string path)
         {
-            RecorderSettingsPrefs prefs;
+            RecorderControllerSettings prefs;
             try
             {
                 var objs = InternalEditorUtility.LoadSerializedFileAndForget(path);
-                prefs = objs.FirstOrDefault(p => p is RecorderSettingsPrefs) as RecorderSettingsPrefs;
+                prefs = objs.FirstOrDefault(p => p is RecorderControllerSettings) as RecorderControllerSettings;
             }
             catch (Exception e)
             {
@@ -145,7 +143,7 @@ namespace UnityEditor.Recorder
 
             if (prefs == null)
             {
-                prefs = CreateInstance<RecorderSettingsPrefs>();
+                prefs = CreateInstance<RecorderControllerSettings>();
                 prefs.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 prefs.name = "Global Settings";
                 prefs.Save();

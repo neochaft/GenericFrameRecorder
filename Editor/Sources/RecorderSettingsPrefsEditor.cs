@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UnityEditor.Recorder
 {
-    [CustomEditor(typeof(RecorderSettingsPrefs))]
+    [CustomEditor(typeof(RecorderControllerSettings))]
     class RecorderSettingsPrefsEditor : Editor
     {
         SerializedProperty m_RecordModeProperty;

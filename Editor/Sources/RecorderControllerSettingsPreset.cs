@@ -36,7 +36,7 @@ namespace UnityEditor.Recorder
         }
     }
     
-    class RecorderListPreset : ScriptableObject
+    class RecorderControllerSettingsPreset : ScriptableObject
     {
         [SerializeField] Preset m_Model;
         [SerializeField] List<RecorderPresetInfo> m_RecorderPresetInfos = new List<RecorderPresetInfo>();
@@ -51,9 +51,9 @@ namespace UnityEditor.Recorder
             get { return m_RecorderPresetInfos.Select(i => i.preset).ToArray(); }
         }
 
-        public static void SaveAtPath(RecorderSettingsPrefs model, string path)
+        public static void SaveAtPath(RecorderControllerSettings model, string path)
         {
-            var data = CreateInstance<RecorderListPreset>();
+            var data = CreateInstance<RecorderControllerSettingsPreset>();
             
             var copy = Instantiate(model);
             copy.name = model.name;
@@ -85,7 +85,7 @@ namespace UnityEditor.Recorder
             AssetDatabase.Refresh();
         }
                 
-        public void AppyTo(RecorderSettingsPrefs prefs)
+        public void AppyTo(RecorderControllerSettings prefs)
         {
             prefs.ReleaseRecorderSettings();
             

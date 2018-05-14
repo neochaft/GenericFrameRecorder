@@ -34,7 +34,7 @@ namespace UnityEditor.Recorder
                 RemoveFromClassList("selected");
         }
 
-        public void SetItemEnabled(RecorderSettingsPrefs prefs, bool value)
+        public void SetItemEnabled(RecorderControllerSettings prefs, bool value)
         {
             m_Disabled = !value;
             prefs.SetRecorderEnabled(settings, value);
@@ -119,7 +119,7 @@ namespace UnityEditor.Recorder
             }
         }
         
-        public RecorderItem(RecorderSettingsPrefs prefs, RecorderSettings recorderSettings, string iconName)
+        public RecorderItem(RecorderControllerSettings prefs, RecorderSettings recorderSettings, string iconName)
         {           
             settings = recorderSettings;
             
