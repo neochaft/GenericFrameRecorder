@@ -505,7 +505,7 @@ namespace UnityEditor.Recorder
                     }
                     else
                     {
-                        return "Recorders '" + gameViewRecorders.name + "' and '" + recorder.name + "' are recording the Game View. This can lead to unespected behaviour.";                        
+                        return "Recorders '" + gameViewRecorders.name + "' and '" + recorder.name + "' are recording the Game View. This can lead to unexpected behaviour.";                        
                     }
                 }
             }   
