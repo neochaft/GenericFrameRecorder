@@ -17,7 +17,7 @@ namespace UnityEditor.Recorder
             if (target != null)
             {               
                 var pf = new PropertyFinder<RecorderSettings>(serializedObject);
-                m_CaptureEveryNthFrame = pf.Find(x => x.captureEveryNthFrame);
+                m_CaptureEveryNthFrame = pf.Find(w => w.captureEveryNthFrame);
                 m_FileNameGenerator = pf.Find(w => w.fileNameGenerator);
                 
                 s_SeparatorTexture = Resources.Load<Texture2D>("vertical_gradient");

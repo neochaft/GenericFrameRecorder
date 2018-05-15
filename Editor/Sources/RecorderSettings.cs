@@ -21,7 +21,7 @@ namespace UnityEditor.Recorder
         Variable,
     }
 
-    internal enum RecordMode
+    enum RecordMode
     {
         Manual,
         SingleFrame,
@@ -37,7 +37,7 @@ namespace UnityEditor.Recorder
         
         public int take = 1;
         
-        internal int captureEveryNthFrame = 1;
+        [SerializeField] internal int captureEveryNthFrame = 1;
 
         internal RecordMode recordMode { get; set; }
 
