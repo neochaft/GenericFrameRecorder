@@ -52,6 +52,7 @@ namespace UnityEditor.Recorder
         VisualElement m_RecorderSettingPanel;
         
         Button m_RecordButton;
+        Button m_RecordButtonIcon;
         
         PanelSplitter m_PanelSplitter;
         VisualElement m_AddNewRecordPanel;
@@ -122,13 +123,16 @@ namespace UnityEditor.Recorder
             controlLeftPane.AddToClassList("StandardPanel");
             controlRightPane.AddToClassList("StandardPanel");
 
-            var recordIcon = new Image
+            m_RecordButtonIcon = new Button(OnRecordButtonClick)
             {
                 name = "recorderIcon",
-                image = Resources.Load<Texture2D>("recorder_icon")
+                style =
+                {
+                    backgroundImage = Resources.Load<Texture2D>("recorder_icon"),
+                }
             };
 
-            controlLeftPane.Add(recordIcon);
+            controlLeftPane.Add(m_RecordButtonIcon);
 
 
             var leftButtonsStack = new VisualElement
@@ -234,14 +238,6 @@ namespace UnityEditor.Recorder
                 image = (Texture2D)EditorGUIUtility.Load("Builtin Skins/" + (EditorGUIUtility.isProSkin ? "DarkSkin" : "LightSkin") + "/Images/pane options.png"),
                 style =
                 {
-                    sliceTop = 0,
-                    sliceBottom = 0,
-                    sliceLeft = 0,
-                    sliceRight = 0,
-                    paddingTop = 0.0f,
-                    paddingLeft = 0.0f,
-                    paddingBottom = 0.0f,
-                    paddingRight = 0.0f,
                     width = 16.0f,
                     height = 11.0f
                 }
@@ -539,16 +535,16 @@ namespace UnityEditor.Recorder
             {
                 if (IsRecording())
                 {
-                    m_RecordButton.SetEnabled(EditorApplication.isPlaying && Time.frameCount - m_FrameCount > 5.0f);
+                    SetRecordButtonsEnabled(EditorApplication.isPlaying && Time.frameCount - m_FrameCount > 5.0f);
                 }
                 else
                 {
-                    m_RecordButton.SetEnabled(true);
+                    SetRecordButtonsEnabled(true);
                 }
             }
             else
             {
-                m_RecordButton.SetEnabled(false);
+                SetRecordButtonsEnabled(false);
             }
 
             UpdateRecordButtonText();
@@ -557,6 +553,12 @@ namespace UnityEditor.Recorder
             {
                 Repaint();
             }
+        }
+
+        void SetRecordButtonsEnabled(bool enabled)
+        {
+            m_RecordButton.SetEnabled(enabled);
+            m_RecordButtonIcon.SetEnabled(enabled);
         }
 
         void StartRecordingInternal()

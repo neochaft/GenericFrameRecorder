@@ -3,6 +3,15 @@
     height : 50;
     margin-left : 5;
     margin-right : 20;
+    slice-top : 0;
+    slice-bottom : 0;
+    slice-left : 0;
+    slice-right : 0;
+    padding-top : 0;
+    padding-left : 0;
+    padding-bottom : 0;
+    padding-right : 0;
+    cursor : link;
 }
 
 .RecorderListHeader {
@@ -29,9 +38,16 @@
     justify-content: center;
 }
 
-#recorderListPreset > Image
-{
+#recorderListPreset > Image {
     align-self: center;
+    slice-top : 0;
+    slice-bottom : 0;
+    slice-left : 0;
+    slice-right : 0;
+    padding-top : 0;
+    padding-left : 0;
+    padding-bottom : 0;
+    padding-right : 0;
 }
 
 #presetButton {
@@ -75,8 +91,7 @@ RecorderItem.selected {
     margin-right : 4;
 }
 
-RecorderItem.hasErrors > .RecorderItemIcon
-{
+RecorderItem.hasErrors > .RecorderItemIcon {
     width : 16;
     height : 16;
 }
@@ -98,6 +113,7 @@ PanelSplitter {
 #recordButton {
     margin-left: 0;
     margin-right: 0;
+    cursor : link;
 }
 
 #recordersPanel {
