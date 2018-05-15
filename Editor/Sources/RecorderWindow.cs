@@ -564,7 +564,7 @@ namespace UnityEditor.Recorder
             if (Options.debugMode)
                 Debug.Log("Start Recording.");
 
-            m_RecorderController.debugMode = Options.debugMode;
+            m_RecorderController.verbose = Options.debugMode;
             var success = m_RecorderController.StartRecording();
             
             if (success)

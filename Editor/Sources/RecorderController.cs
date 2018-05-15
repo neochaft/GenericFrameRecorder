@@ -12,6 +12,8 @@ namespace UnityEditor.Recorder
         List<RecordingSession> m_RecordingSessions;
         readonly RecorderControllerSettings m_Settings;
 
+        public bool verbose;
+        
         public RecorderControllerSettings settings
         {
             get { return m_Settings; }
@@ -22,8 +24,6 @@ namespace UnityEditor.Recorder
             m_Settings = settings;   
             m_SceneHook = new SceneHook(Guid.NewGuid().ToString());
         }
-
-        public bool debugMode;
         
         public bool StartRecording()
         {          
@@ -35,13 +35,13 @@ namespace UnityEditor.Recorder
             
             if (IsRecording())
             {
-                if (debugMode)
+                if (verbose)
                     Debug.Log("Recording was already started.");
                 
                 return false;
             }
 
-            if (debugMode)
+            if (verbose)
                 Debug.Log("Start Recording.");
             
             m_RecordingSessions = new List<RecordingSession>();
@@ -50,7 +50,7 @@ namespace UnityEditor.Recorder
             {
                 if (recorderSetting == null)
                 {
-                    if (debugMode)
+                    if (verbose)
                         Debug.Log("Ignoring unknown recorder.");
 
                     continue;
@@ -60,7 +60,7 @@ namespace UnityEditor.Recorder
 
                 if (recorderSetting.HasErrors())
                 {
-                    if (debugMode)
+                    if (verbose)
                         Debug.Log("Ignoring invalid recorder '" + recorderSetting.name + "'");
 
                     continue;
@@ -76,14 +76,14 @@ namespace UnityEditor.Recorder
 
                 if (errors.Count > 0)
                 {
-                    if (debugMode)
+                    if (verbose)
                         Debug.LogWarning("Recorder '" + recorderSetting.name +
                                          "' has warnings and may not record properly.");
                 }
 
                 if (!recorderSetting.enabled)
                 {
-                    if (debugMode)
+                    if (verbose)
                         Debug.Log("Ignoring disabled recorder '" + recorderSetting.name + "'");
 
                     continue;
@@ -106,7 +106,7 @@ namespace UnityEditor.Recorder
 
         public void StopRecording()
         {           
-            if (debugMode)
+            if (verbose)
                 Debug.Log("Stop Recording.");
 
             if (m_RecordingSessions != null)
