@@ -45,18 +45,6 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public FrameRateType frameRateType
-        {
-            get { return m_FrameRateType; }
-            set { m_FrameRateType = value; }
-        }
-
-        public float customFrameRateValue
-        {
-            get { return m_CustomFrameRateValue; }
-            set { m_CustomFrameRateValue = value; }
-        }
-
         public int startFrame
         {
             get { return m_StartFrame; }
@@ -189,8 +177,7 @@ namespace UnityEditor.Recorder
         {
             recorder.recordMode = m_RecordMode;
             recorder.frameRatePlayback = m_FrameRatePlayback;
-            recorder.frameRateType = m_FrameRateType;
-            recorder.customFrameRateValue = m_CustomFrameRateValue;
+            recorder.frameRate = frameRate;
             recorder.startFrame = m_StartFrame;
             recorder.endFrame = m_EndFrame;
             recorder.startTime = m_StartTime;

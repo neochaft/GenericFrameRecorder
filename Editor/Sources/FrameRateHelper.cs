@@ -2,7 +2,7 @@
 
 namespace UnityEditor.Recorder
 {
-    public enum FrameRateType
+    enum FrameRateType
     {
         FR_23, // 24 * 1000 / 1001
         FR_24,
@@ -15,7 +15,7 @@ namespace UnityEditor.Recorder
         FR_CUSTOM,
     }
     
-    public static class FrameRateHelper
+    static class FrameRateHelper
     {
         public static float ToFloat(FrameRateType frameRateType, float customValue)
         {
@@ -44,7 +44,7 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public static string ToLable(FrameRateType value)
+        internal static string ToLable(FrameRateType value)
         {
             switch (value)
             {

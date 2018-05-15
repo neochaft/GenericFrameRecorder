@@ -43,19 +43,7 @@ namespace UnityEditor.Recorder
 
         internal FrameRatePlayback frameRatePlayback { get; set; }
 
-        internal float frameRate
-        {
-            get { return FrameRateHelper.ToFloat(frameRateType, customFrameRateValue); }
-            set
-            {
-                frameRateType = FrameRateType.FR_CUSTOM;
-                customFrameRateValue = value;
-            }
-        }
-
-        internal FrameRateType frameRateType { get; set; }
-
-        internal float customFrameRateValue { get; set; }
+        internal float frameRate { get; set; }
 
         internal int startFrame { get; set; }
 

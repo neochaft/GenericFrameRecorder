@@ -22,19 +22,19 @@ namespace UnityEditor.Recorder
 
         static class Styles
         {
-            public static readonly GUIContent SRecordModeLabel  = new GUIContent("Record Mode");
-            public static readonly GUIContent SSingleFrameLabel = new GUIContent("Frame #");
-            public static readonly GUIContent SFirstFrameLabel  = new GUIContent("First frame");
-            public static readonly GUIContent SLastFrameLabel   = new GUIContent("Last frame");
-            public static readonly GUIContent SStartTimeLabel   = new GUIContent("Start (sec)");
-            public static readonly GUIContent SEndTimeLabel     = new GUIContent("End (sec)");
+            public static readonly GUIContent RecordModeLabel  = new GUIContent("Record Mode");
+            public static readonly GUIContent SingleFrameLabel = new GUIContent("Frame #");
+            public static readonly GUIContent FirstFrameLabel  = new GUIContent("First frame");
+            public static readonly GUIContent LastFrameLabel   = new GUIContent("Last frame");
+            public static readonly GUIContent StartTimeLabel   = new GUIContent("Start (sec)");
+            public static readonly GUIContent EndTimeLabel     = new GUIContent("End (sec)");
             
-            public static readonly GUIContent SFrameRateTitle   = new GUIContent("Frame Rate");
-            public static readonly GUIContent SPlaybackLabel    = new GUIContent("Playback");
-            public static readonly GUIContent STargetFPSLabel   = new GUIContent("Target Frame Rate");
-            public static readonly GUIContent SMaxFPSLabel      = new GUIContent("Max Frame Rate");
-            public static readonly GUIContent SSyncFPSLabel     = new GUIContent("Sync. Frame Rate");
-            public static readonly GUIContent SValueLabel       = new GUIContent("Value");
+            public static readonly GUIContent FrameRateTitle   = new GUIContent("Frame Rate");
+            public static readonly GUIContent PlaybackLabel    = new GUIContent("Playback");
+            public static readonly GUIContent TargetFPSLabel   = new GUIContent("Target Frame Rate");
+            public static readonly GUIContent MaxFPSLabel      = new GUIContent("Max Frame Rate");
+            public static readonly GUIContent SyncFPSLabel     = new GUIContent("Sync. Frame Rate");
+            public static readonly GUIContent ValueLabel       = new GUIContent("Value");
         }
 
         void OnEnable()
@@ -64,7 +64,7 @@ namespace UnityEditor.Recorder
         {           
             serializedObject.Update();
             
-            EditorGUILayout.PropertyField(m_RecordModeProperty, Styles.SRecordModeLabel);
+            EditorGUILayout.PropertyField(m_RecordModeProperty, Styles.RecordModeLabel);
 
             ++EditorGUI.indentLevel;
             
@@ -78,22 +78,22 @@ namespace UnityEditor.Recorder
                     
                 case RecordMode.SingleFrame:
                 {
-                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.SSingleFrameLabel);
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.SingleFrameLabel);
                     m_EndFrameProperty.intValue = m_StartFrameProperty.intValue;
                     break;
                 }
                     
                 case RecordMode.FrameInterval:
                 {
-                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.SFirstFrameLabel);
-                    EditorGUILayout.PropertyField(m_EndFrameProperty, Styles.SLastFrameLabel);
+                    EditorGUILayout.PropertyField(m_StartFrameProperty, Styles.FirstFrameLabel);
+                    EditorGUILayout.PropertyField(m_EndFrameProperty, Styles.LastFrameLabel);
                     break;
                 }
                     
                 case RecordMode.TimeInterval:
                 {
-                    EditorGUILayout.PropertyField(m_StartTimeProperty, Styles.SStartTimeLabel);
-                    EditorGUILayout.PropertyField(m_EndTimeProperty, Styles.SEndTimeLabel);
+                    EditorGUILayout.PropertyField(m_StartTimeProperty, Styles.StartTimeLabel);
+                    EditorGUILayout.PropertyField(m_EndTimeProperty, Styles.EndTimeLabel);
                     break;
                 }
                     
@@ -110,26 +110,26 @@ namespace UnityEditor.Recorder
         {           
             serializedObject.Update();
             
-            EditorGUILayout.LabelField(Styles.SFrameRateTitle);
+            EditorGUILayout.LabelField(Styles.FrameRateTitle);
             
             ++EditorGUI.indentLevel;
             
-            EditorGUILayout.PropertyField(m_PlaybackProperty, Styles.SPlaybackLabel);
+            EditorGUILayout.PropertyField(m_PlaybackProperty, Styles.PlaybackLabel);
 
             var variableFPS = m_PlaybackProperty.enumValueIndex == (int) FrameRatePlayback.Variable;
             
-            EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.SMaxFPSLabel : Styles.STargetFPSLabel);
+            EditorGUILayout.PropertyField(m_FrameRateTypeProperty, variableFPS ? Styles.MaxFPSLabel : Styles.TargetFPSLabel);
 
             if (m_FrameRateTypeProperty.enumValueIndex == (int) FrameRateType.FR_CUSTOM)
             {
                 ++EditorGUI.indentLevel;
-                EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.SValueLabel);
+                EditorGUILayout.PropertyField(m_CustomFrameRateValueProperty, Styles.ValueLabel);
                 --EditorGUI.indentLevel;
             }
             
             if (variableFPS)
             {
-                EditorGUILayout.PropertyField(m_SynchFrameRateProperty, Styles.SSyncFPSLabel);       
+                EditorGUILayout.PropertyField(m_SynchFrameRateProperty, Styles.SyncFPSLabel);       
             }
             
             --EditorGUI.indentLevel;
