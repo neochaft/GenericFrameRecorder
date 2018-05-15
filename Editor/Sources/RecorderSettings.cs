@@ -21,7 +21,7 @@ namespace UnityEditor.Recorder
         Variable,
     }
 
-    public enum RecordMode
+    internal enum RecordMode
     {
         Manual,
         SingleFrame,
