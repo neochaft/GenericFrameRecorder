@@ -22,12 +22,6 @@ namespace UnityEditor.Recorder
         [SerializeField] float m_EndTime;
         
         [SerializeField] bool m_SynchFrameRate;
-        
-        public RecordMode recordMode
-        {
-            get { return m_RecordMode; }
-            set { m_RecordMode = value; }
-        }
 
         public FrameRatePlayback frameRatePlayback
         {
@@ -45,28 +39,29 @@ namespace UnityEditor.Recorder
             }
         }
 
-        public int startFrame
+        public void SetRecordModeToManual()
         {
-            get { return m_StartFrame; }
-            set { m_StartFrame = value; }
+            m_RecordMode = RecordMode.Manual;
         }
-
-        public int endFrame
+        
+        public void SetRecordModeToSingleFrame(int frameNumber)
         {
-            get { return m_EndFrame; }
-            set { m_EndFrame = value; }
+            m_RecordMode = RecordMode.SingleFrame;
+            m_StartFrame = m_EndFrame = frameNumber;
         }
-
-        public float startTime
+        
+        public void SetRecordModeToFrameInterval(int startFrame, int endFrame)
         {
-            get { return m_StartTime; }
-            set { m_StartTime = value; }
+            m_RecordMode = RecordMode.FrameInterval;
+            m_StartFrame = startFrame;
+            m_EndFrame = endFrame;
         }
-
-        public float endTime
+        
+        public void SetRecordModeToTimeInterval(float startTime, float endTime)
         {
-            get { return m_EndTime; }
-            set { m_EndTime = value; }
+            m_RecordMode = RecordMode.TimeInterval;
+            m_StartTime = startTime;
+            m_EndTime = endTime;
         }
 
         public bool synchFrameRate

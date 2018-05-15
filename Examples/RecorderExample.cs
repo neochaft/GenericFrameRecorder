@@ -41,7 +41,7 @@ public class RecorderExample : MonoBehaviour
         
         controllerSettings.AddRecorderSettings(videoRecorder);
         
-        controllerSettings.recordMode = RecordMode.Manual;
+        controllerSettings.SetRecordModeToManual();
         controllerSettings.frameRate = 60.0f;
 
 
