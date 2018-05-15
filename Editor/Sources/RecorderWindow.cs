@@ -482,22 +482,33 @@ namespace UnityEditor.Recorder
             if (activeRecorders.Length == 0)
                 return null;
 
-            var outputPaths = new HashSet<string>();
+            var outputPaths = new Dictionary<string, RecorderSettings>();
 
             foreach (var recorder in activeRecorders)
             {
                 var path = recorder.fileNameGenerator.BuildAbsolutePath(null); // Does not detect all conflict or might have false positives
-                if (outputPaths.Contains(path))
-                    return "Some recorders might try to save into the same output file.";
-                
-                outputPaths.Add(path);
+                if (outputPaths.ContainsKey(path))
+                    return "Recorders '" + outputPaths[path].name + "' and '" + recorder.name + "' might try to save into the same output file.";
+
+                outputPaths.Add(path, recorder);
             }
             
-            var ii = m_ControllerSettings.recorderSettings.Where(r => r.enabled).SelectMany(r =>
-                r.inputsSettings.Where(i => i is GameViewInputSettings)).ToList();
+            RecorderSettings gameViewRecorders = null;
             
-            if (ii.Count >= 2)
-                return "Using Game View on multiple recorders can lead to unespected behaviour.";
+            foreach (var recorder in activeRecorders)
+            {
+                if (recorder.inputsSettings.Any(i => i is GameViewInputSettings))
+                {
+                    if (gameViewRecorders == null)
+                    {
+                        gameViewRecorders = recorder;
+                    }
+                    else
+                    {
+                        return "Recorders '" + gameViewRecorders.name + "' and '" + recorder.name + "' are recording the Game View. This can lead to unespected behaviour.";                        
+                    }
+                }
+            }   
 
             return null;
         }
