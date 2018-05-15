@@ -31,7 +31,7 @@ namespace UnityEditor.Recorder
             
             public static readonly GUIContent FrameRateTitle   = new GUIContent("Frame Rate");
             public static readonly GUIContent PlaybackLabel    = new GUIContent("Playback");
-            public static readonly GUIContent TargetFPSLabel   = new GUIContent("Target Frame Rate");
+            public static readonly GUIContent TargetFPSLabel   = new GUIContent("Target");
             public static readonly GUIContent MaxFPSLabel      = new GUIContent("Max Frame Rate");
             public static readonly GUIContent SyncFPSLabel     = new GUIContent("Sync. Frame Rate");
             public static readonly GUIContent ValueLabel       = new GUIContent("Value");

@@ -80,6 +80,8 @@ namespace UnityEditor.Recorder
 
         public void OnEnable()
         {             
+            minSize = new Vector2(560.0f, 200.0f);
+            
             var root = this.GetRootVisualContainer();
 
             root.style.flexDirection = FlexDirection.Column; 
@@ -155,6 +157,7 @@ namespace UnityEditor.Recorder
                 
             m_RecordModeOptionsPanel = new IMGUIContainer(() =>
             {
+                PrepareGUIState(m_RecordModeOptionsPanel.layout.width);
                 if (m_RecorderSettingsPrefsEditor.RecordModeGUI())
                     OnGlobalSettingsChanged();
             })
@@ -168,6 +171,7 @@ namespace UnityEditor.Recorder
             
             m_FrameRateOptionsPanel = new IMGUIContainer(() =>
             {
+                PrepareGUIState(m_FrameRateOptionsPanel.layout.width);
                 if (m_RecorderSettingsPrefsEditor.FrameRateGUI())
                     OnGlobalSettingsChanged();
             })
@@ -655,11 +659,18 @@ namespace UnityEditor.Recorder
             // Settings might have changed after the session ended
             m_ControllerSettings.Save();
         }
+        
+        static void PrepareGUIState(float contextWidth)
+        {
+            EditorGUIUtility.labelWidth = Mathf.Min(Mathf.Max(contextWidth * 0.45f - 40, 100), 160);
+        }
 
         void OnRecorderSettingsGUI()
         {
+            PrepareGUIState(m_RecorderSettingPanel.layout.width);
+            
             if (m_SelectedRecorderItem != null)
-            {
+            {               
                 if (m_SelectedRecorderItem.state == RecorderItem.State.HasErrors)
                 {
                     EditorGUILayout.LabelField("Missing reference to the recorder."); // TODO Better messaging
@@ -679,7 +690,7 @@ namespace UnityEditor.Recorder
 
                         if (!(editor is RecorderEditor))
                             EditorGUILayout.LabelField(string.Empty, GUI.skin.horizontalSlider);
-
+                        
                         editor.OnInspectorGUI();
 
                         if (GUI.changed)
